@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReheeCmf.Libs.Modules
+namespace ReheeCmf.Modules
 {
   public class ModuleDependOn
   {

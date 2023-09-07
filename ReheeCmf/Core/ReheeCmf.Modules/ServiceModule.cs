@@ -1,10 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.Extensions.DependencyInjection;
-using ReheeCmf.Libs.Modules.ApiVersions;
+using ReheeCmf.Modules.ApiVersions;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace ReheeCmf.Libs.Modules
+namespace ReheeCmf.Modules
 {
 
   public abstract class ServiceModule

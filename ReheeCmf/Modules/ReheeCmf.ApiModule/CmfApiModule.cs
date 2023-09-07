@@ -1,8 +1,8 @@
-﻿using ReheeCmf.Libs.Modules;
-using Swashbuckle.AspNetCore.SwaggerGen;
+﻿using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using ReheeCmf.Libs.Modules.ApiVersions;
+using ReheeCmf.Modules.ApiVersions;
+using ReheeCmf.Modules;
 
 namespace ReheeCmf
 {

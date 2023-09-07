@@ -1,6 +1,5 @@
 ﻿using ReheeCmf;
 using ReheeCmf.Contexts;
-using ReheeCmf.Libs.Modules;
 
 namespace CmfDemo
 {

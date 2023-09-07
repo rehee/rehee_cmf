@@ -9,7 +9,6 @@
   <ItemGroup>
     
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <ProjectReference Include="..\..\Core\ReheeCmf.Libs.Modules\ReheeCmf.Libs.Modules.csproj" />
     <ProjectReference Include="..\..\Core\ReheeCmf.Servers\ReheeCmf.Servers.csproj" />
   </ItemGroup>
   

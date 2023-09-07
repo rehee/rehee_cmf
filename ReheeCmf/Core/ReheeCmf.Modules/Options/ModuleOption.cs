@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReheeCmf.Libs.Modules.Options
+namespace ReheeCmf.Modules.Options
 {
   public class ModuleOption
   {

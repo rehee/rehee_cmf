@@ -1,12 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ReheeCmf.Libs.Modules.ApiVersions
+namespace ReheeCmf.Modules.ApiVersions
 {
   public class SwaggerApiVersion : ISwaggerApiVersion
   {
