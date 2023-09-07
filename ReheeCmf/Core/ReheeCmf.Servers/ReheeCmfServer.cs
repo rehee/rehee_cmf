@@ -67,6 +67,7 @@ namespace System
       services.AddHttpContextAccessor();
       services.AddHttpClient();
       services.AddScoped<IGetHttpClient, GetHttpClient>();
+      
       services.AddRazorPages();
 
       var fileOption = configuration.GetOption<FileServiceOption>() ?? new FileServiceOption();
@@ -89,12 +90,21 @@ namespace System
       services.AddSingleton<IServiceModuleMapping, ServiceModuleMapping>();
       services.AddScoped<IToken<IServiceModuleRequestFactory>, TokenFromContextScope>();
       services.AddScoped<IServiceModuleRequestFactory, ServiceModuleRequestFactory>();
-
+      services.AddHttpClient("1", client =>
+      {
+              client.BaseAddress = new Uri("https://api.example.com/");
+              // 配置其他 HttpClient 选项
+            })
+      //.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+      //{
+      //  // 配置 HttpClientHandler 选项
+      //})
+      ;
       context.MvcBuilder = context.Services.AddControllersWithViews(option =>
       {
-        option.Filters.Add(typeof(CmfMultiTenancyFilter));
-        option.Filters.Add(typeof(CmfAuthorizationFilter));
-        option.Filters.Add(typeof(CmfExceptionFilter));
+        //option.Filters.Add(typeof(CmfMultiTenancyFilter));
+        //option.Filters.Add(typeof(CmfAuthorizationFilter));
+        //option.Filters.Add(typeof(CmfExceptionFilter));
 
         foreach (var m in serverModule)
         {

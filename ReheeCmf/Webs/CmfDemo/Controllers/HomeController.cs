@@ -1,32 +1,27 @@
 using CmfDemo.Models;
 using Microsoft.AspNetCore.Mvc;
+using ReheeCmf.Requests;
 using System.Diagnostics;
 
 namespace CmfDemo.Controllers
 {
   public class HomeController : Controller
   {
+    private readonly IHttpClientFactory fac;
     private readonly ILogger<HomeController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(IHttpClientFactory fac, ILogger<HomeController> logger)
     {
+      this.fac = fac;
       _logger = logger;
     }
 
     public IActionResult Index()
     {
-      return View();
+      var c1 = fac.CreateClient("1");
+      var c2 = fac.CreateClient("1");
+      return Ok(c1.GetHashCode() == c2.GetHashCode());
     }
 
-    public IActionResult Privacy()
-    {
-      return View();
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-      return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
   }
 }
