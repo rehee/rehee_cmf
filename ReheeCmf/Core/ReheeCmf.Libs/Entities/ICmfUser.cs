@@ -9,7 +9,7 @@ namespace ReheeCmf.Entities
 {
   public interface IAvatar
   {
-    string Avatar { get; set; }
+    string? Avatar { get; set; }
   }
 
   public interface IUserName

@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace ReheeCmf.Commons
 {
-  public class RSAOption
+  public interface IWithEtag
   {
-    public string? RSAPublicKey { get; set; }
-    public string? RSAPrivateKey { get; set; }
+    byte[] ETag { get; set; }
   }
 }

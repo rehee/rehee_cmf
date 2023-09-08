@@ -8,6 +8,6 @@ namespace ReheeCmf.Tenants
 {
   public interface IWithTenant
   {
-    Guid? TenantId { get; set; }
+    Guid? TenantID { get; set; }
   }
 }

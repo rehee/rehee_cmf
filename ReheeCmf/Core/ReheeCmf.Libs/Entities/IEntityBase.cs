@@ -7,7 +7,7 @@ namespace ReheeCmf.Entities
   {
 
   }
-  public interface IEntityBase<T> : IEntityBase, IId<T> where T : IComparable
+  public interface IEntityBase<T> : IEntityBase, IId<T> where T : IEquatable<T>
   {
 
   }

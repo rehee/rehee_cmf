@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Modules\ReheeCmf.ApiModule\ReheeCmf.ApiModule.csproj" />
+    <ProjectReference Include="..\..\Modules\ReheeCmf.ContextModule\ReheeCmf.ContextModule.csproj" />
   </ItemGroup>
 
 </Project>

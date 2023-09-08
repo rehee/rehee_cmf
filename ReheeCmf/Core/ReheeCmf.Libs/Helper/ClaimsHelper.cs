@@ -65,5 +65,10 @@ namespace ReheeCmf.Helper
       value = claim.Value;
       return true;
     }
+
+    public static IEnumerable<Claim> UserSigninClaim(this ICmfUser user)
+    {
+      yield return new Claim(Common.TenantIDHeader, user?.TenantID?.ToString() ?? "");
+    }
   }
 }

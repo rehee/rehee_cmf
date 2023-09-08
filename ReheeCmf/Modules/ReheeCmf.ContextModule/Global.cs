@@ -1,0 +1,10 @@
+﻿global using Microsoft.AspNetCore.Identity;
+global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+global using ReheeCmf.ContextModule.Entities;
+global using ReheeCmf.Entities;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.DependencyInjection;
+global using ReheeCmf.Commons;
+global using ReheeCmf.Commons.DTOs;
+global using ReheeCmf.Contexts;
+global using ReheeCmf.Tenants;

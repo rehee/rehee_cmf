@@ -39,12 +39,12 @@
       var tEntity = (entity as IWithTenant)!;
       if (service != null)
       {
-        tEntity.TenantId = service.GetTenant(context, scopedUser?.Value);
+        tEntity.TenantID = service.GetTenant(context, scopedUser?.Value);
         return Task.CompletedTask;
       }
-      if (tEntity.TenantId == null)
+      if (tEntity.TenantID == null)
       {
-        tEntity.TenantId = context?.TenantId;
+        tEntity.TenantID = context?.TenantID;
       }
 
       return Task.CompletedTask;

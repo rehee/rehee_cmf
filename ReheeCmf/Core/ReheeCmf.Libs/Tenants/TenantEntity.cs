@@ -37,7 +37,7 @@ namespace ReheeCmf.Tenants
   {
     public override Task SetTenant(CancellationToken ct = default)
     {
-      entity!.TenantId = null;
+      entity!.TenantID = null;
       return Task.CompletedTask;
     }
     public override async Task<IEnumerable<ValidationResult>> ValidationAsync(CancellationToken ct = default)

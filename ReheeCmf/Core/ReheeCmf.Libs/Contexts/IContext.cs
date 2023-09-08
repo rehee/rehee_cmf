@@ -1,16 +1,7 @@
 ﻿namespace ReheeCmf.Contexts
 {
-  public interface IContext : IContextRepository
+  public interface IContext : ISaveChange, IRepository, IWithTenant, ITenantContext, IDisposable
   {
-
-
-
     TokenDTO? User { get; }
-
-    int SaveChanges(TokenDTO? user);
-    Task<int> SaveChangesAsync(TokenDTO? user, CancellationToken ct = default);
-    Guid? TenantId { get; }
-
   }
-
 }

@@ -1,4 +1,6 @@
-﻿using ReheeCmf.Modules.Options;
+﻿using ReheeCmf.Caches;
+using ReheeCmf.Commons.Encrypts;
+using ReheeCmf.Modules.Options;
 
 namespace System
 {
@@ -40,6 +42,11 @@ namespace System
       services.AddScoped<IGetCurrentTenant, HttpRequestGetCurrentTenant>();
       services.AddSingleton<IIAsyncQuery, EFCoreAsyncQuery>();
 
+      context.Services.AddScoped<IContextScope<Tenant>, ContextScope<Tenant>>();
+      context.Services.AddScoped<IContextScope<TokenDTO>, ContextScope<TokenDTO>>();
+      context.Services.AddScoped<IContextScope<QuerySecondCache>, ContextScope<QuerySecondCache>>();
+
+
       var options = configuration.GetOption<CrudOption>();
       services.AddSingleton<CrudOption>(options);
       var apiSetting = configuration.GetOption<ApiSetting>() ?? new ApiSetting();
@@ -71,8 +78,7 @@ namespace System
         context.Services.AddScoped<ITenantService, TenantService>();
       }
 
-      context.Services.AddScoped<IContextScope<Tenant>, ContextScope<Tenant>>();
-      context.Services.AddScoped<IContextScope<TokenDTO>, ContextScope<TokenDTO>>();
+     
 
       var serviceMapping = new Dictionary<string, Func<HttpClient>>();
 
