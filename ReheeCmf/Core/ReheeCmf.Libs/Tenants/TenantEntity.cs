@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ReheeCmf.Handlers.EntityChangeHandlers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -33,11 +34,41 @@ namespace ReheeCmf.Tenants
     public string? FileAllowedFileType { get; set; }
   }
 
+  [EntityChangeTracker<TenantEntity, TenantEntityHandler>(Index = -1, Group = nameof(TenantEntityHandler))]
   public class TenantEntityHandler : EntityChangeHandler<TenantEntity>
   {
+    private ITenantStorage? storage { get; set; }
+    public override void Init(IServiceProvider sp, object entity, int index, int subindex, string? group = null)
+    {
+      base.Init(sp, entity, index, subindex, group);
+      storage = sp.GetService<ITenantStorage>();
+    }
+    public override void Dispose()
+    {
+      base.Dispose();
+      storage = null;
+    }
     public override Task SetTenant(CancellationToken ct = default)
     {
       entity!.TenantID = null;
+      return Task.CompletedTask;
+    }
+    public override Task AfterCreateAsync(CancellationToken ct = default)
+    {
+      base.AfterCreateAsync(ct);
+      storage!.AddOrUpdateTenant(entity!);
+      return Task.CompletedTask;
+    }
+    public override Task AfterUpdateAsync(CancellationToken ct = default)
+    {
+      base.AfterUpdateAsync(ct);
+      storage!.AddOrUpdateTenant(entity!);
+      return Task.CompletedTask;
+    }
+    public override Task AfterDeleteAsync(CancellationToken ct = default)
+    {
+      base.AfterDeleteAsync(ct);
+      storage!.AddOrUpdateTenant(entity!);
       return Task.CompletedTask;
     }
     public override async Task<IEnumerable<ValidationResult>> ValidationAsync(CancellationToken ct = default)

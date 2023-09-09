@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿
+using Microsoft.Extensions.Configuration;
 
 namespace ReheeCmf.Helpers
 {
-  public static class ConfigrationHelper
+  public static class ConfigurationHelper
   {
     public static TOption GetOption<TOption>(this IConfiguration configuration, string key = default, TOption defaultValue = default) where TOption : new()
     {

@@ -12,8 +12,13 @@ namespace ReheeCmf.Servers.Services
   {
     public async Task<T?> FirstOrDefaultAsync<T>(IQueryable<T> query, CancellationToken ct)
     {
-      
+
       return await query.FirstOrDefaultAsync(ct);
+    }
+
+    public IQueryable<T> AsNoTracking<T>(IQueryable<T> query) where T : class
+    {
+      return query.AsNoTracking();
     }
   }
 }

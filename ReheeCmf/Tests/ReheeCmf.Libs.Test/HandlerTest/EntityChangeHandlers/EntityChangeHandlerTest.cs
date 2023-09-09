@@ -14,15 +14,15 @@ namespace ReheeCmf.Libs.Test.HandlerTest.EntityChangeHandlers
     public async Task HandlerTest()
     {
       var obj = new TestEntity();
-      var handler = obj.GetType().GetTypedAttribute<EntityChangeHandlerAttribute>()!;
-      var hd = handler.GetHandler()!;
+      var handler = obj.GetType().GetComponentsByHandler<TestEntityHandler>()!;
+      var hd = handler.FirstOrDefault()!.CreateHandler<TestEntityHandler>();
       var validationResult = await hd.ValidationAsync();
       Assert.That(validationResult.Count(), Is.EqualTo(1));
     }
 
 
   }
-  [EntityChangeHandler<TestEntityHandler>]
+  [EntityChange<TestEntityHandler>]
   file class TestEntity : EntityBase<int>
   {
 

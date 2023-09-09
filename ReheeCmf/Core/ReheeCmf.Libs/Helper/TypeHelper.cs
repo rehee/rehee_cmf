@@ -343,5 +343,17 @@ namespace ReheeCmf.Helper
       return fields;
     }
 
+    public static bool IsInheritance(this Type type, Type check)
+    {
+      if (Type.Equals(type, check))
+      {
+        return true;
+      }
+      if (type.BaseType != null)
+      {
+        return type.BaseType.IsInheritance(check);
+      }
+      return false;
+    }
   }
 }

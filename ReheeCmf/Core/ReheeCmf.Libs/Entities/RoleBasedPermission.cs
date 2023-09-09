@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ReheeCmf.Entities
 {
-  [EntityChangeHandler<RoleBasedPermissionChangeHandler>]
+  [EntityChange<RoleBasedPermissionChangeHandler>]
   public class RoleBasedPermission : EntityBase<Guid>
   {
     public string? ModuleName { get; set; }

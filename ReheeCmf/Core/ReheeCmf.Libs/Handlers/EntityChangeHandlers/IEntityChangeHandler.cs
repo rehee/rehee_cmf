@@ -1,10 +1,19 @@
-﻿namespace ReheeCmf.Handlers.EntityChangeHandlers
-{
-  public interface IEntityChangeHandler : IValidationHandler, IDisposable
-  {
-    void Init(IServiceProvider sp, object entity);
+﻿using ReheeCmf.Components;
 
-    Task SetTenant(CancellationToken ct = default);
+namespace ReheeCmf.Handlers.EntityChangeHandlers
+{
+  public interface IEntityChangeHandler : IValidationHandler, IDisposable, ICmfHandler
+  {
+    int EntityHashCode { get; }
+    int Index { get; }
+    int SubIndex { get; }
+    string? Group { get; }
+
+    EnumEntityChange Status { get; }
+
+    void Init(IServiceProvider sp, object entity, int index, int subindex, string? group = null);
+
+    Task SetTeSubindexSubindexnant(CancellationToken ct = default);
 
     Task BeforeCreateAsync(CancellationToken ct = default);
     Task AfterCreateAsync(CancellationToken ct = default);
@@ -15,9 +24,5 @@
     Task BeforeDeleteAsync(CancellationToken ct = default);
     Task AfterDeleteAsync(CancellationToken ct = default);
 
-  }
-  public interface IEntityChangeHandler<T> : IEntityChangeHandler where T : class
-  {
-    void InitWithType(IServiceProvider sp, T entity);
   }
 }

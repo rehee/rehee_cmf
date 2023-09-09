@@ -1,18 +1,24 @@
-﻿namespace ReheeCmf.ContextModule.Contexts
-{
-  public class CmfRepositoryContext : IContext
-  {
-    public readonly DbContext Context;
-    private readonly IServiceProvider sp;
+﻿using ReheeCmf.ContextModule.Events;
+using ReheeCmf.Handlers.EntityChangeHandlers;
+using System.Collections.Concurrent;
 
+namespace ReheeCmf.ContextModule.Contexts
+{
+  public class CmfRepositoryContext : IContext, ICrudTracker
+  {
+    protected readonly DbContext context;
+    public object Context => context;
+    protected readonly IServiceProvider sp;
+    protected ConcurrentDictionary<int, IEntityChangeHandler>? EntityChangeHandlerMapper { get; set; }
     public CmfRepositoryContext(IServiceProvider sp, DbContext context)
     {
       this.sp = sp;
-      this.Context = context;
+      this.context = context;
       if (context is IWithContext ct)
       {
         ct.Context = this;
       }
+      EntityChangeHandlerMapper = new ConcurrentDictionary<int, IEntityChangeHandler>();
       scopeTenant = sp.GetService<IContextScope<Tenant>>()!;
       tenant = scopeTenant?.Value;
       scopeTenant!.ValueChange += ScopeTenant_ValueChange;
@@ -20,7 +26,16 @@
       scopeUser = sp.GetService<IContextScope<TokenDTO>>()!;
       user = scopeUser?.Value;
       scopeUser!.ValueChange += CmfRepositoryContext_ValueChange;
+
+      if (context != null)
+      {
+        context.SavedChanges += CmfDbContextEvent.SavedChangesEventArgs!;
+        context.ChangeTracker.Tracked += CmfDbContextEvent.ChangeTracker_Tracked!;
+        context.ChangeTracker.StateChanged += CmfDbContextEvent.ChangeTracker_StateChanged!;
+      }
+
     }
+
     bool IsDispose { get; set; }
     public void Dispose()
     {
@@ -33,9 +48,21 @@
       tenant = null;
       scopeUser!.ValueChange -= CmfRepositoryContext_ValueChange;
       user = null;
-      if (Context != null && Context is IWithContext ct)
+      if (EntityChangeHandlerMapper != null)
       {
-        Context.Dispose();
+        foreach (var v in EntityChangeHandlerMapper.Values)
+        {
+          v.Dispose();
+        }
+        EntityChangeHandlerMapper.Clear();
+        EntityChangeHandlerMapper = null;
+      }
+      if (context != null && context is IWithContext ct)
+      {
+        context.SavedChanges -= CmfDbContextEvent.SavedChangesEventArgs!;
+        context.ChangeTracker.Tracked -= CmfDbContextEvent.ChangeTracker_Tracked!;
+        context.ChangeTracker.StateChanged -= CmfDbContextEvent.ChangeTracker_StateChanged!;
+        context.Dispose();
         if (ct.Context != null)
         {
           ct.Context = null;
@@ -74,26 +101,26 @@
 
     public async Task AddAsync<T>(T entity, CancellationToken cancellationToken) where T : class
     {
-      await Context.Set<T>().AddAsync(entity, cancellationToken);
+      await context.Set<T>().AddAsync(entity, cancellationToken);
     }
 
     public void Delete<T>(T entity) where T : class
     {
-      Context.Set<T>().Remove(entity);
+      context.Set<T>().Remove(entity);
     }
 
     public void Delete(object entity)
     {
-      Context.Remove(entity);
+      context.Remove(entity);
     }
 
     public async Task ExecuteTransactionAsync(Func<CancellationToken, Task> action, CancellationToken cancellationToken)
     {
-      var strategy = Context.Database.CreateExecutionStrategy();
+      var strategy = context.Database.CreateExecutionStrategy();
 
       await strategy.ExecuteAsync(async (ct) =>
       {
-        using var transaction = Context.Database.BeginTransaction();
+        using var transaction = context.Database.BeginTransaction();
         await action(ct);
         transaction.Commit();
       }, cancellationToken);
@@ -101,7 +128,7 @@
 
     public async Task<T?> GetByIdAsync<T>(object id, CancellationToken cancellationToken) where T : class
     {
-      var set = Context.Set<T>();
+      var set = context.Set<T>();
       return await set.FindAsync(new object[] { id }, cancellationToken);
     }
 
@@ -109,19 +136,19 @@
     {
       if (asNoTracking)
       {
-        return Context.Set<T>().AsNoTracking();
+        return context.Set<T>().AsNoTracking();
       }
-      return Context.Set<T>();
+      return context.Set<T>();
     }
 
     public int SaveChanges(TokenDTO? user)
     {
-      return Context.SaveChanges();
+      return context.SaveChanges();
     }
 
     public async Task<int> SaveChangesAsync(TokenDTO? user, CancellationToken ct = default)
     {
-      return await Context.SaveChangesAsync(ct);
+      return await context.SaveChangesAsync(ct);
     }
     public void SetReadOnly(bool readOnly)
     {
@@ -132,6 +159,59 @@
       this.tenant = tenant;
     }
 
+    public async Task AfterSaveChangesAsync(CancellationToken ct = default)
+    {
+      if (EntityChangeHandlerMapper == null || EntityChangeHandlerMapper.Values.Any() == false)
+      {
+        return;
+      }
+      foreach (var h in EntityChangeHandlerMapper.Values)
+      {
+        switch (h.Status)
+        {
+          case Enums.EnumEntityChange.Update:
+            await h.AfterUpdateAsync(ct);
+            break;
+          case Enums.EnumEntityChange.Delete:
+            await h.AfterDeleteAsync(ct);
+            break;
+          case Enums.EnumEntityChange.Create:
+            await h.AfterCreateAsync(ct);
+            break;
+        }
+      }
+    }
 
+    public void AddingTracker(Type entityType, object entity)
+    {
+      var components = EntityChangeHandlerFactory.CreateHandler(entityType);
+      if (components?.Any() != true || EntityChangeHandlerMapper == null)
+      {
+        return;
+      }
+      foreach (var component in components)
+      {
+        var handler = component.CreateEntityChangeHandler(sp, entity);
+        EntityChangeHandlerMapper.TryAdd(handler.GetHashCode(), handler);
+      }
+
+    }
+
+    public IEnumerable<IEntityChangeHandler> GetHandlers(object entity)
+    {
+      if (EntityChangeHandlerMapper == null)
+      {
+        return Enumerable.Empty<IEntityChangeHandler>();
+      }
+      var values = EntityChangeHandlerMapper.Values
+        .Where(b => b.EntityHashCode == entity.GetHashCode()).OrderBy(b => b.Index).ThenBy(b => b.SubIndex);
+      if (values?.Any() != true)
+      {
+        return Enumerable.Empty<IEntityChangeHandler>();
+      }
+      return values
+        .GroupBy(b => b.Group).Select(b => b.OrderBy(b => b.Index).ThenBy(b => b.SubIndex).AsEnumerable())
+        .Aggregate((a, b) => a.Concat(b));
+    }
   }
 }

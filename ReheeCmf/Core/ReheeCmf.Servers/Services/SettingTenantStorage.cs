@@ -14,9 +14,20 @@ namespace ReheeCmf.Servers.Services
     {
       this.setting = setting;
     }
+
+    public void AddOrUpdateTenant(TenantEntity tenant)
+    {
+      
+    }
+
     public IEnumerable<TenantEntity> GetAllTenants()
     {
       return setting.Tenants;
+    }
+
+    public void RemoveTenant(TenantEntity tenant)
+    {
+      
     }
   }
 }

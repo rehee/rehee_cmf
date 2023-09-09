@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ReheeCmf;
-using ReheeCmf.ContextComponent;
 using ReheeCmf.ContextModule.Contexts;
-using ReheeCmf.Contexts;
 using ReheeCmf.Entities;
 
 namespace CmfDemo.Data
 {
-  [ComponentHandler<MyHandler>(Index = 1)]
   public class ApplicationDbContext : CmfIdentityContext<IdentityUser>
   {
     public ApplicationDbContext(IServiceProvider sp) : base(sp)
@@ -33,14 +29,4 @@ namespace CmfDemo.Data
 
   }
 
-  public class MyHandler : IDbContextBuilder
-  {
-    public  void OnConfiguring(DbContextOptionsBuilder optionsBuilder, IContext? context)
-    {
-
-    }
-    public  void OnModelCreating(ModelBuilder builder, IContext? context)
-    {
-    }
-  }
 }

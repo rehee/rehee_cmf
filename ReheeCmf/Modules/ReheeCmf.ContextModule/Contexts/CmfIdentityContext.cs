@@ -4,7 +4,7 @@ using ReheeCmf.Helper;
 
 namespace ReheeCmf.ContextModule.Contexts
 {
-  [ComponentHandler<CmfDbContextBuilder>(Index = 2)]
+  [CmfComponent<CmfDbContextBuilder>]
   public class CmfIdentityContext<TUser> : IdentityDbContext<
     TUser,
     TenantIdentityRole,
@@ -25,10 +25,10 @@ namespace ReheeCmf.ContextModule.Contexts
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
       base.OnConfiguring(optionsBuilder);
-      var handler = this.GetType().GetComponentHandler<IDbContextBuilder>().ToArray().Reverse();
+      var handler = this.GetType().GetComponentsByHandler<IDbContextBuilder>().OrderBy(b => b.Index);
       foreach (var h in handler)
       {
-        h.SingletonComponent<IDbContextBuilder>()?.OnConfiguring(optionsBuilder, Context);
+        h.SingletonHandler<IDbContextBuilder>()?.OnConfiguring(optionsBuilder, sp, this);
       }
     }
     protected override void OnModelCreating(ModelBuilder builder)
@@ -38,13 +38,15 @@ namespace ReheeCmf.ContextModule.Contexts
 
     public override void Dispose()
     {
-      base.Dispose();
       SelfDispose();
+      base.Dispose();
+      
     }
     public override async ValueTask DisposeAsync()
     {
-      await base.DisposeAsync();
       SelfDispose();
+      await base.DisposeAsync();
+      
     }
     bool IsDispose { get; set; }
     protected void SelfDispose()
@@ -59,5 +61,12 @@ namespace ReheeCmf.ContextModule.Contexts
         Context.Dispose();
       }
     }
+
+    public DbSet<TenantEntity> Tenants { get; set; }
+    public DbSet<RoleBasedPermission> RoleBasedPermissions
+    {
+      get; set;
+    }
+  
   }
 }

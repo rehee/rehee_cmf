@@ -9,17 +9,18 @@ namespace ReheeCmf.Helper
 {
   public static class AttributeHelper
   {
-    public static EntityChangeHandlerAttribute? GetTypedAttribute<T>(this Type entityType) where T : Attribute
+    public static T? GetTypedAttribute<T>(this Type entityType) where T : Attribute
     {
       foreach (var a in entityType.GetCustomAttributes(true))
       {
-        if (a is EntityChangeHandlerAttribute eh)
+        if (a is T eh)
         {
           return eh;
         }
       }
       return null;
     }
+
     public static T? GetCustomAttributes<T>(this PropertyInfo property) where T : Attribute
     {
       return property.GetCustomAttribute<T>();

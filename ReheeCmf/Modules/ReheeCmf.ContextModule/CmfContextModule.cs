@@ -8,15 +8,25 @@ using System.Threading.Tasks;
 
 namespace ReheeCmf.ContextModule
 {
-  public class CmfContextModule : ServiceModule
+  public class CmfContextModule<TContext, TUser>
+    : ServiceModule
+    where TContext : DbContext
+    where TUser : IdentityUser, new()
   {
-    public override string ModuleTitle => nameof(CmfContextModule);
+    public override string ModuleTitle => "CmfContextModule";
 
-    public override string ModuleName => nameof(CmfContextModule);
+    public override string ModuleName => "CmfContextModule";
 
     public override Task<IEnumerable<string>> GetPermissions(IContext db, string token, CancellationToken ct)
     {
-      throw new NotImplementedException();
+      return Task.FromResult(Enumerable.Empty<string>());
     }
+
+    public override Task ConfigureServicesAsync(ServiceConfigurationContext context)
+    {
+      context.Services!.AddContextModule<TContext, TUser>(context.Configuration!);
+      return Task.CompletedTask;
+    }
+
   }
 }

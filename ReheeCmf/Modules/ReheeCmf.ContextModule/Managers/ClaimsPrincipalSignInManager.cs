@@ -7,7 +7,7 @@ using System.Net;
 using ReheeCmf.Helper;
 namespace ReheeCmf.ContextModule.Managers
 {
-  public class ClaimsPrincipalSignInManager<TUser> : IDTOSignInManager<ClaimsPrincipalDTO> where TUser : IdentityUser, ICmfUser, new()
+  public class ClaimsPrincipalSignInManager<TUser> : IDTOSignInManager<ClaimsPrincipalDTO> where TUser : IdentityUser, new()
   {
     private readonly UserManager<TUser> userManager;
     private readonly SignInManager<TUser> signInManager;
@@ -45,7 +45,15 @@ namespace ReheeCmf.ContextModule.Managers
           result.SetNotFound();
           return result;
         }
-        await signInManager.SignInWithClaimsAsync(user, dto.KeepLogin, user.UserSigninClaim());
+        if (user is ICmfUser cmfUser)
+        {
+          await signInManager.SignInWithClaimsAsync(user, dto.KeepLogin, cmfUser.UserSigninClaim());
+        }
+        else
+        {
+          await signInManager.SignInAsync(user, dto.KeepLogin);
+        }
+        
         result.SetSuccess(true);
         return result;
 

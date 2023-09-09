@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace ReheeCmf.ContextComponent
 {
-  public interface IDbContextBuilder : ICmfComponent
+  public interface IDbContextBuilder : ICmfHandler
   {
-    void OnConfiguring(DbContextOptionsBuilder optionsBuilder, IContext? context);
-    void OnModelCreating(ModelBuilder builder, IContext? context);
+    void OnConfiguring(DbContextOptionsBuilder optionsBuilder, IServiceProvider sp, DbContext context);
+    void OnModelCreating(ModelBuilder builder, IServiceProvider sp, DbContext context);
   }
 }
