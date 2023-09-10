@@ -22,10 +22,11 @@ namespace ReheeCmf.Libs.Test.ContextsTest
     protected IServiceProvider? serviceProvider { get; set; }
     public virtual void ConfigService()
     {
+      services = new ServiceCollection();
       services!.AddSingleton<CrudOption>(sp => new CrudOption
       {
         SQLType = Enums.EnumSQLType.Memory,
-        DefaultConnectionString = "ssr"
+        DefaultConnectionString = typeof(TDbContext).Name,
       });
       services!.AddMemoryCache();
       services!.AddCmfMemoryCache<IContext, object, object>(-1, -1);
@@ -34,7 +35,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest
       services!.AddScoped<IContextScope<QuerySecondCache>, ContextScope<QuerySecondCache>>();
       services!.AddScoped<IContextScope<Tenant>, ContextScope<Tenant>>();
       services!.AddScoped<IContextScope<TokenDTO>, ContextScope<TokenDTO>>();
-      services!.AddDbContext<TDbContext>();
+      services!.AddDbContext<TDbContext>(a => { }, ServiceLifetime.Scoped);
       services!.AddScoped<IContext>(sp => new CmfRepositoryContext(sp, sp.GetService<TDbContext>()!));
       services!.AddScoped<ITenantStorage, TenantStorage>();
     }

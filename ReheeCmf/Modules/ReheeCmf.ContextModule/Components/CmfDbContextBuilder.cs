@@ -26,7 +26,7 @@ namespace ReheeCmf.ContextModule.Components
         switch (option.SQLType.Value)
         {
           case EnumSQLType.Memory:
-            optionsBuilder.UseInMemoryDatabase(databaseName: "InMemoryDb");
+            optionsBuilder.UseInMemoryDatabase(databaseName: option.DefaultConnectionString);
             break;
           case EnumSQLType.PGSql:
             optionsBuilder.UseNpgsql(option.DefaultConnectionString);

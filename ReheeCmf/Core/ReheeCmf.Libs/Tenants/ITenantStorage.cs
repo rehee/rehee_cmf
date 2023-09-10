@@ -12,6 +12,7 @@ namespace ReheeCmf.Tenants
     IEnumerable<TenantEntity> GetAllTenants();
     void AddOrUpdateTenant(TenantEntity tenant);
     void RemoveTenant(TenantEntity tenant);
+    void ClearCashed();
   }
 
   public class TenantStorage : ITenantStorage
@@ -48,6 +49,11 @@ namespace ReheeCmf.Tenants
     public void RemoveTenant(TenantEntity tenant)
     {
       _tenantCache.Value.TryRemove(tenant.Id, out _);
+    }
+
+    public void ClearCashed()
+    {
+      _tenantCache.Value.Clear();
     }
   }
 }

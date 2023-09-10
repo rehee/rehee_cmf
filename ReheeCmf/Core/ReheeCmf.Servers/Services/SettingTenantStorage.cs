@@ -20,6 +20,11 @@ namespace ReheeCmf.Servers.Services
       
     }
 
+    public void ClearCashed()
+    {
+      
+    }
+
     public IEnumerable<TenantEntity> GetAllTenants()
     {
       return setting.Tenants;
