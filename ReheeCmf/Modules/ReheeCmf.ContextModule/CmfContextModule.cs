@@ -14,9 +14,7 @@ namespace ReheeCmf.ContextModule
     where TUser : IdentityUser, new()
   {
     public override string ModuleTitle => "CmfContextModule";
-
     public override string ModuleName => "CmfContextModule";
-
     public override Task<IEnumerable<string>> GetPermissions(IContext db, string token, CancellationToken ct)
     {
       return Task.FromResult(Enumerable.Empty<string>());

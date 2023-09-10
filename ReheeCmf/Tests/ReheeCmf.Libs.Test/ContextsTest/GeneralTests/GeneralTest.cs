@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using ReheeCmf.Contexts;
 using ReheeCmf.Libs.Test.ContextsTest.Contexts;
+using ReheeCmf.Tenants;
 using System.ComponentModel.DataAnnotations;
 
 namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
@@ -151,6 +153,35 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
       db.SaveChanges();
       var count = db.Set<TestEntity>().Count();
       Assert.That(count, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void Default_Tenant_Storage_And_Track_Test()
+    {
+      
+      var db = serviceProvider!.GetService<TDbContext>()!;
+      var storage = serviceProvider!.GetService<ITenantStorage>()!;
+      var tenant1 = new TenantEntity()
+      {
+        TenantName = "T1",
+        TenantSubDomain = "T1"
+      };
+      db.Add<TenantEntity>(tenant1);
+      db.SaveChanges();
+      var count = storage.GetAllTenants().Count();
+
+      Assert.That(count, Is.EqualTo(1));
+      var tenant2 = new TenantEntity()
+      {
+        TenantName = "T2",
+        TenantSubDomain = "T2"
+      };
+      db.Add<TenantEntity>(tenant2);
+      db.SaveChanges();
+
+      count = storage.GetAllTenants().Count();
+
+      Assert.That(count, Is.EqualTo(2));
     }
   }
 }

@@ -53,15 +53,7 @@ namespace ReheeCmf.ContextModule
         services.AddScoped<IContext>(sp =>
           new CmfRepositoryContext(sp, sp.GetService<TContext>()!));
       }
-      services.AddScoped<ITenantStorage>(sp =>
-      {
-        var context = sp.GetService<IContext>();
-        if (context != null && context is ITenantStorage storage)
-        {
-          return storage;
-        }
-        return null!;
-      });
+      services.AddScoped<ITenantStorage, TenantStorage>();
 
       var contextType = typeof(TContext);
       if (contextType.IsImplement<IIdentityContext>())

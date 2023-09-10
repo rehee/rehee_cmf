@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace ReheeCmf.Libs.Test.ContextsTest
 {
-  internal abstract class ContextsTest<TDbContext> where TDbContext: DbContext
+  internal abstract class ContextsTest<TDbContext> where TDbContext : DbContext
   {
     protected IServiceCollection? services { get; set; }
     protected IServiceProvider? serviceProvider { get; set; }
@@ -36,7 +36,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest
       services!.AddScoped<IContextScope<TokenDTO>, ContextScope<TokenDTO>>();
       services!.AddDbContext<TDbContext>();
       services!.AddScoped<IContext>(sp => new CmfRepositoryContext(sp, sp.GetService<TDbContext>()!));
-
+      services!.AddScoped<ITenantStorage, TenantStorage>();
     }
 
     [SetUp]
