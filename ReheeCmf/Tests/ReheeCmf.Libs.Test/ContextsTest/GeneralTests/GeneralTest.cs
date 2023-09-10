@@ -107,21 +107,50 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
         await db.AddAsync<TestValidationEntity>(entity, CancellationToken.None);
         await db.SaveChangesAsync(null);
       }
-      catch (StatusException ex)
+      catch (StatusException)
       {
         v = true;
       }
       Assert.That(valiation, Is.EqualTo(v));
     }
+    [Test]
     public void Context_Get_Type_Query()
     {
-      var context = serviceProvider!.GetService<IContext>();
+      var context = serviceProvider!.GetService<IContext>()!;
       var db = serviceProvider!.GetService<TDbContext>()!;
 
       var e1 = db.Set<TestEntity>();
       var e2 = context.Query(typeof(TestEntity), false);
 
       Assert.That(e1, Is.EqualTo(e2));
+    }
+    [Test]
+    public void Context_Get_Type_Find()
+    {
+      var context = serviceProvider!.GetService<IContext>()!;
+      var db = serviceProvider!.GetService<TDbContext>()!;
+      var entity1 = new TestEntity();
+      db.Set<TestEntity>().Add(entity1);
+      db.SaveChanges();
+
+      var e1 = db.Set<TestEntity>().Find(entity1.Id)!;
+      var e2 = context.Find(typeof(TestEntity), entity1.Id) as TestEntity;
+
+      Assert.That(e1.Id, Is.EqualTo(e2!.Id));
+    }
+    [Test]
+    public void Context_Get_Type_Delete()
+    {
+      var context = serviceProvider!.GetService<IContext>()!;
+      var db = serviceProvider!.GetService<TDbContext>()!;
+      var entity1 = new TestEntity();
+      db.Set<TestEntity>().Add(entity1);
+      db.SaveChanges();
+      var id = entity1.Id;
+      context.Delete(typeof(TestEntity), entity1.Id);
+      db.SaveChanges();
+      var count = db.Set<TestEntity>().Count();
+      Assert.That(count, Is.EqualTo(0));
     }
   }
 }

@@ -14,7 +14,7 @@ namespace ReheeCmf.Helper
 {
   public static class StringValueHelper
   {
-    public static string? StringValue(this object input, Type? originalType = null)
+    public static string? StringValue(this object? input, Type? originalType = null)
     {
       if (input == null)
       {

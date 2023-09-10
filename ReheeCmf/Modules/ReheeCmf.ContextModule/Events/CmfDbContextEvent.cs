@@ -8,8 +8,12 @@ namespace ReheeCmf.ContextModule.Events
 {
   public static class CmfDbContextEvent
   {
-    public static ICrudTracker? TryGetTracker(object sender)
+    public static ICrudTracker? TryGetTracker(object? sender)
     {
+      if (sender == null)
+      {
+        return null;
+      }
       if(sender is ChangeTracker changeTracker)
       {
         return TryGetTracker(changeTracker.Context);

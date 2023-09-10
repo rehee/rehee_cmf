@@ -1,9 +1,4 @@
-﻿using ReheeCmf.ContextModule.Events;
-using ReheeCmf.Handlers.EntityChangeHandlers;
-using ReheeCmf.Helper;
-using System.Collections.Concurrent;
-
-namespace ReheeCmf.ContextModule.Contexts
+﻿namespace ReheeCmf.ContextModule.Contexts
 {
   public class CmfRepositoryContext : IContext, ICrudTracker
   {
@@ -143,14 +138,41 @@ namespace ReheeCmf.ContextModule.Contexts
     }
     public object? Query(Type type, bool noTracking)
     {
-      return this.GetMap().Methods.FirstOrDefault(b => b.Name.Equals(nameof(QueryWithType)))
+      return this.GetMap().Methods.FirstOrDefault(b => b.Name.Equals(nameof(QueryWithType)))!
         .MakeGenericMethod(type).Invoke(this, new object[] { noTracking });
     }
     public IQueryable<T> QueryWithType<T>(bool asNoTracking) where T : class
     {
       return Query<T>(asNoTracking);
     }
-
+    public object? Find(Type type, object key)
+    {
+      return this.GetMap().Methods.FirstOrDefault(b => b.Name.Equals(nameof(FindWithType)))!
+        .MakeGenericMethod(type).Invoke(this, new object[] { key });
+    }
+    public T? FindWithType<T>(object key) where T : class
+    {
+      return context.Set<T>().Find(key);
+    }
+    public void Delete(Type type, object key)
+    {
+      var entity = Find(type, key);
+      if (entity == null)
+      {
+        StatusException.Throw(HttpStatusCode.NotFound);
+      }
+      this.GetMap().Methods.FirstOrDefault(b => b.Name.Equals(nameof(DeleteByType)))!
+        .MakeGenericMethod(type).Invoke(this, new object[] { entity! });
+    }
+    public void DeleteByType<T>(object entity) where T : class
+    {
+      if (entity is T tEntity)
+      {
+        context.Remove<T>(tEntity);
+        return;
+      }
+      StatusException.Throw(HttpStatusCode.NotFound);
+    }
     public int SaveChanges(TokenDTO? user)
     {
       return context.SaveChanges();
