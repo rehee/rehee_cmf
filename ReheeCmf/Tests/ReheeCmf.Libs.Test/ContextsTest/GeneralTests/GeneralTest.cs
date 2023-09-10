@@ -163,8 +163,8 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
       var storage = serviceProvider!.GetService<ITenantStorage>()!;
       var tenant1 = new TenantEntity()
       {
-        TenantName = "T1",
-        TenantSubDomain = "T1"
+        TenantName = "TenantName1",
+        TenantSubDomain = "TenantName1"
       };
       db.Add<TenantEntity>(tenant1);
       db.SaveChanges();
