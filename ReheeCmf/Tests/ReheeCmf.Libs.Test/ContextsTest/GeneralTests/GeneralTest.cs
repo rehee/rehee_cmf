@@ -13,14 +13,17 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
     [Test]
     public void ContextService_DbContext_Same_Instance_Test()
     {
-      var db = serviceProvider!.GetService<TDbContext>();
-      var context = serviceProvider!.GetService<IContext>();
+      var serviceProvider = ConfigService();
+      using var context = serviceProvider!.GetService<IContext>()!;
+      using var db = serviceProvider!.GetService<TDbContext>()!;
       Assert.That(db!.GetHashCode(), Is.EqualTo(context!.Context!.GetHashCode()));
     }
     [Test]
     public async Task ContextService_Entity_Update()
     {
-      var context = serviceProvider!.GetService<IContext>()!;
+      var serviceProvider = ConfigService();
+      using var context = serviceProvider!.GetService<IContext>()!;
+      using var db = serviceProvider!.GetService<TDbContext>()!;
       var textName = "test";
       var testEntity = new TestEntity()
       {
@@ -47,7 +50,9 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
     [Test]
     public async Task ContextService_Entity_ShareSameHandler_Update()
     {
-      var context = serviceProvider!.GetService<IContext>()!;
+      var serviceProvider = ConfigService();
+      using var context = serviceProvider!.GetService<IContext>()!;
+      using var db = serviceProvider!.GetService<TDbContext>()!;
       var textName = "test";
       var testEntity = new TestEntity3()
       {
@@ -74,7 +79,9 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
     [Test]
     public async Task ContextService_Entity_No_Inherit_Test()
     {
-      var context = serviceProvider!.GetService<IContext>()!;
+      var serviceProvider = ConfigService();
+      using var context = serviceProvider!.GetService<IContext>()!;
+      using var db = serviceProvider!.GetService<TDbContext>()!;
       var textName = "test";
       var testEntity = new TestEntity()
       {
@@ -95,36 +102,39 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
 
     [TestCase(1, false)]
     [TestCase(10, false)]
-    [TestCase(11, true)]
+    [TestCase(12, true)]
     public async Task ContextService_Entity_Valuation_Test(int index, bool valiation)
     {
-      //TODO there are some reason the exception will block the following test. skip for now
-      if (!valiation)
-      {
-        return;
-      }
+      var serviceProvider = ConfigService();
       var entity = new TestValidationEntity
       {
         Index = index,
       };
       var v = false;
+      using var context = serviceProvider!.GetService<IContext>()!;
+      using var db = serviceProvider!.GetService<TDbContext>()!;
       try
       {
-        var db = serviceProvider!.GetService<IContext>()!;
-        await db.AddAsync<TestValidationEntity>(entity, CancellationToken.None);
-        await db.SaveChangesAsync(null);
+
+        await context.AddAsync<TestValidationEntity>(entity, CancellationToken.None);
+        await context.SaveChangesAsync(null);
       }
       catch (Exception)
       {
         v = true;
+      }
+      finally
+      {
+        db.Dispose();
       }
       Assert.That(valiation, Is.EqualTo(v));
     }
     [Test]
     public void Context_Get_Type_Query()
     {
-      var context = serviceProvider!.GetService<IContext>()!;
-      var db = serviceProvider!.GetService<TDbContext>()!;
+      var serviceProvider = ConfigService();
+      using var context = serviceProvider!.GetService<IContext>()!;
+      using var db = serviceProvider!.GetService<TDbContext>()!;
 
       var e1 = db.Set<TestEntity>();
       var e2 = context.Query(typeof(TestEntity), false);
@@ -134,8 +144,9 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
     [Test]
     public void Context_Get_Type_Find()
     {
-      var context = serviceProvider!.GetService<IContext>()!;
-      var db = serviceProvider!.GetService<TDbContext>()!;
+      var serviceProvider = ConfigService();
+      using var context = serviceProvider!.GetService<IContext>()!;
+      using var db = serviceProvider!.GetService<TDbContext>()!;
       var entity1 = new TestEntity();
       db.Set<TestEntity>().Add(entity1);
       db.SaveChanges();
@@ -148,8 +159,9 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
     [Test]
     public void Context_Get_Type_Delete()
     {
-      var context = serviceProvider!.GetService<IContext>()!;
-      var db = serviceProvider!.GetService<TDbContext>()!;
+      var serviceProvider = ConfigService();
+      using var context = serviceProvider!.GetService<IContext>()!;
+      using var db = serviceProvider!.GetService<TDbContext>()!;
       var entity1 = new TestEntity();
       db.Set<TestEntity>().Add(entity1);
       db.SaveChanges();
@@ -163,9 +175,10 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
     [Test]
     public async Task Default_Tenant_Storage_And_Track_Test()
     {
-      var db = serviceProvider!.GetService<TDbContext>()!;
-      var storage = serviceProvider!.GetService<ITenantStorage>()!;
-
+      var serviceProvider = ConfigService();
+      using var context = serviceProvider!.GetService<IContext>()!;
+      using var db = serviceProvider!.GetService<TDbContext>()!;
+      var storage = serviceProvider.GetService<ITenantStorage>();
       var tenant1 = new TenantEntity()
       {
         TenantName = "TenantName1",
@@ -187,6 +200,26 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
       count = storage.GetAllTenants().Count();
 
       Assert.That(count, Is.EqualTo(2));
+     
+    }
+    [Test]
+    public async Task Entity_Name_Test()
+    {
+      var serviceProvider = ConfigService();
+      var name = nameof(TestEntity).ToLower();
+      var entityInfo = EntityRelationHelper.GetEntityTypeAndKey(name)!;
+      Assert.That(entityInfo.Value.entityType, Is.EqualTo(typeof(TestEntity)));
+      Assert.That(entityInfo.Value.keyType, Is.EqualTo(typeof(int)));
+      Assert.That(entityInfo.Value.entityName, Is.EqualTo(nameof(TestEntity)));
+
+      var newEntity = Activator.CreateInstance(entityInfo.Value.entityType);
+      using var db = serviceProvider!.GetService<IContext>()!;
+      using var context = serviceProvider!.GetService<TDbContext>()!;
+      db.Add(entityInfo.Value.entityType, newEntity);
+      db.SaveChanges(null);
+      var count = db.Query<TestEntity>(false).Select(b => b.Id).ToList();
+      Assert.That(count.Count, Is.EqualTo(1));
+
     }
   }
 }

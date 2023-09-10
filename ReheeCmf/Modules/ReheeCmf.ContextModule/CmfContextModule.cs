@@ -1,5 +1,9 @@
-﻿using ReheeCmf.Contexts;
+﻿using ReheeCmf.ConstValues;
+using ReheeCmf.Contexts;
+using ReheeCmf.Enums;
 using ReheeCmf.Modules;
+using ReheeCmf.Reflects.ReflectPools;
+using ReheeCmf.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +21,15 @@ namespace ReheeCmf.ContextModule
     public override string ModuleName => "CmfContextModule";
     public override Task<IEnumerable<string>> GetPermissions(IContext db, string token, CancellationToken ct)
     {
-      return Task.FromResult(Enumerable.Empty<string>());
+      var result = ReflectPool.EntityMapping_2.Select(b => b.Key.Name).SelectMany(b =>
+        new string[]
+        {
+          EnumHttpMethod.Get.GetEntityPermission(b),
+          EnumHttpMethod.Post.GetEntityPermission(b),
+          EnumHttpMethod.Put.GetEntityPermission(b),
+          EnumHttpMethod.Delete.GetEntityPermission(b),
+        });
+      return Task.FromResult(result);
     }
 
     public override Task ConfigureServicesAsync(ServiceConfigurationContext context)

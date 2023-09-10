@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using ReheeCmf.Caches;
 using ReheeCmf.Commons.DTOs;
+using ReheeCmf.ContextModule;
 using ReheeCmf.ContextModule.Contexts;
 using ReheeCmf.ContextModule.Interceptors;
 using ReheeCmf.Contexts;
@@ -18,35 +19,52 @@ namespace ReheeCmf.Libs.Test.ContextsTest
 {
   internal abstract class ContextsTest<TDbContext> where TDbContext : DbContext
   {
-    protected IServiceCollection? services { get; set; }
-    protected IServiceProvider? serviceProvider { get; set; }
-    public virtual void ConfigService()
+    //protected IServiceCollection? services { get; set; }
+    //protected IServiceProvider? serviceProvider { get; set; }
+    public virtual IServiceProvider ConfigService()
     {
-      services = new ServiceCollection();
+
+      var services = new ServiceCollection();
       services!.AddSingleton<CrudOption>(sp => new CrudOption
       {
         SQLType = Enums.EnumSQLType.Memory,
-        DefaultConnectionString = typeof(TDbContext).Name,
+        DefaultConnectionString = Guid.NewGuid().ToString(),
       });
+      
       services!.AddMemoryCache();
-      services!.AddCmfMemoryCache<IContext, object, object>(-1, -1);
-      services!.AddMemoryKeyValueCache<ICmfDbCommandInterceptor>(1);
-      services!.AddScoped<ICmfDbCommandInterceptor, CmfDbCommandInterceptor>();
+      
+      //services!.AddCmfMemoryCache<IContext, object, object>(-1, -1);
+      //services!.AddMemoryKeyValueCache<ICmfDbCommandInterceptor>(1);
+      //services!.AddScoped<ICmfDbCommandInterceptor, CmfDbCommandInterceptor>();
+      
       services!.AddScoped<IContextScope<QuerySecondCache>, ContextScope<QuerySecondCache>>();
       services!.AddScoped<IContextScope<Tenant>, ContextScope<Tenant>>();
       services!.AddScoped<IContextScope<TokenDTO>, ContextScope<TokenDTO>>();
       services!.AddDbContext<TDbContext>(a => { }, ServiceLifetime.Scoped);
       services!.AddScoped<IContext>(sp => new CmfRepositoryContext(sp, sp.GetService<TDbContext>()!));
       services!.AddScoped<ITenantStorage, TenantStorage>();
-    }
 
+      return services.BuildServiceProvider();
+    }
+    public bool isInited { get; set; }
     [SetUp]
     public virtual void Setup()
     {
-      EntityChangeHandlerFactory.Init();
-      services = new ServiceCollection();
-      ConfigService();
-      serviceProvider = services.BuildServiceProvider();
+      if (!isInited)
+      {
+        isInited = true;
+        EntityChangeHandlerFactory.Init();
+        ContextModuleSetup.SetUpReflectPool(typeof(TDbContext));
+      }
+
+      //services = new ServiceCollection();
+      //ConfigService();
+      //serviceProvider = services.BuildServiceProvider();
+    }
+    [TearDown]
+    public void Cleanup()
+    {
+      // 在测试结束后执行清理操作
     }
   }
 }

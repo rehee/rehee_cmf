@@ -23,15 +23,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CmfDemo", "Webs\CmfDemo\Cmf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReheeCmf.Modules", "Core\ReheeCmf.Modules\ReheeCmf.Modules.csproj", "{D824BB4C-F058-4B68-9FAB-54DE00745FC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReheeCmf.ContextModule", "Modules\ReheeCmf.ContextModule\ReheeCmf.ContextModule.csproj", "{E56A3A79-A3A4-4BC6-8CFD-267FAB72F527}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReheeCmf.ContextModule", "Modules\ReheeCmf.ContextModule\ReheeCmf.ContextModule.csproj", "{E56A3A79-A3A4-4BC6-8CFD-267FAB72F527}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReheeCmf.Caches", "Core\ReheeCmf.Caches\ReheeCmf.Caches.csproj", "{CA9098E0-E053-4047-BC6C-BB54FE2F2F09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReheeCmf.Caches", "Core\ReheeCmf.Caches\ReheeCmf.Caches.csproj", "{CA9098E0-E053-4047-BC6C-BB54FE2F2F09}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{6185B8E9-C356-4602-9269-28AEBD61EB01}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{472F64CE-2248-4969-881C-ABA32CE870B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReheeCmf.ContextComponent", "Components\ReheeCmf.ContextComponent\ReheeCmf.ContextComponent.csproj", "{89973905-0C70-485F-8420-1C390E538C11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReheeCmf.ContextComponent", "Components\ReheeCmf.ContextComponent\ReheeCmf.ContextComponent.csproj", "{89973905-0C70-485F-8420-1C390E538C11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReheeCmf.AuthenticationModule", "Modules\ReheeCmf.AuthenticationModule\ReheeCmf.AuthenticationModule.csproj", "{7986893C-E948-4CCF-B80E-E2AA4A5B425E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{89973905-0C70-485F-8420-1C390E538C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89973905-0C70-485F-8420-1C390E538C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89973905-0C70-485F-8420-1C390E538C11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7986893C-E948-4CCF-B80E-E2AA4A5B425E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7986893C-E948-4CCF-B80E-E2AA4A5B425E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7986893C-E948-4CCF-B80E-E2AA4A5B425E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7986893C-E948-4CCF-B80E-E2AA4A5B425E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,6 +95,7 @@ Global
 		{E56A3A79-A3A4-4BC6-8CFD-267FAB72F527} = {AB5383BD-B1E6-40F0-AF19-A444CCBE769B}
 		{CA9098E0-E053-4047-BC6C-BB54FE2F2F09} = {5536617D-9F78-416E-A7A7-02DC861D9A3D}
 		{89973905-0C70-485F-8420-1C390E538C11} = {472F64CE-2248-4969-881C-ABA32CE870B9}
+		{7986893C-E948-4CCF-B80E-E2AA4A5B425E} = {AB5383BD-B1E6-40F0-AF19-A444CCBE769B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D6A34A30-5D65-4622-BB92-A37DE5D89EB2}

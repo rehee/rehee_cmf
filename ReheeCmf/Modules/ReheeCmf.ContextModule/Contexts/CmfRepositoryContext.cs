@@ -1,4 +1,6 @@
-﻿namespace ReheeCmf.ContextModule.Contexts
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
+namespace ReheeCmf.ContextModule.Contexts
 {
   public class CmfRepositoryContext : IContext, ICrudTracker
   {
@@ -153,6 +155,19 @@
     public T? FindWithType<T>(object key) where T : class
     {
       return context.Set<T>().Find(key);
+    }
+    public void Add(Type type, object? value)
+    {
+      this.GetMap().Methods.FirstOrDefault(b => b.Name.Equals(nameof(AddWithType)))!
+        .MakeGenericMethod(type).Invoke(this, new object[] { value });
+    }
+    public void AddWithType<T>(object? value) where T : class
+    {
+      if(value==null || value is T != true)
+      {
+        return;
+      }
+      context.Set<T>().Add(value as T);
     }
     public void Delete(Type type, object key)
     {

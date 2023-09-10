@@ -54,10 +54,7 @@ namespace ReheeCmf.ContextModule.Contexts
     }
 
     public DbSet<TenantEntity> Tenants { get; set; }
-    public DbSet<RoleBasedPermission> RoleBasedPermissions
-    {
-      get; set;
-    }
+    public DbSet<RoleBasedPermission> RoleBasedPermissions { get; set; }
 
 
 

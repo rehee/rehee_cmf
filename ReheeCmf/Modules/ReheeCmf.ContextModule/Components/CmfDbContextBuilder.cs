@@ -1,4 +1,5 @@
-﻿using ReheeCmf.Caches.MemoryCaches;
+﻿using Microsoft.Extensions.Caching.Memory;
+using ReheeCmf.Caches.MemoryCaches;
 using ReheeCmf.Components;
 using ReheeCmf.ContextComponent;
 using ReheeCmf.ContextModule.Interceptors;
@@ -51,7 +52,7 @@ namespace ReheeCmf.ContextModule.Components
 
     public virtual void OnModelCreating(ModelBuilder builder, IServiceProvider sp, DbContext context)
     {
-
+      
     }
 
   }
