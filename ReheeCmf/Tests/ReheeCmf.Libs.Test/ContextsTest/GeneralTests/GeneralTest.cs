@@ -113,6 +113,15 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
       }
       Assert.That(valiation, Is.EqualTo(v));
     }
+    public void Context_Get_Type_Query()
+    {
+      var context = serviceProvider!.GetService<IContext>();
+      var db = serviceProvider!.GetService<TDbContext>()!;
 
+      var e1 = db.Set<TestEntity>();
+      var e2 = context.Query(typeof(TestEntity), false);
+
+      Assert.That(e1, Is.EqualTo(e2));
+    }
   }
 }

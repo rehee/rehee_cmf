@@ -1,5 +1,6 @@
 ﻿using ReheeCmf.ContextModule.Events;
 using ReheeCmf.Handlers.EntityChangeHandlers;
+using ReheeCmf.Helper;
 using System.Collections.Concurrent;
 
 namespace ReheeCmf.ContextModule.Contexts
@@ -139,6 +140,15 @@ namespace ReheeCmf.ContextModule.Contexts
         return context.Set<T>().AsNoTracking();
       }
       return context.Set<T>();
+    }
+    public object? Query(Type type, bool noTracking)
+    {
+      return this.GetMap().Methods.FirstOrDefault(b => b.Name.Equals(nameof(QueryWithType)))
+        .MakeGenericMethod(type).Invoke(this, new object[] { noTracking });
+    }
+    public IQueryable<T> QueryWithType<T>(bool asNoTracking) where T : class
+    {
+      return Query<T>(asNoTracking);
     }
 
     public int SaveChanges(TokenDTO? user)
