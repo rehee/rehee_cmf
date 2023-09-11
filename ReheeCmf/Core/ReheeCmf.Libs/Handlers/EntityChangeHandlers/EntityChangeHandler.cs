@@ -111,7 +111,22 @@ namespace ReheeCmf.Handlers.EntityChangeHandlers
 
     public virtual Task<IEnumerable<ValidationResult>> ValidationAsync(CancellationToken ct = default)
     {
-      return Task.FromResult(Enumerable.Empty<ValidationResult>());
+      return Task.FromResult(SelfValidation());
+    }
+
+    protected virtual IEnumerable<ValidationResult> SelfValidation()
+    {
+      if (entity == null)
+      {
+        return Enumerable.Empty<ValidationResult>();
+      }
+      var result = new List<ValidationResult>();
+      var context = new ValidationContext(entity);
+      if (Validator.TryValidateObject(entity, context, result))
+      {
+        return Enumerable.Empty<ValidationResult>();
+      }
+      return result;
     }
 
     public void Init(IServiceProvider sp, object entity)

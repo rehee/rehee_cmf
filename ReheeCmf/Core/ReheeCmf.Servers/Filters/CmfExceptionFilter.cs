@@ -17,7 +17,7 @@ namespace ReheeCmf.Servers.Filters
 
       if (!context.ExceptionHandled)
       {
-        var exS = CmfExceptionFilter.GetStatusException(context.Exception);
+        var exS = context.Exception.GetStatusException();
         if (exS != null)
         {
           if (exS.ErrorCode == Common.ErrorCode_Validation)
@@ -40,17 +40,6 @@ namespace ReheeCmf.Servers.Filters
       }
     }
 
-    public static StatusException GetStatusException(Exception ex)
-    {
-      if (ex == null)
-      {
-        return null;
-      }
-      if (ex is StatusException exStatus)
-      {
-        return exStatus;
-      }
-      return CmfExceptionFilter.GetStatusException(ex.InnerException);
-    }
+    
   }
 }

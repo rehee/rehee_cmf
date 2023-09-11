@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ReheeCmf.ContextModule.Contexts;
 using ReheeCmf.ContextModule.Entities;
+using ReheeCmf.Libs.Test.ContextsTest.GeneralTests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
     public DbSet<TestEntity2> TestEntity2s { get; set; }
     public DbSet<TestEntity3> TestEntity3s { get; set; }
     public DbSet<TestValidationEntity> TestValidationEntities { get; set; }
+    public DbSet<WhiteClass> WhiteClasss { get; set; }
   }
   internal class TestDbContext2 : CmfDbContext
   {
@@ -29,5 +31,6 @@ namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
     public DbSet<TestEntity2> TestEntity2s { get; set; }
     public DbSet<TestEntity3> TestEntity3s { get; set; }
     public DbSet<TestValidationEntity> TestValidationEntities { get; set; }
+    public DbSet<WhiteClass> WhiteClasss { get; set; }
   }
 }
