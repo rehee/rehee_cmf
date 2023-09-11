@@ -2,12 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using ReheeCmf.Commons.Interfaces;
 using ReheeCmf.ContextModule.Contexts;
+using ReheeCmf.ContextModule.Entities;
 using ReheeCmf.Entities;
 using ReheeCmf.Handlers.EntityChangeHandlers;
 
 namespace CmfDemo.Data
 {
-  public class ApplicationDbContext : CmfIdentityContext<IdentityUser>
+  public class ApplicationDbContext : CmfIdentityContext<ReheeCmfBaseUser>
   {
     public ApplicationDbContext(IServiceProvider sp) : base(sp)
     {
@@ -22,7 +23,7 @@ namespace CmfDemo.Data
   {
     public string? Name1 { get; set; }
     public string? Name2 { get; set; }
-    
+
   }
 
   [EntityChangeTracker<Entity1, Entity1Tracker>]
