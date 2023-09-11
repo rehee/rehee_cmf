@@ -27,7 +27,7 @@ namespace ReheeCmf.Authenticates
     void SetLockedOutUser(string userName, DateTimeOffset? lockoutEnd);
     bool EnableAuth();
   }
-  public interface IJWTService<TCmfUser> where TCmfUser : ICmfUser
+  public interface IJWTService<TCmfUser>: IJWTService where TCmfUser : ICmfUser
   {
     Task<ContentResponse<TokenDTO>> GetTokenAsync(TCmfUser user, bool getRefresnToken, bool isImpersonate, CancellationToken ct, string? refreshToken = null);
   }
