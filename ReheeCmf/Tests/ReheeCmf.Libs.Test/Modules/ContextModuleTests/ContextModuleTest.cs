@@ -196,5 +196,42 @@ namespace ReheeCmf.Libs.Test.Modules.ContextModuleTests
       r = records.FirstOrDefault();
       Assert.That(r.PermissionList.Count, Is.EqualTo(2));
     }
+    [Test]
+    public async Task Context_Module_Permission_Item_Test()
+    {
+      using var db = ServiceProvider.GetService<IContext>();
+      using var db2 = ServiceProvider.GetService<T>();
+      db2.Database.EnsureCreated();
+      var roleName = "role";
+      var permisionName1 = EnumHttpMethod.Get.GetEntityPermission(nameof(TestEntity));
+      var permisionName2 = "p2";
+      var permisionName3 = EnumHttpMethod.Post.GetEntityPermission(nameof(TestEntity));
+      await this.CmfContextModule.UpdateRoleBasedPermissionAsync(db, roleName, new Commons.DTOs.RoleBasedPermissionDTO
+      {
+        Items = new StandardProperty[]
+        {
+          new StandardProperty
+          {
+            PropertyName = permisionName1,
+            Value="True",
+          },
+          new StandardProperty
+          {
+            PropertyName = permisionName2,
+            Value="True",
+          },
+          new StandardProperty
+          {
+            PropertyName = permisionName3,
+            Value="True",
+          }
+        }
+      }, null);
+      var item = await this.CmfContextModule.GetRoleBasedPermissionAsync(db, new string[] { roleName }, "");
+      var strings = item.Content.Split(",").ToArray();
+      Assert.That(strings.Length,Is.EqualTo(2));
+      Assert.True(strings.Contains(permisionName1));
+      Assert.True(strings.Contains(permisionName3));
+    }
   }
 }
