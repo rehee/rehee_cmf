@@ -8,9 +8,9 @@ namespace ReheeCmf.ConstValues
 {
   public static class ConstCrud
   {
-    public const string Create = "post";
-    public const string Read = "get";
-    public const string Update = "put";
+    public const string Create = "create";
+    public const string Read = "read";
+    public const string Update = "update";
     public const string Delete = "delete";
     public const string Split = ":";
     public static string GetEntityPermission(this EnumHttpMethod method, string entityName)

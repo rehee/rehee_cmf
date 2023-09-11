@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using ReheeCmf.Authenticates;
 using ReheeCmf.Responses;
 using ReheeCmf.Commons.Consts;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using ReheeCmf.ConstValues;
 
 namespace ReheeCmf.Servers.Filters
 {
@@ -239,7 +241,7 @@ namespace ReheeCmf.Servers.Filters
       var permissionString = cmfAttr.RoleString;
       if (cmfAttr.EntityRoleBase)
       {
-        permissionString = $"{entityName}:";
+        permissionString = $"{entityName}{ConstCrud.Split}";
         switch (context.HttpContext.Request.Method.ToLower())
         {
           case "get":
@@ -247,19 +249,20 @@ namespace ReheeCmf.Servers.Filters
             {
               return;
             }
-            permissionString = $"{permissionString}read";
+            permissionString = $"{permissionString}{ConstCrud.Read}";
             break;
           case "post":
-            permissionString = $"{permissionString}create";
+            permissionString = $"{permissionString}{ConstCrud.Create}";
             break;
           case "put":
-            permissionString = $"{permissionString}update";
+            permissionString = $"{permissionString}{ConstCrud.Update}";
             break;
           case "delete":
-            permissionString = $"{permissionString}delete";
+            permissionString = $"{permissionString}{ConstCrud.Delete}";
             break;
         }
       }
+
       if (permissionsFromToken.Any(b => b.Equals(permissionString, StringComparison.OrdinalIgnoreCase)))
       {
         goto gotoNext;
