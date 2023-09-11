@@ -1,16 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
-using ReheeCmf.Entities;
-using ReheeCmf.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ReheeCmf.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ReheeCmf.ContextModule.Entities
 {
   public class ReheeCmfBaseUser : IdentityUser, ICmfUser
   {
+    [NotMapped]
     public string[]? ImpersonateRoles { get; set; }
     [FormInputs(InputType = EnumInputType.File)]
     public string? Avatar { get; set; }

@@ -15,7 +15,7 @@ namespace ReheeCmf.ContextModule
   public class CmfContextModule<TContext, TUser>
     : ServiceModule
     where TContext : DbContext
-    where TUser : IdentityUser, new()
+    where TUser : IdentityUser, ICmfUser, new()
   {
     public override string ModuleTitle => "CmfContextModule";
     public override string ModuleName => "CmfContextModule";

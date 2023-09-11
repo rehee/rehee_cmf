@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ReheeCmf.ContextModule.Contexts;
+using ReheeCmf.ContextModule.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
 {
-  internal class TestDbContext : CmfIdentityContext<IdentityUser>
+  internal class TestDbContext : CmfIdentityContext<ReheeCmfBaseUser>
   {
     public TestDbContext(IServiceProvider sp) : base(sp)
     {

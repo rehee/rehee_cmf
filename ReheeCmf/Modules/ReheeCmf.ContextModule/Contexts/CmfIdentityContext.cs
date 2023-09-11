@@ -14,7 +14,7 @@ namespace ReheeCmf.ContextModule.Contexts
     TenantIdentityUserLogin,
     TenantIdentityRoleClaim,
     TenantIdentityUserToken>, IIdentityContext, IWithContext
-    where TUser : IdentityUser, new()
+    where TUser : IdentityUser, ICmfUser, new()
   {
     protected readonly IServiceProvider sp;
     public IContext? Context { get; set; }
@@ -40,13 +40,13 @@ namespace ReheeCmf.ContextModule.Contexts
     {
       SelfDispose();
       base.Dispose();
-      
+
     }
     public override async ValueTask DisposeAsync()
     {
       SelfDispose();
       await base.DisposeAsync();
-      
+
     }
     bool IsDispose { get; set; }
     protected void SelfDispose()

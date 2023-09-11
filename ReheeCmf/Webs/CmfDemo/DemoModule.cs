@@ -4,6 +4,7 @@ using ReheeCmf;
 using ReheeCmf.Commons.DTOs;
 using ReheeCmf.ContextModule;
 using ReheeCmf.ContextModule.Contexts;
+using ReheeCmf.ContextModule.Entities;
 using ReheeCmf.Contexts;
 using ReheeCmf.Modules;
 
@@ -15,14 +16,14 @@ namespace CmfDemo
     {
       return base.Depends().Concat(new ModuleDependOn[]
       {
-        ModuleDependOn.New<CmfContextModule<ApplicationDbContext,IdentityUser>>()
+        ModuleDependOn.New<CmfContextModule<ApplicationDbContext,ReheeCmfBaseUser>>()
       });
     }
     public override string ModuleTitle => "";
 
     public override string ModuleName => "";
 
-    
+
     public override async Task ConfigureServicesAsync(ServiceConfigurationContext context)
     {
       await base.ConfigureServicesAsync(context);
