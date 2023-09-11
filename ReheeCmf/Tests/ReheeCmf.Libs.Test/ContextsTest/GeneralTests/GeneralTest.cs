@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using ReheeCmf.Caches.MemoryCaches;
 using ReheeCmf.Contexts;
 using ReheeCmf.Libs.Test.ContextsTest.Contexts;
 using ReheeCmf.Tenants;
@@ -8,8 +10,25 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
 {
+  internal class TestDbContextTest : GeneralTest<TestDbContext>
+  {
+  }
+  internal class TestDbContext2Test : GeneralTest<TestDbContext2>
+  {
+  }
   internal abstract class GeneralTest<TDbContext> : ContextsTest<TDbContext> where TDbContext : DbContext
   {
+    private IServiceProvider sp { get; set; }
+    public override IServiceProvider ConfigService()
+    {
+      sp = base.ConfigService();
+      return sp;
+    }
+    [TearDown]
+    public void Cleanup()
+    {
+      
+    }
     [Test]
     public void ContextService_DbContext_Same_Instance_Test()
     {
@@ -200,7 +219,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
       count = storage.GetAllTenants().Count();
 
       Assert.That(count, Is.EqualTo(2));
-     
+
     }
     [Test]
     public async Task Entity_Name_Test()
@@ -219,7 +238,6 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
       db.SaveChanges(null);
       var count = db.Query<TestEntity>(false).Select(b => b.Id).ToList();
       Assert.That(count.Count, Is.EqualTo(1));
-
     }
   }
 }

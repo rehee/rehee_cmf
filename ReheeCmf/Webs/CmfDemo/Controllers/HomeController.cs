@@ -18,10 +18,18 @@ namespace CmfDemo.Controllers
       this.context = context;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-
-      var entityList = db.Entity1s.ToList();
+      var e1 = context.Query<Entity1>(true).ToList();
+      e1.Reverse();
+      var newE = new Entity1();
+      db.Add(newE);
+      ////await context.AddAsync<Entity1>(newE, CancellationToken.None);
+      //newE.Name2 = Guid.NewGuid().ToString();
+      //context.Delete(typeof(Entity1), e1.LastOrDefault().Id);
+      await context.SaveChangesAsync(null);
+      //await context.SaveChangesAsync(null);
+      //db.SaveChanges();
       return Ok();
     }
 

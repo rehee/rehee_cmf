@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using ReheeCmf.Commons.Interfaces;
 
 namespace ReheeCmf.ContextModule.Contexts
 {
@@ -28,10 +29,35 @@ namespace ReheeCmf.ContextModule.Contexts
       if (context != null)
       {
         context.SavedChanges += CmfDbContextEvent.SavedChangesEventArgs!;
-        context.ChangeTracker.Tracked += CmfDbContextEvent.ChangeTracker_Tracked!;
+        context.ChangeTracker.Tracked += CmfDbContextEvent.ChangeTracker_StateChanged!;
         context.ChangeTracker.StateChanged += CmfDbContextEvent.ChangeTracker_StateChanged!;
+        //context.ChangeTracker.StateChanging += ChangeTracker_StateChanging;
       }
 
+    }
+
+    private void ChangeTracker_StateChanging(object? sender, Microsoft.EntityFrameworkCore.ChangeTracking.EntityStateChangingEventArgs e)
+    {
+      if (e.Entry.Entity is IWithName nn)
+      {
+        nn.Name1 = Guid.NewGuid().ToString();
+      }
+    }
+
+    private void ChangeTracker_DetectedEntityChanges(object? sender, Microsoft.EntityFrameworkCore.ChangeTracking.DetectedEntityChangesEventArgs e)
+    {
+      if (e.Entry.Entity is IWithName nn)
+      {
+        nn.Name1 = Guid.NewGuid().ToString();
+      }
+    }
+
+    private void ChangeTracker_StateChanged(object? sender, Microsoft.EntityFrameworkCore.ChangeTracking.EntityStateChangedEventArgs e)
+    {
+      if (e.Entry.Entity is IWithName b)
+      {
+        b.Name1 = Guid.NewGuid().ToString();
+      }
     }
 
     bool IsDispose { get; set; }
@@ -58,7 +84,7 @@ namespace ReheeCmf.ContextModule.Contexts
       if (context != null && context is IWithContext ct)
       {
         context.SavedChanges -= CmfDbContextEvent.SavedChangesEventArgs!;
-        context.ChangeTracker.Tracked -= CmfDbContextEvent.ChangeTracker_Tracked!;
+        context.ChangeTracker.Tracked -= CmfDbContextEvent.ChangeTracker_StateChanged!;
         context.ChangeTracker.StateChanged -= CmfDbContextEvent.ChangeTracker_StateChanged!;
         context.Dispose();
         if (ct.Context != null)
@@ -163,7 +189,7 @@ namespace ReheeCmf.ContextModule.Contexts
     }
     public void AddWithType<T>(object? value) where T : class
     {
-      if(value==null || value is T != true)
+      if (value == null || value is T != true)
       {
         return;
       }
@@ -238,8 +264,13 @@ namespace ReheeCmf.ContextModule.Contexts
       }
       foreach (var component in components)
       {
+        var handlerKey = component.GetHashCode() + entity.GetHashCode();
+        if (EntityChangeHandlerMapper.TryGetValue(handlerKey, out _))
+        {
+          continue;
+        }
         var handler = component.CreateEntityChangeHandler(sp, entity);
-        EntityChangeHandlerMapper.TryAdd(handler.GetHashCode(), handler);
+        EntityChangeHandlerMapper.TryAdd(handlerKey, handler);
       }
 
     }

@@ -30,13 +30,13 @@ namespace ReheeCmf.Libs.Test.ContextsTest
         SQLType = Enums.EnumSQLType.Memory,
         DefaultConnectionString = Guid.NewGuid().ToString(),
       });
-      
+
       services!.AddMemoryCache();
-      
+
       //services!.AddCmfMemoryCache<IContext, object, object>(-1, -1);
-      //services!.AddMemoryKeyValueCache<ICmfDbCommandInterceptor>(1);
-      //services!.AddScoped<ICmfDbCommandInterceptor, CmfDbCommandInterceptor>();
-      
+      services!.AddMemoryKeyValueCache<ICmfDbCommandInterceptor>(1);
+      services!.AddScoped<ICmfDbCommandInterceptor, CmfDbCommandInterceptor>();
+
       services!.AddScoped<IContextScope<QuerySecondCache>, ContextScope<QuerySecondCache>>();
       services!.AddScoped<IContextScope<Tenant>, ContextScope<Tenant>>();
       services!.AddScoped<IContextScope<TokenDTO>, ContextScope<TokenDTO>>();
@@ -46,25 +46,17 @@ namespace ReheeCmf.Libs.Test.ContextsTest
 
       return services.BuildServiceProvider();
     }
-    public bool isInited { get; set; }
+
     [SetUp]
     public virtual void Setup()
     {
-      if (!isInited)
-      {
-        isInited = true;
-        EntityChangeHandlerFactory.Init();
-        ContextModuleSetup.SetUpReflectPool(typeof(TDbContext));
-      }
+      EntityChangeHandlerFactory.Init();
+      ContextModuleSetup.SetUpReflectPool(typeof(TDbContext));
 
       //services = new ServiceCollection();
       //ConfigService();
       //serviceProvider = services.BuildServiceProvider();
     }
-    [TearDown]
-    public void Cleanup()
-    {
-      // 在测试结束后执行清理操作
-    }
+
   }
 }

@@ -52,7 +52,7 @@ namespace ReheeCmf.ContextModule.Components
 
     public virtual void OnModelCreating(ModelBuilder builder, IServiceProvider sp, DbContext context)
     {
-      
+
     }
 
   }

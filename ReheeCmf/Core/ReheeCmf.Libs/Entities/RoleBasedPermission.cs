@@ -13,14 +13,14 @@ namespace ReheeCmf.Entities
     public string? ModuleName { get; set; }
     public string? RoleName { get; set; }
     public string? Permissions { get; set; }
-    [IgnoreUpdate]
-    [IgnoreMapping]
+    //[IgnoreUpdate]
+    //[IgnoreMapping]
     public string? NormalizationModuleName { get; set; }
-
-    [IgnoreUpdate]
-    [IgnoreMapping]
+    public string? NormalizationModuleName2 { get; set; }
+    //[IgnoreUpdate]
+    //[IgnoreMapping]
     public string? NormalizationRoleName { get; set; }
-
+    public string? NormalizationRoleName2 { get; set; }
     [NotMapped]
     public string[] PermissionList
     {
@@ -46,8 +46,10 @@ namespace ReheeCmf.Entities
       {
         entity.Id = Guid.NewGuid();
       }
-      entity!.NormalizationModuleName = entity!.ModuleName?.Trim().ToUpper() ?? "";
-      entity!.NormalizationRoleName = entity!.RoleName?.Trim().ToUpper() ?? "";
+      entity.NormalizationModuleName = entity.ModuleName?.Trim().ToUpper() ?? "";
+      entity.NormalizationRoleName = entity.RoleName?.Trim().ToUpper() ?? "";
+      entity.NormalizationModuleName2 = entity.ModuleName?.Trim().ToUpper() ?? "";
+      entity.NormalizationRoleName2 = entity.RoleName?.Trim().ToUpper() ?? "";
     }
     public override async Task BeforeUpdateAsync(EntityChanges[] propertyChange, CancellationToken ct = default)
     {

@@ -28,15 +28,15 @@ namespace ReheeCmf.Modules
     {
       return Enumerable.Empty<Assembly>();
     }
-    public abstract Task<IEnumerable<string>> GetPermissions(IContext db, string token, CancellationToken ct);
-    
+    public abstract Task<IEnumerable<string>> GetPermissions(IContext? db, TokenDTO? user, CancellationToken ct = default);
+
 
     public virtual IEnumerable<ModuleDependOn> Depends()
     {
       return Enumerable.Empty<ModuleDependOn>();
     }
-    public virtual async Task<ContentResponse<RoleBasedPermissionDTO>> GetRoleBasedPermissionAsync(IContext db,
-      string roleName, string token, CancellationToken ct = default)
+    public virtual async Task<ContentResponse<RoleBasedPermissionDTO>> GetRoleBasedPermissionAsync(IContext? db,
+      string? roleName, TokenDTO? user, CancellationToken ct = default)
     {
       if (db == null)
       {
@@ -70,7 +70,7 @@ namespace ReheeCmf.Modules
       {
         permission = permissions!.FirstOrDefault()!;
       }
-      var permissionsList = await GetPermissions(db, token, ct);
+      var permissionsList = await GetPermissions(db, user, ct);
 
       var dto = new RoleBasedPermissionDTO()
       {
@@ -98,8 +98,8 @@ namespace ReheeCmf.Modules
       return result;
     }
 
-    public virtual async Task<ContentResponse<bool>> UpdateRoleBasedPermissionAsync(IContext db,
-      string roleName, RoleBasedPermissionDTO dto, string token, CancellationToken ct = default)
+    public virtual async Task<ContentResponse<bool>> UpdateRoleBasedPermissionAsync(IContext? db,
+      string? roleName, RoleBasedPermissionDTO? dto, TokenDTO? user, bool save = true, CancellationToken ct = default)
     {
       var result = new ContentResponse<bool>();
       var roleNameNormalization = roleName.ToUpper();
@@ -112,32 +112,40 @@ namespace ReheeCmf.Modules
         {
           db.Delete<RoleBasedPermission>(d);
         }
-        await db.SaveChangesAsync(db.User, ct);
       }
       RoleBasedPermission permission = null;
-      var permissionString = dto.Items.Where(b =>
+      var permissionsFromDto = dto.Items.Where(b =>
       {
         var val = b.Value.GetValue<bool>();
         return (val.Success && val.Content);
-      }).Select(b => b.PropertyName).ToArray().BackToString();
-      if (permissions.Length == 0)
+      }).Select(b => b.PropertyName?.Trim() ?? "").Where(b => !String.IsNullOrEmpty(b)).Distinct().ToArray();
+
+      var modulePermissions = await GetPermissions(db, user, ct);
+
+      var matchedPermissions = modulePermissions.Where(b => permissionsFromDto.Any(c => String.Equals(c, b, StringComparison.OrdinalIgnoreCase)));
+
+      var permissionString = matchedPermissions.BackToString();
+      if (permissions.Length < 1)
       {
-        permission = new RoleBasedPermission()
+        var newPermission = new RoleBasedPermission()
         {
           ModuleName = ModuleName,
           RoleName = roleNameNormalization,
           Permissions = permissionString,
-
         };
-        await db.AddAsync<RoleBasedPermission>(permission, ct);
-        await db.SaveChangesAsync(null, ct);
+        await db.AddAsync<RoleBasedPermission>(newPermission, ct);
       }
       else
       {
-        permission = permissions.FirstOrDefault()!;
+        permission = permissions[0];
         permission.Permissions = permissionString;
-        await db.SaveChangesAsync(null, ct);
+        
       }
+      if (save)
+      {
+        await db.SaveChangesAsync(user, ct);
+      }
+
       return result;
 
     }
@@ -166,7 +174,7 @@ namespace ReheeCmf.Modules
 
     public virtual IEnumerable<Type> SharedEntityTypes => Enumerable.Empty<Type>();
     public virtual IEnumerable<SharedModule> SharedModuleTypes => Enumerable.Empty<SharedModule>();
-    
+
     public virtual bool SkipAutoServiceRegistration { get; private set; }
     public ServiceConfigurationContext ServiceConfigurationContext { get; private set; }
     public void Constructor(ServiceConfigurationContext context)
@@ -218,12 +226,12 @@ namespace ReheeCmf.Modules
 
     public virtual void SwaggerConfigration(SwaggerGenOptions setupAction)
     {
-      
+
     }
     public virtual void SwaggerConfigrationWithApiVersion(
       SwaggerGenOptions setupAction, IApiVersionDescriptionProvider provider, ISwaggerApiVersion swaggerApiVersion)
     {
-      
+
     }
     public virtual Task<ContentResponse<IEnumerable<NavActionItemDTO>>> GetMenu()
     {

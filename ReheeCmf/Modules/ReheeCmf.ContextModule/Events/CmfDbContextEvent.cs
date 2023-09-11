@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using ReheeCmf.Commons.Interfaces;
 using ReheeCmf.ContextModule.Contexts;
 using ReheeCmf.Handlers.EntityChangeHandlers;
 using ReheeCmf.Helper;
@@ -14,7 +15,7 @@ namespace ReheeCmf.ContextModule.Events
       {
         return null;
       }
-      if(sender is ChangeTracker changeTracker)
+      if (sender is ChangeTracker changeTracker)
       {
         return TryGetTracker(changeTracker.Context);
       }
@@ -70,50 +71,48 @@ namespace ReheeCmf.ContextModule.Events
         }
       }
     }
-    public static void ChangeTracker_StateChanged(object? sender, Microsoft.EntityFrameworkCore.ChangeTracking.EntityStateChangedEventArgs e)
+    public static void ChangeTracker_StateChanged(object sender, EntityEntryEventArgs e)
     {
       var db = TryGetTracker(sender);
       if (db != null)
       {
         var entity = e.Entry.Entity;
-        var handlers = db.GetHandlers(e.Entry.Entity);
-        var newState = e.NewState;
-        var oldState = e.OldState;
+        var newState = e.Entry.State;
+        switch (newState)
+        {
+
+          case EntityState.Added:
+          case EntityState.Modified:
+          case EntityState.Deleted:
+            db.AddingTracker(entity.GetType().ThisType(), entity);
+            break;
+        }
         switch (newState)
         {
           case EntityState.Added:
+            var handlers = db.GetHandlers(entity);
             foreach (var handler in handlers)
             {
               handler.BeforeCreateAsync().Wait();
             }
-
             ValidateEntity(handlers);
             break;
-          case EntityState.Unchanged:
-            if (oldState == EntityState.Added)
-            {
-              foreach (var handler in handlers)
-              {
-                handler.BeforeCreateAsync().Wait();
-              }
-
-              ValidateEntity(handlers);
-            }
-            break;
           case EntityState.Modified:
+            var handlersUpdate = db.GetHandlers(entity);
             var entityChanges = e.Entry.Properties.Where(b =>
            //b.IsModified ||
            b.CurrentValue.StringValue(b.Metadata.ClrType) != b.OriginalValue.StringValue(b.Metadata.ClrType))
              .Select(p => new EntityChanges(p.Metadata.Name, p.Metadata.ClrType, p.CurrentValue, p.OriginalValue))
              .ToArray();
-            foreach (var handler in handlers)
+            foreach (var handler in handlersUpdate)
             {
               handler.BeforeUpdateAsync(entityChanges).Wait();
             }
-            ValidateEntity(handlers);
+            ValidateEntity(handlersUpdate);
             break;
           case EntityState.Deleted:
-            foreach (var handler in handlers)
+            var handlersDelete = db.GetHandlers(entity);
+            foreach (var handler in handlersDelete)
             {
               handler.BeforeDeleteAsync().Wait();
             }
