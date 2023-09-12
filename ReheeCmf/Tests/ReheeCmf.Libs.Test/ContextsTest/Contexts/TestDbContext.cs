@@ -21,6 +21,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
     public DbSet<TestEntity3> TestEntity3s { get; set; }
     public DbSet<TestValidationEntity> TestValidationEntities { get; set; }
     public DbSet<WhiteClass> WhiteClasss { get; set; }
+    public DbSet<InterfaceHanderEntity> InterfaceHanderEntitys { get; set; }
   }
   internal class TestDbContext2 : CmfDbContext
   {
@@ -32,5 +33,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
     public DbSet<TestEntity3> TestEntity3s { get; set; }
     public DbSet<TestValidationEntity> TestValidationEntities { get; set; }
     public DbSet<WhiteClass> WhiteClasss { get; set; }
+
+    public DbSet<InterfaceHanderEntity> InterfaceHanderEntitys { get; set; }
   }
 }

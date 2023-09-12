@@ -27,7 +27,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
     [TearDown]
     public void Cleanup()
     {
-      
+
     }
     [Test]
     public void ContextService_DbContext_Same_Instance_Test()
@@ -238,6 +238,30 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
       db.SaveChanges(null);
       var count = db.Query<TestEntity>(false).Select(b => b.Id).ToList();
       Assert.That(count.Count, Is.EqualTo(1));
+    }
+    [Test]
+    public void Interface_Name_Test()
+    {
+      var name = Guid.NewGuid().ToString();
+      var entityName = nameof(InterfaceHanderEntity);
+      var serviceProvider = ConfigService();
+      var entityInfo = EntityRelationHelper.GetEntityTypeAndKey(entityName)!;
+      Assert.That(entityInfo.Value.entityType, Is.EqualTo(typeof(InterfaceHanderEntity)));
+      Assert.That(entityInfo.Value.keyType, Is.EqualTo(typeof(int)));
+      Assert.That(entityInfo.Value.entityName, Is.EqualTo(nameof(InterfaceHanderEntity)));
+      var newEntity = Activator.CreateInstance(entityInfo.Value.entityType) as InterfaceHanderEntity;
+      newEntity!.Name = name;
+      using var db = serviceProvider!.GetService<IContext>()!;
+      using var context = serviceProvider!.GetService<TDbContext>()!;
+      db.Add(entityInfo.Value.entityType, newEntity);
+      db.SaveChanges(null);
+      Assert.True(newEntity!.Name_After!.EndsWith("After", StringComparison.OrdinalIgnoreCase));
+      var count = db.Query<InterfaceHanderEntity>(false).Where(b => b.Id > 0).ToList();
+      Assert.That(count.Count, Is.EqualTo(1));
+      var check = count.FirstOrDefault() as InterfaceHanderEntity;
+      
+      //Assert.True(check!.Name_After!.EndsWith("After", StringComparison.OrdinalIgnoreCase));
+      Assert.True(check!.Name_Before!.EndsWith("Before", StringComparison.OrdinalIgnoreCase));
     }
   }
 }

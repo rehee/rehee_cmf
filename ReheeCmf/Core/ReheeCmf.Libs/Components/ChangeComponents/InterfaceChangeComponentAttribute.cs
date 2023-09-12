@@ -12,9 +12,17 @@ namespace ReheeCmf.Components.ChangeComponents
   }
   public class InterfaceChangeComponentAttribute<T> : ChangeComponentAttribute<T>, IInterfaceChangeComponent where T : IInterfaceChangeHandler, new()
   {
-
+    public override bool IsAvailable(Type type)
+    {
+      if (EntityType == null || !EntityType.IsInterface)
+      {
+        return false;
+      }
+      return type.IsImplement(EntityType);
+    }
   }
-  public class InterfaceChangeTrackerAttribute<TInterface, THandler> : InterfaceChangeComponentAttribute<THandler> where THandler : IInterfaceChangeHandler, new()
+  public class InterfaceChangeTrackerAttribute<TInterface, THandler> : InterfaceChangeComponentAttribute<THandler>
+    where THandler : IInterfaceChangeHandler, new()
   {
     public override Type EntityType => typeof(TInterface);
     public override int GetHashCode()

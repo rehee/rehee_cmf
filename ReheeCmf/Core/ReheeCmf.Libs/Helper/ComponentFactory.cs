@@ -19,11 +19,9 @@ namespace ReheeCmf.Helper
     }
     public static IEnumerable<IChangeComponent> CreateEntityChangeComponents(Type type)
     {
-      var component = GetComponent<IChangeComponent>().ToArray();
+      var component = GetComponent<IChangeComponent>();
 
-      IEnumerable<IChangeComponent> result = (type.IsInterface ?
-          component.Where(b => b.EntityType?.IsImplement(type) ?? false) :
-          component.Where(b => b.NoInherit ? b.EntityType?.Equals(type) ?? false : b.EntityType != null && type.IsInheritance(b.EntityType)));
+      IEnumerable<IChangeComponent> result = component.Where(b => b.IsAvailable(type));
       if (result?.Any() != true)
       {
         return Enumerable.Empty<IChangeComponent>();

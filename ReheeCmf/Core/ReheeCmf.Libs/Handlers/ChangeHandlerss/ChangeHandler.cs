@@ -26,6 +26,7 @@ namespace ReheeCmf.Handlers.ChangeHandlerss
       {
         StatusException.Throw(ValidationResultHelper.New("Entity not be track", "entity"));
       }
+      var types = typeof(T);
       if (entity is T != true)
       {
         StatusException.Throw(ValidationResultHelper.New("Entity not be track", "entity"));
