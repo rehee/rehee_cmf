@@ -7,7 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReheeCmf.ContextModule\ReheeCmf.ContextModule.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0-rc.1.23421.29" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0-rc.1.23421.29" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\ReheeCmf.Caches\ReheeCmf.Caches.csproj" />
+    <ProjectReference Include="..\..\Core\ReheeCmf.Modules\ReheeCmf.Modules.csproj" />
   </ItemGroup>
 
 </Project>

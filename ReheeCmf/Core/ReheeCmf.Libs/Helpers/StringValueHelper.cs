@@ -1,16 +1,10 @@
-﻿using ReheeCmf.Responses;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace ReheeCmf.Helper
+namespace ReheeCmf.Helpers
 {
   public static class StringValueHelper
   {

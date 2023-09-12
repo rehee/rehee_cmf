@@ -10,7 +10,6 @@ using ReheeCmf.ContextModule.Interceptors;
 using ReheeCmf.ContextModule.Managers;
 using ReheeCmf.ContextModule.Providers;
 using ReheeCmf.Handlers.ContextHandlers;
-using ReheeCmf.Helpers;
 using ReheeCmf.Modules.Options;
 
 using ReheeCmf.Reflects.ReflectPools;

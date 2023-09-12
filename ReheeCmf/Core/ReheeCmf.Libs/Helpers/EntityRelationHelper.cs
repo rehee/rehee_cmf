@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 
-namespace ReheeCmf.Helper
+namespace ReheeCmf.Helpers
 {
   public static class EntityRelationHelper
   {

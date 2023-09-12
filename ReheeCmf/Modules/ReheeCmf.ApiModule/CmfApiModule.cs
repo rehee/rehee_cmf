@@ -8,7 +8,7 @@ namespace ReheeCmf
 {
   public abstract class CmfApiModule : ServiceModule
   {
-    public override void SwaggerConfigration(SwaggerGenOptions setupAction)
+    public override void SwaggerConfiguration(SwaggerGenOptions setupAction)
     {
       setupAction.SwaggerDoc("v0", new Microsoft.OpenApi.Models.OpenApiInfo()
       {
@@ -16,7 +16,7 @@ namespace ReheeCmf
         Version = "v1",
       });
     }
-    public override void SwaggerConfigrationWithApiVersion(
+    public override void SwaggerConfigurationWithApiVersion(
       SwaggerGenOptions setupAction, IApiVersionDescriptionProvider provider, ISwaggerApiVersion swaggerApiVersion)
     {
       if (provider != null)

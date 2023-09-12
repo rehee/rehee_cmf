@@ -2,7 +2,7 @@
 global using ReheeCmf.Entities;
 global using ReheeCmf.Handlers.ValidationHandlers;
 global using ReheeCmf.Handlers.EntityChangeHandlers;
-global using ReheeCmf.Helper;
+global using ReheeCmf.Helpers;
 global using ReheeCmf.Attributes;
 global using ReheeCmf.Enums;
 global using ReheeCmf.Commons.DTOs;

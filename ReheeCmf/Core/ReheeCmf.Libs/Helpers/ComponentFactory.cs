@@ -1,8 +1,7 @@
 ﻿using ReheeCmf.Components;
-using ReheeCmf.Components.ChangeComponents;
 using ReheeCmf.Utility.CmfRegisters;
 
-namespace ReheeCmf.Helper
+namespace ReheeCmf.Helpers
 {
   public static class ComponentFactory
   {

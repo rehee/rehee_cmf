@@ -10,6 +10,6 @@ global using ReheeCmf.Contexts;
 global using ReheeCmf.Tenants;
 global using ReheeCmf.ContextModule.Events;
 global using ReheeCmf.Handlers.EntityChangeHandlers;
-global using ReheeCmf.Helper;
+global using ReheeCmf.Helpers;
 global using System.Collections.Concurrent;
 global using System.Net;

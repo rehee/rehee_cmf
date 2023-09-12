@@ -2,7 +2,7 @@
 using System.Net;
 using System.Reflection;
 
-namespace ReheeCmf.Helper
+namespace ReheeCmf.Helpers
 {
   public static class TypeHelper
   {

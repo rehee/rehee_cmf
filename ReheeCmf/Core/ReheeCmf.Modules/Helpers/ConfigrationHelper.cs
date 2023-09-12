@@ -5,7 +5,7 @@ namespace ReheeCmf.Helpers
 {
   public static class ConfigurationHelper
   {
-    public static TOption GetOption<TOption>(this IConfiguration configuration, string key = default, TOption defaultValue = default) where TOption : new()
+    public static TOption GetOption<TOption>(this IConfiguration configuration, string? key = default, TOption? defaultValue = default) where TOption : new()
     {
       var name = key ?? typeof(TOption).Name;
       var configValue = configuration.GetSection(name).Get<TOption>();

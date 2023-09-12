@@ -1,4 +1,4 @@
-﻿namespace ReheeCmf.Helper
+﻿namespace ReheeCmf.Helpers
 {
   public static class ETagHelper
   {

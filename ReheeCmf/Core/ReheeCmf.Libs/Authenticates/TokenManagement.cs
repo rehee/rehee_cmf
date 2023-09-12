@@ -22,5 +22,6 @@ namespace ReheeCmf.Authenticates
     public string? FullAccessRole { get; set; }
     public string GetTokenGenerateSecret => this.TokenGenerateSecret ?? DefaultTokenGenerateSecret;
     public bool CheckUserEveryRequest { get; set; }
+    public bool CachedPermission { get; set; }
   }
 }

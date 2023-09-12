@@ -1,4 +1,5 @@
-﻿using ReheeCmf.Caches;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ReheeCmf.Caches;
 using ReheeCmf.Commons.Encrypts;
 using ReheeCmf.Modules.Options;
 
@@ -13,13 +14,15 @@ namespace System
       var modules = ModuleHelper.GetAllService(root).ToArray();
       var builder = WebApplication.CreateBuilder(args);
 
+      var crudOption = builder.Configuration.GetOption<CrudOption>();
       var context = new ServiceConfigurationContext
       {
         Services = builder.Services,
         Configuration = builder.Configuration,
-        CrudOptions = builder.Configuration.GetOption<CrudOption>(),
+        CrudOptions = crudOption,
         WebHost = builder.WebHost
       };
+      builder.Services.AddSingleton<CrudOption>(crudOption);
       var serverModule = modules.Select(b =>
       {
         if (b is ServiceModule s)
@@ -46,9 +49,6 @@ namespace System
       context.Services.AddScoped<IContextScope<TokenDTO>, ContextScope<TokenDTO>>();
       context.Services.AddScoped<IContextScope<QuerySecondCache>, ContextScope<QuerySecondCache>>();
 
-
-      var options = configuration.GetOption<CrudOption>();
-      services.AddSingleton<CrudOption>(options);
       var apiSetting = configuration.GetOption<ApiSetting>() ?? new ApiSetting();
       if (apiSetting.RSAOption == null || string.IsNullOrEmpty(apiSetting.RSAOption.RSAPrivateKey) || string.IsNullOrEmpty(apiSetting.RSAOption.RSAPublicKey))
       {
@@ -63,7 +63,7 @@ namespace System
       services.AddHttpContextAccessor();
       services.AddHttpClient();
       services.AddScoped<IGetHttpClient, GetHttpClient>();
-      
+
       services.AddRazorPages();
 
       var fileOption = configuration.GetOption<FileServiceOption>() ?? new FileServiceOption();
@@ -78,7 +78,7 @@ namespace System
         context.Services.AddScoped<ITenantService, TenantService>();
       }
 
-     
+
 
       var serviceMapping = new Dictionary<string, Func<HttpClient>>();
 
@@ -87,9 +87,9 @@ namespace System
       services.AddScoped<IServiceModuleRequestFactory, ServiceModuleRequestFactory>();
       services.AddHttpClient("1", client =>
       {
-              client.BaseAddress = new Uri("https://api.example.com/");
-              // 配置其他 HttpClient 选项
-            })
+        client.BaseAddress = new Uri("https://api.example.com/");
+        // 配置其他 HttpClient 选项
+      })
       //.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
       //{
       //  // 配置 HttpClientHandler 选项
@@ -103,7 +103,7 @@ namespace System
 
         foreach (var m in serverModule)
         {
-          m.FiltersConfigration(option.Filters);
+          m.FiltersConfiguration(option.Filters);
         }
       }).AddRazorOptions(options =>
       {
@@ -153,7 +153,7 @@ namespace System
       }
       foreach (var m in serverModule)
       {
-        m.JsonConfigration(context);
+        m.JsonConfiguration(context);
         await m.ConfigureServicesAsync(context);
       }
       services.AddCors();
@@ -274,17 +274,17 @@ namespace System
           var api = apiVersionDescriptionProvider();
           if (api == null)
           {
-            root.SwaggerConfigration(c);
+            root.SwaggerConfiguration(c);
           }
           else
           {
-            root.SwaggerConfigrationWithApiVersion(c, api, swaggerApiVersion());
+            root.SwaggerConfigurationWithApiVersion(c, api, swaggerApiVersion());
           }
 
         });
 
       services.AddOdataSwaggerSupport();
-      foreach (var s in serverModule.Where(b => b.RuningInFinal && b.GetType() != root.GetType()))
+      foreach (var s in serverModule.Where(b => b.RunningInFinal && b.GetType() != root.GetType()))
       {
         await s.FinalRootConfigure(context);
       }

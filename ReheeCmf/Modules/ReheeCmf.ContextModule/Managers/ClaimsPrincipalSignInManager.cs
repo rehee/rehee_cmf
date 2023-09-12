@@ -1,10 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using ReheeCmf.Authenticates;
-using ReheeCmf.Commons.DTOs;
-using ReheeCmf.Entities;
+﻿using ReheeCmf.Authenticates;
 using ReheeCmf.Responses;
-using System.Net;
-using ReheeCmf.Helper;
 namespace ReheeCmf.ContextModule.Managers
 {
   public class ClaimsPrincipalSignInManager<TUser> : IDTOSignInManager<ClaimsPrincipalDTO> where TUser : IdentityUser, new()

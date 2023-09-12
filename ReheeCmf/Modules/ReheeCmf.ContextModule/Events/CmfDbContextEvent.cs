@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-using ReheeCmf.Commons.Interfaces;
 using ReheeCmf.ContextModule.Contexts;
 using ReheeCmf.Handlers.ChangeHandlerss;
-using ReheeCmf.Handlers.EntityChangeHandlers;
-using ReheeCmf.Helper;
 using System.ComponentModel.DataAnnotations;
 
 namespace ReheeCmf.ContextModule.Events

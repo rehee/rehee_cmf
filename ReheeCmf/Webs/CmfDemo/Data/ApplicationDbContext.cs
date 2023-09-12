@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ReheeCmf.Commons.Interfaces;
+using ReheeCmf.Components.ChangeComponents;
 using ReheeCmf.ContextModule.Contexts;
 using ReheeCmf.ContextModule.Entities;
 using ReheeCmf.Entities;

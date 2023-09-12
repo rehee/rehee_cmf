@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 
 
-namespace ReheeCmf.Helper
+namespace ReheeCmf.Helpers
 {
   public static class ReflectTypeMapperHelper
   {

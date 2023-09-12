@@ -35,17 +35,24 @@ namespace ReheeCmf.Modules
     {
       return Enumerable.Empty<ModuleDependOn>();
     }
-    public virtual async Task<ContentResponse<RoleBasedPermissionDTO>> GetRoleBasedPermissionAsync(IContext? db,
-      string? roleName, TokenDTO? user, CancellationToken ct = default)
+    public virtual async Task<ContentResponse<RoleBasedPermissionDTO>> GetRoleBasedPermissionAsync(
+      IContext? db, string? roleName, TokenDTO? user, CancellationToken ct = default)
     {
+      var result = new ContentResponse<RoleBasedPermissionDTO>();
       if (db == null)
       {
-        throw new ArgumentNullException();
+        result.SetValidation(ValidationResultHelper.New("Context is Required", "context"));
+        return result;
       }
-      var result = new ContentResponse<RoleBasedPermissionDTO>();
-      var nomolizationRole = roleName.ToUpper();
+      if (String.IsNullOrEmpty(roleName))
+      {
+        result.SetValidation(ValidationResultHelper.New("Role is Required", nameof(roleName)));
+        return result;
+      }
+      var roleNormalization = roleName!.ToUpper();
+      var moduleNormalization = ModuleName.ToUpper();
       var permissions = db.Query<RoleBasedPermission>(false)
-        .Where(b => b.ModuleName.Equals(ModuleName) && b.NormalizationRoleName.Equals(nomolizationRole))
+        .Where(b => moduleNormalization.Equals(b.NormalizationModuleName) && roleNormalization.Equals(b.NormalizationRoleName))
         .ToArray();
 
       if (permissions.Length > 1)
@@ -56,10 +63,9 @@ namespace ReheeCmf.Modules
           db.Delete<RoleBasedPermission>(d);
         }
         await db.SaveChangesAsync(db.User, ct);
-
       }
       RoleBasedPermission permission;
-      if (permissions?.Any() != true)
+      if (permissions?.Length == 0)
       {
         permission = new RoleBasedPermission()
         {
@@ -88,7 +94,6 @@ namespace ReheeCmf.Modules
           }}).SelectMany(b => b).ToArray()
       };
       result.SetSuccess(dto);
-      result.SetSuccess(dto);
       var trueString = true.StringValue();
       foreach (var v in dto.Items.Where(b => permission.PermissionList.Any(s => String.Equals(b.PropertyName, s, StringComparison.OrdinalIgnoreCase))))
       {
@@ -98,13 +103,34 @@ namespace ReheeCmf.Modules
       return result;
     }
 
-    public virtual async Task<ContentResponse<bool>> UpdateRoleBasedPermissionAsync(IContext? db,
-      string? roleName, RoleBasedPermissionDTO? dto, TokenDTO? user, bool save = true, CancellationToken ct = default)
+    public virtual async Task<ContentResponse<bool>> UpdateRoleBasedPermissionAsync(
+      IContext? db, string? roleName, RoleBasedPermissionDTO? dto, TokenDTO? user, bool save = true, CancellationToken ct = default)
     {
       var result = new ContentResponse<bool>();
+      if (db == null)
+      {
+        result.SetValidation(ValidationResultHelper.New("Context is Required", "context"));
+        return result;
+      }
+      if (String.IsNullOrEmpty(roleName))
+      {
+        result.SetValidation(ValidationResultHelper.New("Role is Required", nameof(roleName)));
+        return result;
+      }
+      if (dto == null)
+      {
+        result.SetValidation(ValidationResultHelper.New("dto is Required", nameof(dto)));
+        return result;
+      }
+      if (dto?.Items?.Length == 0)
+      {
+        result.SetValidation(ValidationResultHelper.New("Items is empty", nameof(dto.Items)));
+        return result;
+      }
       var roleNameNormalization = roleName.ToUpper();
+      var moduleNormalization = ModuleName.ToUpper();
       var permissions = db.Query<RoleBasedPermission>(false).Where(b =>
-          b.ModuleName.Equals(ModuleName) && b.NormalizationRoleName.Equals(roleNameNormalization)).ToArray();
+          moduleNormalization.Equals(b.NormalizationModuleName) && roleNameNormalization.Equals(b.NormalizationRoleName)).ToArray();
       if (permissions.Length > 1)
       {
         var needDeletedPermissions = permissions.Where((b, i) => i > 0).ToArray();
@@ -113,16 +139,17 @@ namespace ReheeCmf.Modules
           db.Delete<RoleBasedPermission>(d);
         }
       }
-      RoleBasedPermission permission = null;
-      var permissionsFromDto = dto.Items.Where(b =>
+      RoleBasedPermission? permission = null;
+      var permissionsFromDto = dto!.Items!.Where(b =>
       {
-        var val = b.Value.GetValue<bool>();
+        var val = b!.Value!.GetValue<bool>();
         return (val.Success && val.Content);
       }).Select(b => b.PropertyName?.Trim() ?? "").Where(b => !String.IsNullOrEmpty(b)).Distinct().ToArray();
 
       var modulePermissions = await GetPermissions(db, user, ct);
 
-      var matchedPermissions = modulePermissions.Where(b => permissionsFromDto.Any(c => String.Equals(c, b, StringComparison.OrdinalIgnoreCase)));
+      var matchedPermissions = modulePermissions.Where(b =>
+        permissionsFromDto.Any(c => String.Equals(c, b, StringComparison.OrdinalIgnoreCase)));
 
       var permissionString = matchedPermissions.BackToString();
       if (permissions.Length < 1)
@@ -139,7 +166,7 @@ namespace ReheeCmf.Modules
       {
         permission = permissions[0];
         permission.Permissions = permissionString;
-        
+
       }
       if (save)
       {
@@ -176,10 +203,9 @@ namespace ReheeCmf.Modules
     public virtual IEnumerable<SharedModule> SharedModuleTypes => Enumerable.Empty<SharedModule>();
 
     public virtual bool SkipAutoServiceRegistration { get; private set; }
-    public ServiceConfigurationContext ServiceConfigurationContext { get; private set; }
-    public void Constructor(ServiceConfigurationContext context)
+
+    public virtual void Constructor(ServiceConfigurationContext context)
     {
-      ServiceConfigurationContext = context;
 
     }
     public virtual Task PreConfigureServicesAsync(ServiceConfigurationContext context)
@@ -207,28 +233,28 @@ namespace ReheeCmf.Modules
       return Task.CompletedTask;
     }
 
-    public virtual void FiltersConfigration(FilterCollection filters)
+    public virtual void FiltersConfiguration(FilterCollection filters)
     {
 
     }
-    public virtual void AuthenticationConfigration(ServiceConfigurationContext context)
+    public virtual void AuthenticationConfiguration(ServiceConfigurationContext context)
     {
 
     }
-    public virtual void JsonConfigration(ServiceConfigurationContext context)
+    public virtual void JsonConfiguration(ServiceConfigurationContext context)
     {
 
     }
-    public virtual void EndpointRouteBuilder(IEndpointRouteBuilder endpoints, ServiceConfigurationContext context = null)
+    public virtual void EndpointRouteBuilder(IEndpointRouteBuilder endpoints, ServiceConfigurationContext? context = null)
     {
 
     }
 
-    public virtual void SwaggerConfigration(SwaggerGenOptions setupAction)
+    public virtual void SwaggerConfiguration(SwaggerGenOptions setupAction)
     {
 
     }
-    public virtual void SwaggerConfigrationWithApiVersion(
+    public virtual void SwaggerConfigurationWithApiVersion(
       SwaggerGenOptions setupAction, IApiVersionDescriptionProvider provider, ISwaggerApiVersion swaggerApiVersion)
     {
 
@@ -243,10 +269,10 @@ namespace ReheeCmf.Modules
        });
     }
 
-    public virtual bool RuningInFinal { get; }
-    public virtual async Task FinalRootConfigure(ServiceConfigurationContext context)
+    public virtual bool RunningInFinal { get; }
+    public virtual Task FinalRootConfigure(ServiceConfigurationContext context)
     {
-
+      return Task.CompletedTask;
     }
 
 
@@ -266,12 +292,18 @@ namespace ReheeCmf.Modules
     {
       ReflectPool.EntityNameMapping.TryAdd(type.Name, type);
       ReflectPool.SetQueryAndFindCheck(type);
-      var id = type.GetMap().Properties.Where(b =>
+      var map = type.GetMap();
+      var id = map.Properties.Where(b =>
           b.HasCustomAttribute<KeyAttribute>() ||
           b.HasCustomAttribute(nameof(PersonalDataAttribute)) ||
           b.Name == nameof(IId<long>.Id)).FirstOrDefault();
-      ReflectPool.EntityKeyMapping.AddOrUpdate(type, id, (c, b) => id);
-      var queryFirstProperty = type.GetMap().Properties.Where(b => b.HasCustomAttribute<QueryBeforeFilterAttribute>()).Select(b => b.Name).ToArray();
+      if (id != null)
+      {
+        ReflectPool.EntityKeyMapping.AddOrUpdate(type, id, (c, b) => id);
+      }
+
+      var queryFirstProperty = map.Properties.Where(b => b.HasCustomAttribute<QueryBeforeFilterAttribute>())
+        .Select(b => b.Name).ToArray();
       ReflectPool.EntityTypeQueryFirst.TryAdd(type, queryFirstProperty);
     }
   }

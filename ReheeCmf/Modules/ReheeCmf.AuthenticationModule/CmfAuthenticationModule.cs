@@ -1,4 +1,5 @@
-﻿using ReheeCmf.Commons.DTOs;
+﻿using ReheeCmf.Commons.Consts;
+using ReheeCmf.Commons.DTOs;
 using ReheeCmf.Contexts;
 using ReheeCmf.Modules;
 
@@ -12,8 +13,12 @@ namespace ReheeCmf.AuthenticationModule
 
     public override Task<IEnumerable<string>> GetPermissions(IContext? db, TokenDTO? user, CancellationToken ct = default)
     {
-      var result = Enumerable.Empty<string>();
-      return Task.FromResult(result);
+      var result = new string[]
+      {
+        ConstAuthentication.PermissionReadRoleBasedAccess,
+        ConstAuthentication.PermissionUpdateRoleBasedAccess
+      };
+      return Task.FromResult(result as IEnumerable<string>);
     }
   }
 }

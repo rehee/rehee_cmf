@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReheeCmf.Helper
+namespace ReheeCmf.Helpers
 {
   public static class AttributeHelper
   {

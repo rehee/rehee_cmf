@@ -7,7 +7,7 @@ global using ReheeCmf.Tenants;
 global using System.Security.Cryptography;
 global using ReheeCmf.Helpers;
 global using Microsoft.Extensions.DependencyInjection;
-global using ReheeCmf.Helper;
+global using ReheeCmf.Helpers;
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.Mvc.ApiExplorer;
 global using Microsoft.IdentityModel.Tokens;

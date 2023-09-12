@@ -16,11 +16,9 @@ namespace ReheeCmf.Entities
     //[IgnoreUpdate]
     //[IgnoreMapping]
     public string? NormalizationModuleName { get; set; }
-    public string? NormalizationModuleName2 { get; set; }
     //[IgnoreUpdate]
     //[IgnoreMapping]
     public string? NormalizationRoleName { get; set; }
-    public string? NormalizationRoleName2 { get; set; }
     [NotMapped]
     public string[] PermissionList
     {
@@ -48,8 +46,7 @@ namespace ReheeCmf.Entities
       }
       entity.NormalizationModuleName = entity.ModuleName?.Trim().ToUpper() ?? "";
       entity.NormalizationRoleName = entity.RoleName?.Trim().ToUpper() ?? "";
-      entity.NormalizationModuleName2 = entity.ModuleName?.Trim().ToUpper() ?? "";
-      entity.NormalizationRoleName2 = entity.RoleName?.Trim().ToUpper() ?? "";
+
     }
     public override async Task BeforeUpdateAsync(EntityChanges[] propertyChange, CancellationToken ct = default)
     {
@@ -71,17 +68,7 @@ namespace ReheeCmf.Entities
       {
         result.Add(ValidationResultHelper.New("Module is Required", nameof(RoleBasedPermission.ModuleName)));
       }
-      if (result.Count <= 0)
-      {
-        if (context!.Query<RoleBasedPermission>(true)
-          .Where(b => 
-            !Guid.Equals(b.Id, entity.Id) && 
-            String.Equals(b.NormalizationRoleName, entity.NormalizationRoleName) &&
-            String.Equals(b.NormalizationModuleName, entity.NormalizationModuleName)).Select(b => b.Id).Any() == true)
-        {
-          result.Add(ValidationResultHelper.New("Permission with role and module already existing", nameof(RoleBasedPermission.RoleName)));
-        };
-      }
+      
 
 
       return existing.Concat(result);
