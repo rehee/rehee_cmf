@@ -41,10 +41,10 @@ namespace ReheeCmf
     {
       unchecked
       {
-        int hash = 17; // 初始哈希码值，可以是任意非零常数
-        hash = hash * 23 + Index.GetHashCode(); // 考虑 Index 属性
-        hash = hash * 23 + HandlerType.GetHashCode(); // 考虑 HandlerType 属性
-
+        var typeHash = this.GetType().GetHashCode();
+        int hash = typeHash; 
+        hash = hash * 21 + Index.GetHashCode(); 
+        hash = hash * 22 + HandlerType.GetHashCode(); 
         return hash;
       }
     }

@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace ReheeCmf.Helper
 {
-  public static class ComponentHelper
+  public static class ComponentAttributeHelper
   {
-
     public static IEnumerable<ICmfComponent> GetComponents(this Type type)
     {
       return type.GetMap().Attributes.Select(b =>

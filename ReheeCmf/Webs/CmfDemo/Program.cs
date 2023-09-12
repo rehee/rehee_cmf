@@ -1,5 +1,6 @@
 ﻿using CmfDemo;
 using ReheeCmf.Handlers.EntityChangeHandlers;
+using ReheeCmf.Utility.CmfRegisters;
 
-EntityChangeHandlerFactory.Init();
+CmfRegister.Init();
 await ReheeCmfServer.WebStartUp<DemoModule>(args);

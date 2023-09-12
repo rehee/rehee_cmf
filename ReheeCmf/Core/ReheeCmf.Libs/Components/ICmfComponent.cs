@@ -1,6 +1,8 @@
-﻿namespace ReheeCmf.Components
+﻿using ReheeCmf.Utility.CmfRegisters;
+
+namespace ReheeCmf.Components
 {
-  public interface ICmfComponent
+  public interface ICmfComponent : IRegistrableAttribute
   {
     ICmfHandler CreateHandler();
     ICmfHandler SingletonHandler();

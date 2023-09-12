@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ReheeCmf.Commons.Interfaces;
+using ReheeCmf.Handlers.ChangeHandlerss;
 
 namespace ReheeCmf.ContextModule.Contexts
 {
@@ -8,7 +9,7 @@ namespace ReheeCmf.ContextModule.Contexts
     protected readonly DbContext context;
     public object Context => context;
     protected readonly IServiceProvider sp;
-    protected ConcurrentDictionary<int, IEntityChangeHandler>? EntityChangeHandlerMapper { get; set; }
+    protected ConcurrentDictionary<int, IChangeHandler>? EntityChangeHandlerMapper { get; set; }
     public CmfRepositoryContext(IServiceProvider sp, DbContext context)
     {
       this.sp = sp;
@@ -17,7 +18,7 @@ namespace ReheeCmf.ContextModule.Contexts
       {
         ct.Context = this;
       }
-      EntityChangeHandlerMapper = new ConcurrentDictionary<int, IEntityChangeHandler>();
+      EntityChangeHandlerMapper = new ConcurrentDictionary<int, IChangeHandler>();
       scopeTenant = sp.GetService<IContextScope<Tenant>>()!;
       tenant = scopeTenant?.Value;
       scopeTenant!.ValueChange += ScopeTenant_ValueChange;
@@ -257,7 +258,7 @@ namespace ReheeCmf.ContextModule.Contexts
 
     public void AddingTracker(Type entityType, object entity)
     {
-      var components = EntityChangeHandlerFactory.CreateHandler(entityType);
+      var components = ComponentFactory.CreateEntityChangeComponents(entityType);
       if (components?.Any() != true || EntityChangeHandlerMapper == null)
       {
         return;
@@ -269,13 +270,13 @@ namespace ReheeCmf.ContextModule.Contexts
         {
           continue;
         }
-        var handler = component.CreateEntityChangeHandler(sp, entity);
+        var handler = component.CreateChangeHandler(sp, entity);
         EntityChangeHandlerMapper.TryAdd(handlerKey, handler);
       }
 
     }
 
-    public IEnumerable<IEntityChangeHandler> GetHandlers(object entity)
+    public IEnumerable<IChangeHandler> GetHandlers(object entity)
     {
       if (EntityChangeHandlerMapper == null)
       {
@@ -285,7 +286,7 @@ namespace ReheeCmf.ContextModule.Contexts
         .Where(b => b.EntityHashCode == entity.GetHashCode()).OrderBy(b => b.Index).ThenBy(b => b.SubIndex);
       if (values?.Any() != true)
       {
-        return Enumerable.Empty<IEntityChangeHandler>();
+        return Enumerable.Empty<IChangeHandler>();
       }
       return values
         .GroupBy(b => b.Group).Select(b => b.OrderBy(b => b.Index).ThenBy(b => b.SubIndex).AsEnumerable())

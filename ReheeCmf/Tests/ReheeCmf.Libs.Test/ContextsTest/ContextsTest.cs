@@ -9,6 +9,7 @@ using ReheeCmf.Contexts;
 using ReheeCmf.Helpers;
 using ReheeCmf.Libs.Test.ContextsTest.Contexts;
 using ReheeCmf.Tenants;
+using ReheeCmf.Utility.CmfRegisters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest
     [SetUp]
     public virtual void Setup()
     {
-      EntityChangeHandlerFactory.Init();
+      CmfRegister.Init();
       ContextModuleSetup.SetUpReflectPool(typeof(TDbContext));
 
       //services = new ServiceCollection();

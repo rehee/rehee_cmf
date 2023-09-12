@@ -10,3 +10,4 @@ global using Microsoft.Extensions.DependencyInjection;
 global using ReheeCmf.Contexts;
 global using ReheeCmf.Libs.Test.ContextsTest.Contexts;
 global using System.ComponentModel.DataAnnotations;
+global using ReheeCmf.Components.ChangeComponents;

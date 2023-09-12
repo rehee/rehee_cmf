@@ -15,3 +15,5 @@ global using ReheeCmf.Responses;
 global using ReheeCmf.Reflects.ReflectPools;
 global using  ReheeCmf.Reflects.Mappings;
 global using ReheeCmf.FileServices;
+global using ReheeCmf.Components.ChangeComponents;
+global using System.ComponentModel.DataAnnotations.Schema;

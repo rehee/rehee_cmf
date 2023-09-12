@@ -1,12 +1,13 @@
-﻿using ReheeCmf.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReheeCmf.Handlers.EntityChangeHandlers
+namespace ReheeCmf.Utility.CmfRegisters
 {
-  
-  
+  public interface IRegistrableAttribute
+  {
+
+  }
 }
