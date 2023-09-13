@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using ReheeCmf.Authenticates;
 using ReheeCmf.Commons;
 using ReheeCmf.Entities;
@@ -16,7 +17,7 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     {
     }
 
-    //[EnableQuery()]
+    [EnableQuery()]
     [HttpGet("{entityName}/Json")]
     [CmfAuthorize(EntityName = "entityName", EntityRoleBase = true)]
     public IActionResult Query(string entityName)
@@ -29,7 +30,7 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
       }
       return Ok(context!.Query(entity.Value.entityType, true));
     }
-    //[EnableQuery()]
+    [EnableQuery()]
     [HttpGet("{entityName}/{key}/Json")]
     [CmfAuthorize(EntityName = "entityName", EntityRoleBase = true)]
     public IActionResult FindEntity(

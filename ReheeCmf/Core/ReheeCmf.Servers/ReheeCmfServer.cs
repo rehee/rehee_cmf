@@ -2,6 +2,7 @@
 using ReheeCmf.Caches;
 using ReheeCmf.Commons.Encrypts;
 using ReheeCmf.Modules.Options;
+using ReheeCmf.Servers.Filters;
 using ReheeCmf.Utility.CmfRegisters;
 
 namespace System
@@ -99,9 +100,10 @@ namespace System
       ;
       context.MvcBuilder = context.Services.AddControllersWithViews(option =>
       {
+        option.Filters.Add(typeof(CmfExceptionFilter));
         //option.Filters.Add(typeof(CmfMultiTenancyFilter));
         //option.Filters.Add(typeof(CmfAuthorizationFilter));
-        //option.Filters.Add(typeof(CmfExceptionFilter));
+
 
         foreach (var m in serverModule)
         {

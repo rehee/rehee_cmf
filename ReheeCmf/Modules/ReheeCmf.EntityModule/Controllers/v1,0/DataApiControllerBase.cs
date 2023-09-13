@@ -6,10 +6,11 @@ using ReheeCmf.Entities;
 using ReheeCmf.Helpers;
 using ReheeCmf.Modules.Controllers;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace ReheeCmf.EntityModule.Controllers.v1_0
 {
-  public class DataApiControllerBase<T> : ReheeCmfController where T : class
+  public class DataApiControllerBase<T, TKey> : ReheeCmfController where T : class, IId<TKey> where TKey : IEquatable<TKey>
   {
     public DataApiControllerBase(IServiceProvider sp) : base(sp)
     {
@@ -21,31 +22,20 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     [CmfAuthorize(EntityName = "entityName", EntityRoleBase = true)]
     public IEnumerable<T> Query()
     {
-      return context.Query<T>(true);
+      return context!.Query<T>(true);
     }
-    ////[EnableQuery()]
-    //[HttpGet("{entityName}/{key}/Json")]
-    //[CmfAuthorize(EntityName = "entityName", EntityRoleBase = true)]
-    //public IActionResult FindEntity(
-    //  string entityName, string key, CancellationToken ct)
-    //{
-    //  var entity = EntityRelationHelper.GetEntityTypeAndKey(entityName);
-    //  if (entity == null)
-    //  {
-    //    return NotFound();
-    //  }
-    //  var idResponse = key.GetObjValue(entity.Value.keyType);
-    //  if (!idResponse.Success || idResponse.Content == null)
-    //  {
-    //    return NotFound();
-    //  }
-    //  var result = context!.Find(entity.Value.entityType, idResponse.Content!);
-    //  if (result == null)
-    //  {
-    //    return NotFound();
-    //  }
-    //  return Ok(result);
-    //}
+    [EnableQuery()]
+    [HttpGet("{key}")]
+    [CmfAuthorize(EntityName = "entityName", EntityRoleBase = true)]
+    public T FindEntity(TKey key, CancellationToken ct)
+    {
+      var result = context!.Query<T>(true).Where(b => b.Id.Equals(key)).FirstOrDefault();
+      if (result == null)
+      {
+        StatusException.Throw(HttpStatusCode.NotFound);
+      }
+      return result!;
+    }
     //[HttpGet("{entityName}/{key}/item")]
     //[CmfAuthorize(EntityName = "entityName", EntityRoleBase = true)]
     //public async Task<IActionResult> FindEntityItem(
