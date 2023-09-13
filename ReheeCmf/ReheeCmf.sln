@@ -40,7 +40,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReheeCmf.EntityModule", "Modules\ReheeCmf.EntityModule\ReheeCmf.EntityModule.csproj", "{8DBB944C-65F0-4735-B9E0-4617544ED4DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReheeCmf.EntityModule", "Modules\ReheeCmf.EntityModule\ReheeCmf.EntityModule.csproj", "{8DBB944C-65F0-4735-B9E0-4617544ED4DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReheeCmf.ODatas", "Core\ReheeCmf.Odatas\ReheeCmf.ODatas.csproj", "{30C7D27B-CA00-485F-8ABD-F1B5B5AE50C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,6 +94,10 @@ Global
 		{8DBB944C-65F0-4735-B9E0-4617544ED4DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DBB944C-65F0-4735-B9E0-4617544ED4DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DBB944C-65F0-4735-B9E0-4617544ED4DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30C7D27B-CA00-485F-8ABD-F1B5B5AE50C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30C7D27B-CA00-485F-8ABD-F1B5B5AE50C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30C7D27B-CA00-485F-8ABD-F1B5B5AE50C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30C7D27B-CA00-485F-8ABD-F1B5B5AE50C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -108,6 +114,7 @@ Global
 		{89973905-0C70-485F-8420-1C390E538C11} = {472F64CE-2248-4969-881C-ABA32CE870B9}
 		{7986893C-E948-4CCF-B80E-E2AA4A5B425E} = {AB5383BD-B1E6-40F0-AF19-A444CCBE769B}
 		{8DBB944C-65F0-4735-B9E0-4617544ED4DE} = {AB5383BD-B1E6-40F0-AF19-A444CCBE769B}
+		{30C7D27B-CA00-485F-8ABD-F1B5B5AE50C4} = {5536617D-9F78-416E-A7A7-02DC861D9A3D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D6A34A30-5D65-4622-BB92-A37DE5D89EB2}

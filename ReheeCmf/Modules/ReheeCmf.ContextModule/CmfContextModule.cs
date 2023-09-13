@@ -1,14 +1,4 @@
-﻿using ReheeCmf.ConstValues;
-using ReheeCmf.Contexts;
-using ReheeCmf.Enums;
-using ReheeCmf.Modules;
-using ReheeCmf.Reflects.ReflectPools;
-using ReheeCmf.Responses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ReheeCmf.Modules;
 
 namespace ReheeCmf.ContextModule
 {
@@ -29,14 +19,10 @@ namespace ReheeCmf.ContextModule
 
     public override Task<IEnumerable<string>> GetPermissions(IContext? db, TokenDTO? user, CancellationToken ct = default)
     {
-      var result = ReflectPool.EntityMapping_2.Select(b => b.Key.Name).SelectMany(b =>
-        new string[]
-        {
-          EnumHttpMethod.Get.GetEntityPermission(b),
-          EnumHttpMethod.Post.GetEntityPermission(b),
-          EnumHttpMethod.Put.GetEntityPermission(b),
-          EnumHttpMethod.Delete.GetEntityPermission(b),
-        });
+      IEnumerable<string> result = new string[]
+      {
+
+      };
       return Task.FromResult(result);
     }
   }

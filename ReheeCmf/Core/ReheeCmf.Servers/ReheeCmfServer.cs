@@ -2,6 +2,7 @@
 using ReheeCmf.Caches;
 using ReheeCmf.Commons.Encrypts;
 using ReheeCmf.Modules.Options;
+using ReheeCmf.Utility.CmfRegisters;
 
 namespace System
 {
@@ -9,7 +10,7 @@ namespace System
   {
     public static async Task WebStartUp<T>(string[] args) where T : ServiceModule, new()
     {
-
+      
       var root = new T();
       var modules = ModuleHelper.GetAllService(root).ToArray();
       var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +36,7 @@ namespace System
       {
         m.Constructor(context);
       }
+      CmfRegister.Init();
       ModuleHelper.BlizorAssemblies = serverModule.SelectMany(b => b.BlazorAssemblies()).Distinct().ToArray();
       var configuration = context.Configuration;
       var services = context.Services;

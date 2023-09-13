@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Components\ReheeCmf.ContextComponent\ReheeCmf.ContextComponent.csproj" />
     <ProjectReference Include="..\..\Core\ReheeCmf.Modules\ReheeCmf.Modules.csproj" />
+    <ProjectReference Include="..\..\Core\ReheeCmf.Odatas\ReheeCmf.ODatas.csproj" />
   </ItemGroup>
 
   <ItemGroup>
