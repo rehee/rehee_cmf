@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ReheeCmf.Handlers.ChangeHandlers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -76,6 +77,24 @@ namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
     {
       await base.BeforeCreateAsync(ct);
       entity!.Before_Create2 = entity!.Create2;
+    }
+  }
+
+
+  internal class TestDeleteItem : EntityBase<int>
+  {
+    public string? Name { get; set; }
+  }
+  [EntityChangeTracker<TestDeleteItem, TestDeleteItemHandler>]
+  internal class TestDeleteItemHandler : EntityChangeHandler<TestDeleteItem>, IDeletedHandler
+  {
+    public bool IsDeleted { get; set; }
+
+    public Task DeleteAsync(CancellationToken ct = default)
+    {
+      entity!.Name = "0";
+      IsDeleted = false;
+      return Task.CompletedTask;
     }
   }
 

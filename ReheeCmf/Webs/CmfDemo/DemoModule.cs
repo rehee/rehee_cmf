@@ -6,6 +6,7 @@ using ReheeCmf.ContextModule;
 using ReheeCmf.ContextModule.Contexts;
 using ReheeCmf.ContextModule.Entities;
 using ReheeCmf.Contexts;
+using ReheeCmf.EntityModule;
 using ReheeCmf.Modules;
 
 namespace CmfDemo
@@ -16,7 +17,8 @@ namespace CmfDemo
     {
       return base.Depends().Concat(new ModuleDependOn[]
       {
-        ModuleDependOn.New<CmfContextModule<ApplicationDbContext,ReheeCmfBaseUser>>()
+        ModuleDependOn.New<CmfContextModule<ApplicationDbContext,ReheeCmfBaseUser>>(),
+        ModuleDependOn.New<CmfEntityModule>()
       });
     }
     public override string ModuleTitle => "";
@@ -27,9 +29,7 @@ namespace CmfDemo
     public override async Task ConfigureServicesAsync(ServiceConfigurationContext context)
     {
       await base.ConfigureServicesAsync(context);
-      context.Services!.AddDbContext<ApplicationDbContext>();
-      context.Services!.AddScoped<IContext, CmfRepositoryContext>(sp =>
-        new CmfRepositoryContext(sp, sp.GetService<ApplicationDbContext>()!));
+
     }
 
     public override Task<IEnumerable<string>> GetPermissions(IContext? db, TokenDTO? user, CancellationToken ct = default)

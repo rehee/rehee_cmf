@@ -4,6 +4,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using ReheeCmf.Caches.MemoryCaches;
 using ReheeCmf.Contexts;
+using ReheeCmf.Entities;
 using ReheeCmf.Libs.Test.ContextsTest.Contexts;
 using ReheeCmf.Tenants;
 using System.ComponentModel.DataAnnotations;
@@ -259,9 +260,44 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
       var count = db.Query<InterfaceHanderEntity>(false).Where(b => b.Id > 0).ToList();
       Assert.That(count.Count, Is.EqualTo(1));
       var check = count.FirstOrDefault() as InterfaceHanderEntity;
-      
+
       //Assert.True(check!.Name_After!.EndsWith("After", StringComparison.OrdinalIgnoreCase));
       Assert.True(check!.Name_Before!.EndsWith("Before", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Test]
+    public async Task Entity_Override_Delete()
+    {
+      var serviceProvider = ConfigService();
+      using var context = serviceProvider!.GetService<IContext>()!;
+      using var db = serviceProvider!.GetService<TDbContext>()!;
+      var textName = "test";
+      var testEntity = new TestDeleteItem()
+      {
+
+      };
+      await context.AddAsync<TestDeleteItem>(testEntity, CancellationToken.None);
+      await context.SaveChangesAsync(null);
+      await Task.Delay(1000);
+      var entity2 = context.Query<TestDeleteItem>(false).Select(b => b.Id).Count();
+      Assert.That(entity2, Is.EqualTo(1));
+
+
+      context.Delete<TestDeleteItem>(testEntity);
+      var entityName = nameof(InterfaceHanderEntity);
+      var entityInfo = EntityRelationHelper.GetEntityTypeAndKey(entityName)!;
+      var newEntity = Activator.CreateInstance(entityInfo.Value.entityType) as InterfaceHanderEntity;
+
+      context.Add(entityInfo.Value.entityType, newEntity);
+      await context.SaveChangesAsync(null);
+      entity2 = context.Query<TestDeleteItem>(false).Select(b => b.Id).Count();
+      Assert.That(entity2, Is.EqualTo(1));
+
+      var entity3 = context.Query<InterfaceHanderEntity>(false).Select(b => b.Id).Count();
+      Assert.That(entity3, Is.EqualTo(1));
+
+      var newDeletedEntity = context.Query<TestDeleteItem>(false).Where(b => b.Name == "0").Count();
+      Assert.That(newDeletedEntity, Is.EqualTo(1));
     }
   }
 }

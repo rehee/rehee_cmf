@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using ReheeCmf.Attributes;
 using ReheeCmf.ContextModule.Contexts;
-using ReheeCmf.Handlers.ChangeHandlerss;
+using ReheeCmf.Handlers.ChangeHandlers;
 using System.ComponentModel.DataAnnotations;
 
 namespace ReheeCmf.ContextModule.Events
@@ -75,8 +76,8 @@ namespace ReheeCmf.ContextModule.Events
       if (db != null)
       {
         var entity = e.Entry.Entity;
-        var newState = e.Entry.State;
-        switch (newState)
+
+        switch (e.Entry.State)
         {
 
           case EntityState.Added:
@@ -85,7 +86,8 @@ namespace ReheeCmf.ContextModule.Events
             db.AddingTracker(entity.GetType().ThisType(), entity);
             break;
         }
-        switch (newState)
+      ReCheckLogic:
+        switch (e.Entry.State)
         {
           case EntityState.Added:
             var handlers = db.GetHandlers(entity);
@@ -110,6 +112,18 @@ namespace ReheeCmf.ContextModule.Events
             break;
           case EntityState.Deleted:
             var handlersDelete = db.GetHandlers(entity);
+            var deleteHandlers = handlersDelete.Where(b => b is IDeletedHandler)
+              .Select(b => b as IDeletedHandler).Select(b => b!);
+            if (deleteHandlers?.Any() == true)
+            {
+              Task.WaitAll(deleteHandlers.Select(b => b.DeleteAsync()).ToArray());
+              if (deleteHandlers.Any(b => b.IsDeleted) == false)
+              {
+                e.Entry.State = EntityState.Modified;
+                goto ReCheckLogic;
+              }
+            }
+
             foreach (var handler in handlersDelete)
             {
               handler.BeforeDeleteAsync().Wait();
