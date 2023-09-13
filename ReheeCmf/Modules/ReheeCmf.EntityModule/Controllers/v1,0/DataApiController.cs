@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 namespace ReheeCmf.EntityModule.Controllers.v1_0
 {
   [ApiController]
-  [Route("Api/Data")]
+  [Route(CrudOption.DataApiEndpoint)]
   public class DataApiController : ReheeCmfController
   {
     public DataApiController(IServiceProvider sp) : base(sp)
