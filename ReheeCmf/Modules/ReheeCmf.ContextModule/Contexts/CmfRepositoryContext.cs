@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ReheeCmf.Commons.Interfaces;
 using ReheeCmf.Handlers.ChangeHandlers;
+using System;
+using System.Collections.Generic;
 
 namespace ReheeCmf.ContextModule.Contexts
 {
@@ -165,6 +167,34 @@ namespace ReheeCmf.ContextModule.Contexts
       }
       return context.Set<T>();
     }
+    public IEnumerable<KeyValueItemDTO> GetKeyValueItemDTO(Type type)
+    {
+      var result = this.GetMap().Methods.FirstOrDefault(b => b.Name.Equals(nameof(GetKeyValueItemDTOWithType)))!
+        .MakeGenericMethod(type).Invoke(this, null);
+      if (result != null && result is KeyValueItemDTO[] list)
+      {
+        return list;
+      }
+      return Enumerable.Empty<KeyValueItemDTO>();
+    }
+    public KeyValueItemDTO[] GetKeyValueItemDTOWithType<T>() where T : class, ISelect
+    {
+      var component = ComponentFactory.GetSelectEntityComponent(typeof(T));
+      if (component != null)
+      {
+        var handler = component.GetSelectHandler();
+        if (handler != null)
+        {
+          return handler!.GetSelectItem(this).ToArray();
+        }
+      }
+      return context.Set<T>().AsNoTracking().Select(b =>
+        new KeyValueItemDTO
+        {
+          Key = b.SelectKey,
+          Value = b.SelectValue,
+        }).ToArray();
+    }
     public object? Query(Type type, bool noTracking)
     {
       return this.GetMap().Methods.FirstOrDefault(b => b.Name.Equals(nameof(QueryWithType)))!
@@ -292,5 +322,7 @@ namespace ReheeCmf.ContextModule.Contexts
         .GroupBy(b => b.Group).Select(b => b.OrderBy(b => b.Index).ThenBy(b => b.SubIndex).AsEnumerable())
         .Aggregate((a, b) => a.Concat(b));
     }
+
+
   }
 }

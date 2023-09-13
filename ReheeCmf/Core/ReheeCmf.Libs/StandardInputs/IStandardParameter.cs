@@ -17,5 +17,6 @@ namespace ReheeCmf.StandardInputs
     string? InputMask { get; set; }
     bool ReadOnly { get; set; }
     int DisplayOrder { get; set; }
+    
   }
 }

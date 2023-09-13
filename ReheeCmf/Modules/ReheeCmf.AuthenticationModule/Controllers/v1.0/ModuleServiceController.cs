@@ -13,12 +13,12 @@ namespace ReheeCmf.AuthenticationModule.Controllers.v1._0
   [Route("Api/ModuleService")]
   public class ModuleServiceController : ReheeCmfController
   {
-    
+
     private ServiceModule[] modules;
 
     public ModuleServiceController(IServiceProvider sp) : base(sp)
     {
-     modules = ModuleOption.GetModuleBases(sp);
+      modules = ModuleOption.GetModuleBases(sp);
     }
 
     [HttpGet("{roleName}")]
@@ -48,7 +48,8 @@ namespace ReheeCmf.AuthenticationModule.Controllers.v1._0
       foreach (var s in modules)
       {
         var title = s.ModuleTitle;
-        if (!properties.TryGetValue(title, out var item))
+        var key = properties.Keys.FirstOrDefault(b => String.Equals(title, b, StringComparison.OrdinalIgnoreCase));
+        if (!properties.TryGetValue(key ?? title, out var item))
         {
           continue;
         }

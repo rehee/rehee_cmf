@@ -142,7 +142,7 @@ namespace ReheeCmf.Modules
       RoleBasedPermission? permission = null;
       var permissionsFromDto = dto!.Items!.Where(b =>
       {
-        var val = b!.Value!.GetValue<bool>();
+        var val = b!.Value!.GetObjValue<bool>();
         return (val.Success && val.Content);
       }).Select(b => b.PropertyName?.Trim() ?? "").Where(b => !String.IsNullOrEmpty(b)).Distinct().ToArray();
 

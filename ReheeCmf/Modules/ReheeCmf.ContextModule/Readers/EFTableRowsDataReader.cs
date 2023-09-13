@@ -1,4 +1,5 @@
-﻿using ReheeCmf.ContextModule.Readers;
+﻿using ReheeCmf.Commons.Jsons.Options;
+using ReheeCmf.ContextModule.Readers;
 using System.Collections;
 using System.Data;
 using System.Data.Common;
@@ -552,7 +553,7 @@ public class EFTableRowsDataReader : DbDataReader
 
     if (actualValueType == StringType && string.Equals(dbTypeName, "jsonb", StringComparison.OrdinalIgnoreCase))
     {
-      return JsonSerializer.Deserialize<T>((string)value)!;
+      return JsonSerializer.Deserialize<T>((string)value, JsonOption.DefaultOption)!;
     }
 #endif
 

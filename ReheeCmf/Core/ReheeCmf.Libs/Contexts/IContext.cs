@@ -9,5 +9,7 @@
     object? Find(Type type, object key);
     void Add(Type type, object? value);
     void Delete(Type type, object key);
+
+    IEnumerable<KeyValueItemDTO> GetKeyValueItemDTO(Type type);
   }
 }

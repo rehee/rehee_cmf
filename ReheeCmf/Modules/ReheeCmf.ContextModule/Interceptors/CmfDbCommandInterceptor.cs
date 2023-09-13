@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using ReheeCmf.Caches;
 using ReheeCmf.Commons;
+using ReheeCmf.Commons.Jsons.Options;
 using ReheeCmf.ContextModule.Readers;
 using ReheeCmf.Tenants;
 using System.Data.Common;
@@ -40,7 +41,7 @@ namespace ReheeCmf.ContextModule.Interceptors
             {
               try
               {
-                return new EFTableRowsDataReader(JsonSerializer.Deserialize<EFTableRows>(json)!);
+                return new EFTableRowsDataReader(JsonSerializer.Deserialize<EFTableRows>(json, JsonOption.DefaultOption)!);
               }
               catch { }
             }
@@ -54,7 +55,7 @@ namespace ReheeCmf.ContextModule.Interceptors
           tableRows = dbReaderLoader.LoadAndClose();
         }
 
-        var jsonResponse = JsonSerializer.Serialize(tableRows);
+        var jsonResponse = JsonSerializer.Serialize(tableRows, JsonOption.DefaultOption);
         //var obj = JsonConvert.DeserializeObject<EFTableRows>(json);
         mc.Set(key, jsonResponse, 0.05d);
         return new EFTableRowsDataReader(tableRows);

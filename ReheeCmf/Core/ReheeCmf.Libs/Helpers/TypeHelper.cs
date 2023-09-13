@@ -6,7 +6,7 @@ namespace ReheeCmf.Helpers
 {
   public static class TypeHelper
   {
-    public static ContentResponse<object> CreateObject(this IStandardItem baseItem)
+    public static ContentResponse<object> CreateObject(this StandardItem baseItem)
     {
       var result = new ContentResponse<object>();
       if (baseItem == null)

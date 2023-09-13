@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ReheeCmf.EntityModule.Controllers.v1_0
 {
-  public class DTOsApiController
+  public class DTOApiController
   {
   }
 }

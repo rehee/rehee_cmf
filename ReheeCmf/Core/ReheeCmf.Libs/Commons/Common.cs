@@ -4,6 +4,13 @@
   {
     public const string DataFormat = "yyyy-MM-ddTHH:mm:ss.fffZ";
     public const string DataFormat2 = "yyyy-MM-ddTHH:mm:ss";
+    public const string DATE = "yyyy-MM-dd";
+    public const string DATETIME = "yyyy-MM-ddTHH:mm:ss.fff";
+    public const string DATETIME2 = "yyyy-MM-ddTHH:mm:ss";
+    public const string DATETIMEUTC = "yyyy-MM-ddTHH:mm:ss.fffZ";
+    public const string DATETIMELOCAL = "yyyy-MM-ddTHH:mm:ss.fffzzz";
+    public static readonly string[] DateTimeFormats = { DATETIMEUTC, DATETIMELOCAL, DATETIME, DATETIME2, DATE };
+
     public const string DigitalFormat = "#0.0000";
     public const string StringDelimiter = "[__,__]";
     public const string SystemApiClaimType = "SystemInternalApiCall";

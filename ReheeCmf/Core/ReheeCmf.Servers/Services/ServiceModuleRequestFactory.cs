@@ -30,7 +30,8 @@ namespace ReheeCmf.Servers.Services
     }
     public RequestClient<IServiceModuleRequestFactory> GetRequest(string serviceName)
     {
-      var hasService = mapping.Mapping.TryGetValue(serviceName, out var func);
+      var key = mapping.Mapping.Keys.FirstOrDefault(b => String.Equals(b, serviceName, StringComparison.OrdinalIgnoreCase));
+      var hasService = mapping.Mapping.TryGetValue(key ?? serviceName, out var func);
       var result = new RequestClient<IServiceModuleRequestFactory>(factory,
         sp.GetService<IGetRequestTokenService>()!
         , contextScopeTenant);

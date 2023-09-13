@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ReheeCmf.Commons.Jsons.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -38,10 +39,10 @@ namespace ReheeCmf.Requests
     {
       this.contextScopeTenant = contextScopeTenant;
     }
-    protected abstract HttpClient GetHttpClient(string name = default);
+    protected abstract HttpClient GetHttpClient(string? name = default);
     protected string SerializeObject(object input)
     {
-      return JsonSerializer.Serialize(input);
+      return JsonSerializer.Serialize(input, JsonOption.DefaultOption);
     }
     public async Task<ContentResponse<T>> Request<T>
       (HttpMethod method, string url, string? json = null, Stream? content = null, Dictionary<string, string>? headValue = null,
@@ -63,7 +64,7 @@ namespace ReheeCmf.Requests
             }
             else
             {
-              result.SetSuccess(JsonSerializer.Deserialize<T>(response.Content));
+              result.SetSuccess(JsonSerializer.Deserialize<T>(response.Content, JsonOption.DefaultOption));
             }
           }
           else

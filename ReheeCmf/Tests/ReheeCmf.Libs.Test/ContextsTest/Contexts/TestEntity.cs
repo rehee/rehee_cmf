@@ -1,4 +1,6 @@
-﻿using ReheeCmf.Handlers.ChangeHandlers;
+﻿using ReheeCmf.Commons.DTOs;
+using ReheeCmf.Handlers.ChangeHandlers;
+using ReheeCmf.Handlers.SelectHandler;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +25,11 @@ namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
   {
     public string? Name { get; set; }
   }
-  internal class TestEntity3 : TestEntity
+  internal class TestEntity3 : TestEntity, ISelect
   {
-
+    public string SelectValue { get { return Name ?? Id.ToString(); } set { } }
+    public string SelectKey { get { return Id.ToString(); } set { } }
+    public bool SelectDisplay { get; set; }
   }
 
 
@@ -95,6 +99,21 @@ namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
       entity!.Name = "0";
       IsDeleted = false;
       return Task.CompletedTask;
+    }
+  }
+
+  [SelectEntity<TestEntity3, TestEntity3SelectHandler>]
+  internal class TestEntity3SelectHandler : SelectEntityHandler<TestEntity3>
+  {
+    public override IEnumerable<KeyValueItemDTO> GetSelectItem(IContext context)
+    {
+      return context.Query<TestEntity3>(true).Where(b => b.Id > 10)
+        .Select(
+        b => new KeyValueItemDTO
+        {
+          Key = b.SelectKey,
+          Value = b.SelectValue
+        }).ToArray();
     }
   }
 

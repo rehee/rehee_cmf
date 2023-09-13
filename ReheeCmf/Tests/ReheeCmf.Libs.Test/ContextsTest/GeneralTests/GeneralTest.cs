@@ -299,5 +299,27 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
       var newDeletedEntity = context.Query<TestDeleteItem>(false).Where(b => b.Name == "0").Count();
       Assert.That(newDeletedEntity, Is.EqualTo(1));
     }
+    [Test]
+    public async Task Entity_Select_Test()
+    {
+      var serviceProvider = ConfigService();
+      using var context = serviceProvider!.GetService<IContext>()!;
+      using var db = serviceProvider!.GetService<TDbContext>()!;
+      for (var i = 1; i < 21; i++)
+      {
+        var textName = "test" + i.ToString();
+        var testEntity = new TestEntity3()
+        {
+          Name = textName,
+        };
+        await context.AddAsync<TestEntity3>(testEntity, CancellationToken.None);
+      }
+      await context.SaveChangesAsync(null);
+      await Task.Delay(1000);
+
+      var select = context.GetKeyValueItemDTO(typeof(TestEntity3)).ToArray();
+
+      Assert.That(select.Length, Is.EqualTo(10));
+    }
   }
 }

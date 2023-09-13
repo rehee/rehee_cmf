@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using ReheeCmf.Commons.Jsons.Options;
+using System.Text.Json;
 
 namespace ReheeCmf.Helpers
 {
@@ -18,7 +19,7 @@ namespace ReheeCmf.Helpers
         }
         if (input.Length >= 2 && input.FirstOrDefault() == '[' && input.LastOrDefault() == ']')
         {
-          return JsonSerializer.Deserialize<string[]>(input)!;
+          return JsonSerializer.Deserialize<string[]>(input, JsonOption.DefaultOption)!;
         }
         return new string[] { input };
       }
@@ -39,7 +40,7 @@ namespace ReheeCmf.Helpers
         {
           return input!.FirstOrDefault()!;
         }
-        return JsonSerializer.Serialize(input);
+        return JsonSerializer.Serialize(input, JsonOption.DefaultOption);
       }
       else
       {

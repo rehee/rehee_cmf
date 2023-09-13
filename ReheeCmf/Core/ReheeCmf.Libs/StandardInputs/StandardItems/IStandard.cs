@@ -11,9 +11,7 @@ namespace ReheeCmf.StandardInputs.StandardItems
   {
     string FullTypeName { get; set; }
     string Assembly { get; set; }
-  }
-  public interface IStandardItem : IStandard
-  {
     IEnumerable<StandardProperty>? Properties { get; set; }
   }
+
 }

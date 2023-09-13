@@ -13,9 +13,8 @@ namespace ReheeCmf.StandardInputs.Properties
     public string? Value { get; set; }
     [DataMember]
     public KeyValueItemDTO[]? SelectItem { get; set; }
-    [DataMember]
-    public bool MultiSelect { get; set; }
-
+    
+    
     [DataMember]
     public EnumInputType InputType { get; set; }
     [DataMember]
@@ -34,5 +33,7 @@ namespace ReheeCmf.StandardInputs.Properties
     public bool ReadOnly { get; set; }
     [DataMember]
     public int DisplayOrder { get; set; }
+    [DataMember]
+    public bool MultiSelect { get; set; }
   }
 }

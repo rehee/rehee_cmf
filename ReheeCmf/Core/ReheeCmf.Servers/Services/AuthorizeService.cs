@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using ReheeCmf.Authenticates;
 using ReheeCmf.Commons.Consts;
+using ReheeCmf.Commons.Jsons.Options;
 using ReheeCmf.Enums;
 using ReheeCmf.Requests;
 using ReheeCmf.Responses;
@@ -72,7 +73,7 @@ namespace ReheeCmf.Servers.Services
             JsonSerializer.Serialize(new TokenValidate()
             {
               Token = token
-            }));
+            }, JsonOption.DefaultOption));
         case EnumAuthorizeType.RemoteLoginSelfAuth:
           return await SelfValidation(token);
         default:

@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using ReheeCmf.Commons.Jsons.Options;
+using System;
+using System.Collections;
+using System.Globalization;
 using System.Net;
 using System.Reflection;
 using System.Text.Json;
@@ -8,365 +11,6 @@ namespace ReheeCmf.Helpers
 {
   public static class StringValueHelper
   {
-    public static string? StringValue(this object? input, Type? originalType = null)
-    {
-      if (input == null)
-      {
-        return null;
-      }
-      var result = input.GetStringValue(originalType);
-      return result.Content;
-    }
-    public static bool TryStringValue(this object input, Type? originalType, out string? value)
-    {
-      var result = input.GetStringValue(originalType);
-      value = result.Content;
-      return result.Success;
-    }
-    public static ContentResponse<string?> GetStringValue(this object input, Type? originalType = null)
-    {
-      var result = new ContentResponse<string?>();
-      if (input == null)
-      {
-        if (originalType != null && originalType.IsNullable())
-        {
-          result.SetSuccess(null);
-        }
-        else
-        {
-          result.Status = HttpStatusCode.NotFound;
-        }
-
-        return result;
-      }
-      var objectType = input.GetType();
-      if (objectType.IsIEnumerable())
-      {
-        var lists = ((IEnumerable)input).Cast<object>().ToList();
-        var listConvert = lists.Select(b => b.GetStringValue()).ToList();
-        var stringValues = listConvert.Where(b => b.Success).Select(b => b.Content).ToList();
-        var d = Common.StringDelimiter;
-        var listResult = stringValues.BackToString();
-        result.SetSuccess(listResult);
-        return result;
-      }
-      var typeCode = Type.GetTypeCode(objectType);
-      if (objectType.IsEnum)
-      {
-        return ((int)input).GetStringValue();
-      }
-      string format = null;
-      string format2 = null;
-      switch (typeCode)
-      {
-        case TypeCode.Boolean:
-        case TypeCode.Char:
-        case TypeCode.SByte:
-        case TypeCode.Byte:
-        case TypeCode.Int16:
-        case TypeCode.UInt16:
-        case TypeCode.Int32:
-        case TypeCode.UInt32:
-        case TypeCode.Int64:
-        case TypeCode.UInt64:
-          goto invoke;
-        case TypeCode.Single:
-        case TypeCode.Double:
-        case TypeCode.Decimal:
-          format = Common.DigitalFormat;
-          goto invoke;
-        case TypeCode.DateTime:
-          format = Common.DataFormat;
-          format2 = Common.DataFormat2;
-          goto invoke;
-        case TypeCode.String:
-          result.SetSuccess<string>(input as string);
-          return result;
-      }
-      switch (objectType.Name)
-      {
-        case nameof(DateTimeOffset):
-          if (input != null)
-          {
-            var offset = (DateTimeOffset)input;
-            return offset.DateTime.GetStringValue();
-          }
-          return result;
-        case nameof(Guid):
-          result.SetSuccess(input.ToString());
-          return result;
-      }
-      result.SetError(HttpStatusCode.NotImplemented);
-      return result;
-
-    invoke:
-      var dateConvert = objectType.Invoke<string>("ToString", input, format);
-      if (dateConvert.Success)
-      {
-        result.SetSuccess(dateConvert.Content);
-      }
-      else
-      {
-        result.SetError(dateConvert);
-      }
-      return result;
-
-      //boolConvert:
-      //  switch(boolConvert)
-      //  return result;
-
-    }
-    public static ContentResponse<string> GetStringValue(this PropertyInfo property, object item, Type originalType = null)
-    {
-      return property.GetValue(item).GetStringValue(originalType);
-    }
-
-    public static ContentResponse<T> GetValue<T>(this string input)
-    {
-      var result = new ContentResponse<T>();
-      if (String.IsNullOrEmpty(input))
-      {
-        result.SetError(HttpStatusCode.NotFound);
-        return result;
-      }
-      var objectType = typeof(T);
-      if (objectType.IsIEnumerable())
-      {
-        var listType = typeof(List<>);
-        var elementType = objectType.GetElementType() ?? objectType.GenericTypeArguments.FirstOrDefault();
-        var constructedListType = listType.MakeGenericType(elementType);
-        var instance = (IList)Activator.CreateInstance(constructedListType);
-
-        var inputList = input.ToIEnumerable()
-          .Select(b => b.GetValue(elementType))
-          .Where(b => b.Success)
-          .Select(b => b.Content);
-        foreach (var i in inputList)
-        {
-          instance.Add(i);
-        }
-        if (objectType.IsArray)
-        {
-          var arrayResult = instance.GetType().Invoke<object>("ToArray", instance, null);
-          if (arrayResult.Success)
-          {
-            result.SetSuccess((T)arrayResult.Content);
-          }
-          return result;
-        }
-        else
-        {
-          result.SetSuccess((T)instance);
-        }
-        return result;
-      }
-      var convertResult = input.GetValue(
-        Type.GetTypeCode(objectType), objectType);
-      if (!convertResult.Success)
-      {
-        result.SetError(convertResult);
-      }
-      else
-      {
-        result.SetSuccess((T)convertResult.Content);
-      }
-      return result;
-    }
-    public static ContentResponse<object> GetValue(this string input, Type type)
-    {
-      return input.GetValue(Type.GetTypeCode(type), type);
-    }
-    public static ContentResponse<object> GetValue(this string input, TypeCode typeCode, Type origilalType = null, bool isNullable = false)
-    {
-      var result = new ContentResponse<object>();
-      if (string.IsNullOrEmpty(input))
-      {
-        if (isNullable)
-        {
-          result.SetError(HttpStatusCode.NotFound);
-        }
-        else
-        {
-          result.SetSuccess(null);
-        }
-        return result;
-      }
-
-      string format = null;
-      string invokeMethod = "TryParse";
-      ContentResponse<bool> convertResult;
-      var type = typeCode.GetSystemType();
-      object[] parameters;
-      switch (typeCode)
-      {
-        case TypeCode.Boolean:
-        //goto invokeBoolean;
-        case TypeCode.Char:
-        case TypeCode.SByte:
-        case TypeCode.Byte:
-        case TypeCode.Int16:
-        case TypeCode.UInt16:
-        case TypeCode.Int32:
-        case TypeCode.UInt32:
-        case TypeCode.Int64:
-        case TypeCode.UInt64:
-        case TypeCode.Single:
-        case TypeCode.Double:
-        case TypeCode.Decimal:
-          goto invoke;
-        case TypeCode.DateTime:
-          format = Common.DataFormat;
-          invokeMethod = "TryParseExact";
-          goto invokeDate;
-        case TypeCode.String:
-          result.SetSuccess<object>(input);
-          return result;
-        case TypeCode.Object:
-          if (origilalType.IsIEnumerable())
-          {
-            var baseEnumType = origilalType.GetElementType() ?? origilalType.GenericTypeArguments.FirstOrDefault();
-            var d = Common.StringDelimiter;
-            var values = input.ToIEnumerable()
-              .Select(b => GetValue(b, baseEnumType))
-              .Where(b => b.Success)
-              .Select(b => b.Content).ToArray();
-            var listType = typeof(List<>);
-            var constructedListType = listType.MakeGenericType(baseEnumType);
-            var instance = (IList)Activator.CreateInstance(constructedListType);
-            foreach (var v in values)
-            {
-              instance.Add(v);
-            }
-            if (origilalType.IsArray)
-            {
-              var arrayResult = instance.GetType().Invoke<object>("ToArray", instance, null);
-              if (arrayResult.Success)
-              {
-                result.SetSuccess(arrayResult.Content);
-              }
-            }
-            else
-            {
-              result.SetSuccess(instance as object);
-            }
-            return result;
-          }
-
-          return GetObjectValue(input, origilalType);
-        default:
-          result.SetError(HttpStatusCode.NotImplemented);
-          return result;
-      }
-
-    invoke:
-      if (typeCode == TypeCode.Int32 && origilalType != null && origilalType.IsEnum)
-      {
-        result = new ContentResponse<object>();
-        if (Enum.TryParse(origilalType, input, out var enumResult))
-        {
-          result.SetSuccess(enumResult);
-        }
-        return result;
-      }
-      parameters = new object[] { input, null };
-      convertResult = type.Invoke<bool>(invokeMethod, null, parameters);
-      goto returnResult;
-
-    invokeDate:
-      //var dataFormat = String.Equals(input[input.Length - 1].ToString(), "z", StringComparison.InvariantCultureIgnoreCase);
-      //parameters = new object[] { input, dataFormat ? format : Common.DataFormat2, null, DateTimeStyles.None, null };
-      //convertResult = type.Invoke<bool>(invokeMethod, null, parameters);
-      try
-      {
-        var inputData = $@"""{input}""";
-        var date = JsonSerializer.Deserialize<DateTime>(inputData);
-        result.SetSuccess(date);
-      }
-      catch (Exception ex)
-      {
-        ex.ThrowStatusException();
-        result.SetError(ex);
-      }
-      return result;
-
-    //invokeBoolean:
-
-    //  if (String.IsNullOrEmpty(input))
-    //  {
-    //    result.SetError();
-    //  }
-    //  result.SetSuccess(string.Equals(input, "true", StringComparison.InvariantCultureIgnoreCase));
-    //  return result;
-
-    returnResult:
-
-      if (convertResult.Success && convertResult.Content)
-      {
-        result.SetSuccess(parameters.LastOrDefault());
-      }
-      return result;
-    }
-
-    public static ContentResponse<object> GetObjectValue(string input, Type type, bool? isNullable = null)
-    {
-      var result = new ContentResponse<object>();
-      if (type == null)
-      {
-        return result;
-      }
-      if (isNullable == null)
-      {
-        if (type.IsNullable())
-        {
-          var genericType = type.GenericTypeArguments.FirstOrDefault();
-          return GetObjectValue(input, genericType, true);
-        }
-        else
-        {
-          return GetObjectValue(input, type, false);
-        }
-      }
-      var baseType = Type.GetTypeCode(type);
-      if (baseType == TypeCode.Object)
-      {
-        switch (type.Name)
-        {
-          case nameof(DateTimeOffset):
-            var datatime = input.GetValue(TypeCode.DateTime);
-            if (datatime.Success)
-            {
-              var v = (DateTime)datatime.Content;
-              DateTimeOffset utcTime2 = DateTime.SpecifyKind(v, DateTimeKind.Utc);
-              result.SetSuccess(utcTime2);
-              return result;
-            }
-            break;
-          case nameof(Guid):
-            if (Guid.TryParse(input, out var guidValue))
-            {
-              result.SetSuccess(guidValue);
-              return result;
-            }
-            break;
-        }
-      }
-      else if (type.IsEnum && Enum.TryParse(type, input, out var enumResult))
-      {
-        result.SetSuccess(enumResult);
-        return result;
-      }
-      else
-      {
-        return GetValue(input, baseType, type, isNullable == true);
-      }
-
-      if (isNullable == true)
-      {
-        result.SetSuccess(null);
-      }
-      return result;
-    }
-
     public static string SplitPascalCase(this string input)
     {
       Regex r = new Regex(
@@ -411,8 +55,307 @@ namespace ReheeCmf.Helpers
         case TypeCode.Object:
           return typeof(object);
       }
-      return null;
+      return typeof(object);
     }
 
+    public static ContentResponse<T> GetObjValue<T>(this string? input)
+    {
+      var result = new ContentResponse<T>();
+      var response = GetObjValue(input, typeof(T));
+      if (response.Success && response.Content is T tValue)
+      {
+        result.SetSuccess(tValue);
+      }
+      return result;
+    }
+    public static ContentResponse<object> GetObjValue(this string? input, Type type, TypeCode? typeCode = null, Type? originalType = null, bool isNullable = false)
+    {
+      if (typeCode == null)
+      {
+        var nullableCheck = type.IsNullable();
+        if (nullableCheck)
+        {
+          var mapper = type.GetMap();
+          var genericType = mapper.GenericTypeArguments.FirstOrDefault();
+          return GetObjValue(input, genericType!, Type.GetTypeCode(genericType), type, nullableCheck);
+        }
+        return GetObjValue(input, type, Type.GetTypeCode(type), type, nullableCheck);
+      }
+      var result = new ContentResponse<object>();
+      Func<ContentResponse<object>> returnIfNullable = () =>
+      {
+        if (isNullable)
+        {
+          result.SetSuccess(null);
+          return result;
+        }
+        return result;
+      };
+      switch (typeCode)
+      {
+        case TypeCode.Boolean:
+          if (bool.TryParse(input, out var boolValue))
+          {
+            result.SetSuccess(boolValue);
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.Char:
+          if (char.TryParse(input, out var charValue))
+          {
+            result.SetSuccess(charValue);
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.SByte:
+          if (SByte.TryParse(input, out var sByteValue))
+          {
+            result.SetSuccess(sByteValue);
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.Byte:
+          if (Byte.TryParse(input, out var byteValue))
+          {
+            result.SetSuccess(byteValue);
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.Int16:
+          if (Int16.TryParse(input, out var Int16Value))
+          {
+            result.SetSuccess(Int16Value);
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.UInt16:
+          if (UInt16.TryParse(input, out var UInt16Value))
+          {
+            result.SetSuccess(UInt16Value);
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.Int32:
+          if (originalType!.IsEnum)
+          {
+            if (Enum.TryParse(originalType, input, out var enumResult))
+            {
+              result.SetSuccess(enumResult);
+              return result;
+            }
+            return returnIfNullable();
+          }
+          if (Int32.TryParse(input, out var Int32Value))
+          {
+            result.SetSuccess(Int32Value);
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.UInt32:
+          if (UInt32.TryParse(input, out var UInt32Value))
+          {
+            result.SetSuccess(UInt32Value);
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.Int64:
+          if (Int64.TryParse(input, out var Int64Value))
+          {
+            result.SetSuccess(Int64Value);
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.UInt64:
+          if (UInt64.TryParse(input, out var UInt64Value))
+          {
+            result.SetSuccess(UInt64Value);
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.Single:
+          if (Single.TryParse(input, out var SingleValue))
+          {
+            result.SetSuccess(SingleValue);
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.Double:
+          if (Double.TryParse(input, out var DoubleValue))
+          {
+            result.SetSuccess(DoubleValue);
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.Decimal:
+          if (Decimal.TryParse(input, out var DecimalValue))
+          {
+            result.SetSuccess(DecimalValue);
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.String:
+          result.SetSuccess(input);
+          return result;
+        case TypeCode.DateTime:
+          if (DateTime.TryParseExact(input, Common.DateTimeFormats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var date))
+          {
+            result.SetSuccess(date);
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.Object:
+          switch (type.Name)
+          {
+            case nameof(DateTimeOffset):
+              if (DateTimeOffset.TryParseExact(input, Common.DateTimeFormats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var dateOffSet))
+              {
+                result.SetSuccess(dateOffSet);
+                return result;
+              }
+              return returnIfNullable();
+            case nameof(Guid):
+              if (Guid.TryParse(input, out var guidValue))
+              {
+                result.SetSuccess(guidValue);
+                return result;
+              }
+              return returnIfNullable();
+            default:
+              try
+              {
+                if (isNullable && String.IsNullOrEmpty(input))
+                {
+                  return returnIfNullable();
+                }
+                var objFromJson = JsonSerializer.Deserialize(input!, originalType!, JsonOption.DefaultOption);
+                result.SetSuccess(objFromJson);
+                return result;
+              }
+              catch
+              {
+                return returnIfNullable();
+              }
+          }
+
+      }
+      return result;
+    }
+    public static ContentResponse<string> GetStrValue(this object? input, Type type, TypeCode? typeCode = null, Type? originalType = null, bool isNullable = false)
+    {
+      if (typeCode == null)
+      {
+        var nullableCheck = type.IsNullable();
+        if (nullableCheck)
+        {
+          var mapper = type.GetMap();
+          var genericType = mapper.GenericTypeArguments.FirstOrDefault();
+          return GetStrValue(input, genericType!, Type.GetTypeCode(genericType), type, nullableCheck);
+        }
+        return GetStrValue(input, type, Type.GetTypeCode(type), type, nullableCheck);
+      }
+      var result = new ContentResponse<string>();
+      Func<ContentResponse<string>> returnIfNullable = () =>
+      {
+        if (isNullable)
+        {
+          result.SetSuccess(null);
+          return result;
+        }
+        return result;
+      };
+      if (input == null)
+      {
+        return returnIfNullable();
+      }
+      switch (typeCode)
+      {
+        case TypeCode.Boolean:
+        case TypeCode.Char:
+        case TypeCode.SByte:
+        case TypeCode.Byte:
+        case TypeCode.Int16:
+        case TypeCode.UInt16:
+        case TypeCode.UInt32:
+        case TypeCode.Int64:
+        case TypeCode.UInt64:
+        case TypeCode.Single:
+        case TypeCode.Double:
+          result.SetSuccess(input.ToString());
+          return result;
+        case TypeCode.Decimal:
+          if (input is Decimal DecimalValue)
+          {
+            result.SetSuccess(DecimalValue.ToString(Common.DigitalFormat));
+          }
+          return result;
+        case TypeCode.Int32:
+          if (originalType!.IsEnum)
+          {
+            result.SetSuccess(Enum.GetName(type, input));
+            return result;
+          }
+          result.SetSuccess(input.ToString());
+          return result;
+        case TypeCode.String:
+          result.SetSuccess(input);
+          return result;
+        case TypeCode.DateTime:
+          if (input is DateTime DateTimeValue)
+          {
+            result.SetSuccess(DateTimeValue.ToString(Common.DATETIMEUTC));
+            return result;
+          }
+          return returnIfNullable();
+        case TypeCode.Object:
+          switch (type.Name)
+          {
+            case nameof(DateTimeOffset):
+              if (input is DateTimeOffset DateTimeOffsetValue)
+              {
+                result.SetSuccess(DateTimeOffsetValue.ToString(Common.DATETIMEUTC));
+                return result;
+              }
+              return returnIfNullable();
+            case nameof(Guid):
+              if (input is Guid GuidValue)
+              {
+                result.SetSuccess(GuidValue.ToString());
+                return result;
+              }
+              return returnIfNullable();
+            default:
+              try
+              {
+                result.SetSuccess(JsonSerializer.Serialize(input, JsonOption.DefaultOption));
+                return result;
+              }
+              catch
+              {
+                return returnIfNullable();
+              }
+          }
+
+      }
+      return result;
+    }
+
+    public static string? StringValue(this object input, Type? type = null)
+    {
+      var response = GetStrValue(input, type ?? input.GetType());
+      if (response.Success)
+      {
+        return response.Content;
+      }
+      return null;
+    }
+    public static T? GetValue<T>(this string? input)
+    {
+      var response = GetObjValue<T>(input);
+      if (response.Success)
+      {
+        return response.Content;
+      }
+      return default(T?);
+    }
   }
 }

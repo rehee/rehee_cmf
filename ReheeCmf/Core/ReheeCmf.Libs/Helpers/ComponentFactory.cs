@@ -1,4 +1,5 @@
 ﻿using ReheeCmf.Components;
+using ReheeCmf.Handlers.SelectHandler;
 using ReheeCmf.Utility.CmfRegisters;
 
 namespace ReheeCmf.Helpers
@@ -40,6 +41,11 @@ namespace ReheeCmf.Helpers
         return sub;
       });
       return groups.Aggregate((f, s) => f.Concat(s));
+    }
+
+    public static ISelectEntityComponent? GetSelectEntityComponent(Type type)
+    {
+      return GetComponent<ISelectEntityComponent>().Where(b => b.EntityType == type).OrderByDescending(b => b.Index).ThenByDescending(b => b.SubIndex).FirstOrDefault();
     }
   }
 }
