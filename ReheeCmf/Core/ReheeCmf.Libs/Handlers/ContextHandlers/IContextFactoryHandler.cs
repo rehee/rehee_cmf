@@ -1,4 +1,5 @@
 ﻿using ReheeCmf.Components;
+using ReheeCmf.Components.ChangeComponents;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,8 +14,10 @@ namespace ReheeCmf.Handlers.ContextHandlers
 
   }
 
-  public class ContextFactoryComponentAttribute<T> : CmfComponentAttribute<T>, IContextFactoryComponent where T : ICmfHandler, new()
+
+  public class ContextFactoryComponentAttribute<T> : CmfComponentAttribute, IEntityComponent, IContextFactoryComponent where T : ICmfHandler, new()
   {
+    public override Type? HandlerType => typeof(T);
   }
   public interface IContextFactoryHandler : ICmfHandler
   {

@@ -11,7 +11,8 @@ namespace ReheeCmf.Components.ChangeComponents
   public interface IEntityChangeComponent : IChangeComponent
   {
   }
-  public class EntityChangeAttribute<T> : ChangeComponentAttribute<T>, IEntityChangeComponent where T : IEntityChangeHandler, new()
+
+  public class EntityChangeAttribute<T> : ChangeComponentEntityAttribute<T>, IEntityChangeComponent where T : IEntityChangeHandler, new()
   {
     public override bool IsAvailable(Type type)
     {
@@ -24,18 +25,19 @@ namespace ReheeCmf.Components.ChangeComponents
           NoInherit ? EntityType.Equals(type) : type.IsInheritance(EntityType);
     }
   }
-  public class EntityChangeTrackerAttribute<TEntity, THandler> : EntityChangeAttribute<THandler>
-    where TEntity : class
-    where THandler : IEntityChangeHandler, new()
-  {
 
-    public override Type EntityType => typeof(TEntity);
-    public override int GetHashCode()
+  public class EntityChangeTrackerAttribute<TEntity> : ChangeComponentHandlerAttribute<TEntity>, IEntityChangeComponent
+    where TEntity : class
+  {
+    public override bool IsAvailable(Type type)
     {
-      unchecked
+      if (EntityType == null || EntityType.IsInterface)
       {
-        return base.GetHashCode() * 11 + EntityType.GetHashCode();
+        return false;
       }
+      return type.IsInterface ?
+          EntityType.IsImplement(type) :
+          NoInherit ? EntityType.Equals(type) : type.IsInheritance(EntityType);
     }
   }
 

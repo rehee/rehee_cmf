@@ -14,7 +14,7 @@ namespace ReheeCmf.ContextModule.Entities
   {
     public Guid? TenantID { get; set; }
   }
-  [ODataEntitySet<TenantIdentityUserRole, TenantIdentityUserRoleSetHandler>]
+  [ODataEntitySet<TenantIdentityUserRole>]
   public class TenantIdentityUserRoleSetHandler : ODataEntitySetHandler<TenantIdentityUserRole>
   {
     public override object EntitySet(ODataConventionModelBuilder builder)

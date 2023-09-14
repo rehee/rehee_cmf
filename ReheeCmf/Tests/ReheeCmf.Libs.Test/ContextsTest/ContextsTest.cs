@@ -36,7 +36,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest
 
       //services!.AddCmfMemoryCache<IContext, object, object>(-1, -1);
       services!.AddMemoryKeyValueCache<ICmfDbCommandInterceptor>(1);
-      services!.AddScoped<ICmfDbCommandInterceptor, CmfDbCommandInterceptor>();
+      //services!.AddScoped<ICmfDbCommandInterceptor, CmfDbCommandInterceptor>();
 
       services!.AddScoped<IContextScope<QuerySecondCache>, ContextScope<QuerySecondCache>>();
       services!.AddScoped<IContextScope<Tenant>, ContextScope<Tenant>>();

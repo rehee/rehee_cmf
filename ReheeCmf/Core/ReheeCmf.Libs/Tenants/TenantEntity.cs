@@ -26,7 +26,7 @@ namespace ReheeCmf.Tenants
     public string? FileAllowedFileType { get; set; }
   }
 
-  [EntityChangeTracker<TenantEntity, TenantEntityHandler>(Index = -1, Group = nameof(TenantEntityHandler))]
+  [EntityChangeTracker<TenantEntity>(Index = -1, Group = nameof(TenantEntityHandler))]
   public class TenantEntityHandler : EntityChangeHandler<TenantEntity>
   {
     private ITenantStorage? storage { get; set; }

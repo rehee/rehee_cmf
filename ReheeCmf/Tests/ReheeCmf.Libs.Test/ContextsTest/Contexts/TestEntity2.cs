@@ -12,7 +12,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
     public int Index { get; set; }
   }
 
-  [EntityChangeTracker<TestValidationEntity, TestValidationEntityHandler>]
+  [EntityChangeTracker<TestValidationEntity>]
   internal class TestValidationEntityHandler : EntityChangeHandler<TestValidationEntity>
   {
     public override async Task<IEnumerable<ValidationResult>> ValidationAsync(CancellationToken ct = default)

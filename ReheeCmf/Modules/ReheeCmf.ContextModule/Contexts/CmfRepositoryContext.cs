@@ -313,7 +313,7 @@ namespace ReheeCmf.ContextModule.Contexts
         return Enumerable.Empty<IEntityChangeHandler>();
       }
       var values = EntityChangeHandlerMapper.Values
-        .Where(b => b.EntityHashCode == entity.GetHashCode()).OrderBy(b => b.Index).ThenBy(b => b.SubIndex);
+        .Where(b => b?.EntityHashCode == entity.GetHashCode()).OrderBy(b => b.Index).ThenBy(b => b.SubIndex);
       if (values?.Any() != true)
       {
         return Enumerable.Empty<IChangeHandler>();

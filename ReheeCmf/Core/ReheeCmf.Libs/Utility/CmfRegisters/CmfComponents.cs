@@ -12,14 +12,23 @@ namespace ReheeCmf.Utility.CmfRegisters
   {
     public static ConcurrentDictionary<int, ICmfComponent> ComponentPool =
       new ConcurrentDictionary<int, ICmfComponent>();
-
-    public static void RegisterComponent(Attribute attribute)
+    public static ConcurrentDictionary<int, ICmfHandler> SingletonHandlerPool =
+      new ConcurrentDictionary<int, ICmfHandler>();
+    public static void RegisterComponent(Attribute attribute, Type decorate)
     {
       if (attribute is ICmfComponent != true)
       {
         return;
       }
       var component = attribute as ICmfComponent;
+      if (component is IHandlerComponent)
+      {
+        component.HandlerType = decorate;
+      }
+      if (component is IEntityComponent)
+      {
+        component.EntityType = decorate;
+      }
       ComponentPool.TryAdd(component!.GetHashCode(), component);
 
     }

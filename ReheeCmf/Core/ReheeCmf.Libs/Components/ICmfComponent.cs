@@ -4,11 +4,12 @@ namespace ReheeCmf.Components
 {
   public interface ICmfComponent : IRegistrableAttribute
   {
-    ICmfHandler CreateHandler();
-    ICmfHandler SingletonHandler();
+    ICmfHandler? CreateHandler();
+    ICmfHandler? SingletonHandler();
     THandler? SingletonHandler<THandler>() where THandler : ICmfHandler;
     THandler? CreateHandler<THandler>() where THandler : ICmfHandler;
-    Type HandlerType { get; }
+    Type? HandlerType { get; set; }
+    Type? EntityType { get; set; }
     int Index { get; }
     int SubIndex { get; }
     string? Group { get; }

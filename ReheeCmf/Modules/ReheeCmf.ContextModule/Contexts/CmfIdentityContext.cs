@@ -1,9 +1,10 @@
 ﻿using ReheeCmf.ContextComponent;
 using ReheeCmf.ContextModule.Components;
+using ReheeCmf.Handlers.ContextHandlers;
 
 namespace ReheeCmf.ContextModule.Contexts
 {
-  [CmfComponent<CmfDbContextBuilder>]
+  [ContextFactoryComponent<CmfDbContextBuilder>]
   public class CmfIdentityContext<TUser> : IdentityDbContext<
     TUser,
     TenantIdentityRole,

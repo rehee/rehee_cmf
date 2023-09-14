@@ -9,22 +9,33 @@ namespace ReheeCmf.Components.ChangeComponents
 {
   public interface IChangeComponent : ICmfComponent
   {
-    Type? EntityType { get; }
     bool NoInherit { get; }
     bool IsAvailable(Type type);
-    IChangeHandler CreateChangeHandler(IServiceProvider sp, object entity);
+    IChangeHandler? CreateChangeHandler(IServiceProvider sp, object entity);
   }
-  public abstract class ChangeComponentAttribute<T> : CmfComponentAttribute<T>, IChangeComponent where T : IChangeHandler, new()
+  public abstract class ChangeComponentAttribute : CmfComponentAttribute, IChangeComponent
   {
     public abstract bool IsAvailable(Type type);
-    public virtual Type? EntityType { get; set; }
     public bool NoInherit { get; set; }
-    public virtual IChangeHandler CreateChangeHandler(IServiceProvider sp, object entity)
+    public virtual IChangeHandler? CreateChangeHandler(IServiceProvider sp, object entity)
     {
-      var handler = new T();
-      handler.Init(sp, entity, Index, SubIndex, Group);
-      return handler;
+      var handler = CreateHandler();
+      if (handler != null && handler is IChangeHandler ch)
+      {
+        ch.Init(sp, entity, Index, SubIndex, Group);
+        return ch;
+      }
+      return null;
     }
+  }
+
+  public abstract class ChangeComponentEntityAttribute<THandler> : ChangeComponentAttribute, IEntityComponent
+  {
+    public override Type? HandlerType => typeof(THandler);
+  }
+  public abstract class ChangeComponentHandlerAttribute<TEntity> : ChangeComponentAttribute, IHandlerComponent
+  {
+    public override Type? EntityType => typeof(TEntity);
   }
 
 }

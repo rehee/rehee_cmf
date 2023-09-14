@@ -34,7 +34,7 @@ namespace ReheeCmf.Entities
     }
   }
 
-  [EntityChangeTracker<RoleBasedPermission, RoleBasedPermissionChangeHandler>(Group = nameof(RoleBasedPermission))]
+  [EntityChangeTracker<RoleBasedPermission>(Group = nameof(RoleBasedPermission))]
   public class RoleBasedPermissionChangeHandler : EntityChangeHandler<RoleBasedPermission>
   {
     public override async Task BeforeCreateAsync(CancellationToken ct = default)

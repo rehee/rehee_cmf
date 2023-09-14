@@ -1,11 +1,7 @@
 ﻿using ReheeCmf.Commons.DTOs;
 using ReheeCmf.Handlers.ChangeHandlers;
 using ReheeCmf.Handlers.SelectHandler;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
 {
@@ -34,7 +30,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
 
 
 
-  [EntityChangeTracker<TestEntity, TestEntityHandler>]
+  [EntityChangeTracker<TestEntity>]
   internal class TestEntityHandler : EntityChangeHandler<TestEntity>
   {
     public override async Task BeforeCreateAsync(CancellationToken ct = default)
@@ -74,7 +70,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
     }
   }
 
-  [EntityChangeTracker<TestEntity, TestEntityHandler2>(NoInherit = true)]
+  [EntityChangeTracker<TestEntity>(NoInherit = true)]
   internal class TestEntityHandler2 : EntityChangeHandler<TestEntity>
   {
     public override async Task BeforeCreateAsync(CancellationToken ct = default)
@@ -89,7 +85,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
   {
     public string? Name { get; set; }
   }
-  [EntityChangeTracker<TestDeleteItem, TestDeleteItemHandler>]
+  [EntityChangeTracker<TestDeleteItem>]
   internal class TestDeleteItemHandler : EntityChangeHandler<TestDeleteItem>, IDeletedHandler
   {
     public bool IsDeleted { get; set; }
@@ -102,7 +98,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
     }
   }
 
-  [SelectEntity<TestEntity3, TestEntity3SelectHandler>]
+  [SelectEntity<TestEntity3>]
   internal class TestEntity3SelectHandler : SelectEntityHandler<TestEntity3>
   {
     public override IEnumerable<KeyValueItemDTO> GetSelectItem(IContext context)

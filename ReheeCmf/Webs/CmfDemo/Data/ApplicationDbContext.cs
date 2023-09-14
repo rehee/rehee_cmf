@@ -27,7 +27,7 @@ namespace CmfDemo.Data
 
   }
 
-  [EntityChangeTracker<Entity1, Entity1Tracker>]
+  [EntityChangeTracker<Entity1>]
   public class Entity1Tracker : EntityChangeHandler<Entity1>
   {
     public override async Task BeforeCreateAsync(CancellationToken ct = default)

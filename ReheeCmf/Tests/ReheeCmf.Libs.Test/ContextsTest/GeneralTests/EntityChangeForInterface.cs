@@ -26,7 +26,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
     string? Name_Before { get; set; }
     string? Name_After { get; set; }
   }
-  [InterfaceChangeTracker<ITest, TestInterfaceHandler>]
+  [InterfaceChangeTracker<ITest>]
   internal class TestInterfaceHandler : InterfaceChangeHandler<ITest>
   {
     public override async Task BeforeCreateAsync(CancellationToken ct = default)

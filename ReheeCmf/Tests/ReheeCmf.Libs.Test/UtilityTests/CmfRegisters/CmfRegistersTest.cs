@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using ReheeCmf.Components;
+using ReheeCmf.Components.ChangeComponents;
 using ReheeCmf.Utility.CmfRegisters;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace ReheeCmf.Libs.Test.UtilityTests.CmfRegisters
     public void InitRegister()
     {
       CmfRegister.Init();
+      var pool = CmfRegister.ComponentPool.Values.ToArray();
       var registers = CmfRegister.ComponentPool.Values.Where(b => b is ITestComponent).ToArray();
 
       Assert.That(registers.Length, Is.EqualTo(3));
@@ -30,22 +32,22 @@ namespace ReheeCmf.Libs.Test.UtilityTests.CmfRegisters
 
 
   }
-  [TestRegister<TestHandler>]
+  [TestRegister<TestUsedClass, TestHandler>]
   file class TestUsedClass
   {
 
   }
-  [TestRegister<TestHandler>]
+  [TestRegister<TestUsedClass, TestHandler>]
   file class TestUsedClass2
   {
 
   }
-  [TestRegister2<TestHandler>]
+  [TestRegister2<TestUsedClass3, TestHandler>]
   file class TestUsedClass3
   {
 
   }
-  [TestRegister2<TestHandler2>]
+  [TestRegister2<TestUsedClass4, TestHandler2>]
   file class TestUsedClass4
   {
 
@@ -54,13 +56,14 @@ namespace ReheeCmf.Libs.Test.UtilityTests.CmfRegisters
   {
 
   }
-  file class TestRegister2Attribute<T> : TestRegisterAttribute<T> where T : ICmfHandler, new()
+  file class TestRegister2Attribute<K, T> : TestRegisterAttribute<K, T> where T : ICmfHandler, new()
   {
 
   }
-  file class TestRegisterAttribute<T> : CmfComponentAttribute<T>, ITestComponent where T : ICmfHandler, new()
+  file class TestRegisterAttribute<K, T> : CmfComponentAttribute, IEntityComponent, ITestComponent where T : ICmfHandler, new()
   {
-
+    public override Type? EntityType => typeof(K);
+    public override Type? HandlerType => typeof(T);
   }
 
   file class TestHandler : ICmfHandler

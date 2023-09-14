@@ -1,5 +1,6 @@
 ﻿using Microsoft.OData.ModelBuilder;
 using ReheeCmf.Components;
+using ReheeCmf.Components.ChangeComponents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,21 +11,16 @@ namespace ReheeCmf.ODatas.Components
 {
   public interface IODataEntitySet : ICmfComponent
   {
-    Type EntityType { get; }
     IODataEntitySetHandler? GetHandler();
   }
-  public class ODataEntitySetAttribute<TEntity, THandler> : CmfComponentAttribute<THandler>, IODataEntitySet
-    where THandler : IODataEntitySetHandler, new()
+  public class ODataEntitySetAttribute<TEntity> : CmfComponentAttribute, IODataEntitySet, IHandlerComponent
   {
-    public Type EntityType => typeof(TEntity);
+    public override Type EntityType => typeof(TEntity);
     public IODataEntitySetHandler? GetHandler()
     {
-      return SingletonHandler<THandler>();
+      return SingletonHandler() as IODataEntitySetHandler;
     }
-    public override int GetHashCode()
-    {
-      return base.GetHashCode() * EntityType.GetHashCode();
-    }
+    
   }
 
   public interface IODataEntitySetHandler : ICmfHandler

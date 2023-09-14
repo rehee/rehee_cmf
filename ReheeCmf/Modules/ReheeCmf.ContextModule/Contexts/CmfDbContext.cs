@@ -1,9 +1,11 @@
 ﻿using ReheeCmf.ContextComponent;
 using ReheeCmf.ContextModule.Components;
+using ReheeCmf.Handlers.ContextHandlers;
 
 namespace ReheeCmf.ContextModule.Contexts
 {
-  [CmfComponent<CmfDbContextBuilder>]
+  
+  [ContextFactoryComponentAttribute<CmfDbContextBuilder>]
   public class CmfDbContext : DbContext, IWithContext
   {
     protected readonly IServiceProvider sp;
