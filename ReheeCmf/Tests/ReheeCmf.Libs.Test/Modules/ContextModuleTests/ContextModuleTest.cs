@@ -15,7 +15,7 @@ namespace ReheeCmf.Libs.Test.Modules.ContextModuleTests
     [Test]
     public async Task Context_Module_Permissions()
     {
-      var permissions = await this.CmfContextModule.GetPermissions(null, null, CancellationToken.None);
+      var permissions = await this.CmfEntityModule.GetPermissions(null, null, CancellationToken.None);
 
       Assert.That(permissions.Where(b => b.StartsWith($"{nameof(TestEntity)}{ConstCrud.Split}")).Count(), Is.EqualTo(4));
       Assert.That(permissions.Where(b => b.StartsWith($"{nameof(TestEntity2)}{ConstCrud.Split}")).Count(), Is.EqualTo(4));
@@ -76,7 +76,7 @@ namespace ReheeCmf.Libs.Test.Modules.ContextModuleTests
       var permisionName1 = EnumHttpMethod.Get.GetEntityPermission(nameof(TestEntity));
       var permisionName2 = "p2";
       var permisionName3 = "p3";
-      await this.CmfContextModule.UpdateRoleBasedPermissionAsync(db, roleName, new Commons.DTOs.RoleBasedPermissionDTO
+      await this.CmfEntityModule.UpdateRoleBasedPermissionAsync(db, roleName, new Commons.DTOs.RoleBasedPermissionDTO
       {
         Items = new StandardProperty[]
         {
@@ -97,7 +97,7 @@ namespace ReheeCmf.Libs.Test.Modules.ContextModuleTests
           }
         }
       }, null);
-      var moduleName = CmfContextModule.ModuleName.ToUpper();
+      var moduleName = CmfEntityModule.ModuleName.ToUpper();
       var roleNameUp = roleName.ToUpper();
       var records = db.Query<RoleBasedPermission>(true)
         .Where(b =>
@@ -119,7 +119,7 @@ namespace ReheeCmf.Libs.Test.Modules.ContextModuleTests
       var permisionName1 = EnumHttpMethod.Get.GetEntityPermission(nameof(TestEntity));
       var permisionName2 = EnumHttpMethod.Post.GetEntityPermission(nameof(TestEntity));
       var permisionName3 = "p3";
-      await this.CmfContextModule.UpdateRoleBasedPermissionAsync(db, roleName, new Commons.DTOs.RoleBasedPermissionDTO
+      await this.CmfEntityModule.UpdateRoleBasedPermissionAsync(db, roleName, new Commons.DTOs.RoleBasedPermissionDTO
       {
         Items = new StandardProperty[]
         {
@@ -140,7 +140,7 @@ namespace ReheeCmf.Libs.Test.Modules.ContextModuleTests
           }
         }
       }, null);
-      var moduleName = CmfContextModule.ModuleName.ToUpper();
+      var moduleName = CmfEntityModule.ModuleName.ToUpper();
       var roleNameUp = roleName.ToUpper();
       var records = db.Query<RoleBasedPermission>(true)
         .Where(b =>
@@ -151,7 +151,7 @@ namespace ReheeCmf.Libs.Test.Modules.ContextModuleTests
       Assert.That(records.Count, Is.EqualTo(1));
       var r = records.FirstOrDefault();
       Assert.That(r.PermissionList.Count, Is.EqualTo(1));
-      await this.CmfContextModule.UpdateRoleBasedPermissionAsync(db, roleName, new Commons.DTOs.RoleBasedPermissionDTO
+      await this.CmfEntityModule.UpdateRoleBasedPermissionAsync(db, roleName, new Commons.DTOs.RoleBasedPermissionDTO
       {
         Items = new StandardProperty[]
         {
@@ -192,7 +192,7 @@ namespace ReheeCmf.Libs.Test.Modules.ContextModuleTests
       var permisionName1 = EnumHttpMethod.Get.GetEntityPermission(nameof(TestEntity));
       var permisionName2 = "p2";
       var permisionName3 = EnumHttpMethod.Post.GetEntityPermission(nameof(TestEntity));
-      await this.CmfContextModule.UpdateRoleBasedPermissionAsync(db, roleName, new Commons.DTOs.RoleBasedPermissionDTO
+      await this.CmfEntityModule.UpdateRoleBasedPermissionAsync(db, roleName, new Commons.DTOs.RoleBasedPermissionDTO
       {
         Items = new StandardProperty[]
         {
@@ -213,7 +213,7 @@ namespace ReheeCmf.Libs.Test.Modules.ContextModuleTests
           }
         }
       }, null);
-      var item = await this.CmfContextModule.GetRoleBasedPermissionAsync(db, new string[] { roleName }, "");
+      var item = await this.CmfEntityModule.GetRoleBasedPermissionAsync(db, new string[] { roleName }, "");
       var strings = item.Content.Split(",").ToArray();
       Assert.That(strings.Length,Is.EqualTo(2));
       Assert.True(strings.Contains(permisionName1));
