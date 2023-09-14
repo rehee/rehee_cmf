@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ReheeCmf.Services
 {
-  public interface IIAsyncQuery
+  public interface IAsyncQuery
   {
     Task<T?> FirstOrDefaultAsync<T>(IQueryable<T> query, CancellationToken ct);
     IQueryable<T> AsNoTracking<T>(IQueryable<T> query) where T : class;

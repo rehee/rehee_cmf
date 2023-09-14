@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ReheeCmf.Servers.Services
 {
-  public class EFCoreAsyncQuery : IIAsyncQuery
+  public class EFCoreAsyncQuery : IAsyncQuery
   {
     public async Task<T?> FirstOrDefaultAsync<T>(IQueryable<T> query, CancellationToken ct)
     {

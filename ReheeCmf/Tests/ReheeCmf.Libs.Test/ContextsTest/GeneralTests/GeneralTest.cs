@@ -20,9 +20,9 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
   internal abstract class GeneralTest<TDbContext> : ContextsTest<TDbContext> where TDbContext : DbContext
   {
     private IServiceProvider sp { get; set; }
-    public override IServiceProvider ConfigService()
+    public override IServiceProvider ConfigService(params Action<IServiceCollection>[] actions)
     {
-      sp = base.ConfigService();
+      sp = base.ConfigService(actions);
       return sp;
     }
     [TearDown]

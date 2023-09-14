@@ -33,12 +33,12 @@ namespace ReheeCmf.EntityModule
     public override async Task PostConfigureServicesAsync(ServiceConfigurationContext context)
     {
       await base.PostConfigureServicesAsync(context);
-      context.MvcBuilder.AddCmfOdataEndpoint(sp =>
+      context.MvcBuilder!.AddCmfOdataEndpoint(sp =>
       {
         var m = sp.GetEdmModel(
           builder =>
           {
-          }, context.CrudOptions.UserType, context.CrudOptions.RoleType, context.CrudOptions);
+          }, context.CrudOptions!.UserType!, context.CrudOptions!.RoleType!, context.CrudOptions);
         ReflectPool.OdataEdmModelEntity = m;
         return m;
       }

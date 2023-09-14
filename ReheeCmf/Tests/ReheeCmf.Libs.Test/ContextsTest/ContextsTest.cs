@@ -8,6 +8,8 @@ using ReheeCmf.ContextModule.Interceptors;
 using ReheeCmf.Contexts;
 using ReheeCmf.Helpers;
 using ReheeCmf.Libs.Test.ContextsTest.Contexts;
+using ReheeCmf.Servers.Services;
+using ReheeCmf.Services;
 using ReheeCmf.Tenants;
 using ReheeCmf.Utility.CmfRegisters;
 using System;
@@ -22,7 +24,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest
   {
     //protected IServiceCollection? services { get; set; }
     //protected IServiceProvider? serviceProvider { get; set; }
-    public virtual IServiceProvider ConfigService()
+    public virtual IServiceProvider ConfigService(params Action<IServiceCollection>[] actions)
     {
 
       var services = new ServiceCollection();
@@ -44,7 +46,11 @@ namespace ReheeCmf.Libs.Test.ContextsTest
       services!.AddDbContext<TDbContext>(a => { }, ServiceLifetime.Scoped);
       services!.AddScoped<IContext>(sp => new CmfRepositoryContext(sp, sp.GetService<TDbContext>()!));
       services!.AddScoped<ITenantStorage, TenantStorage>();
-
+      services!.AddSingleton<IAsyncQuery, EFCoreAsyncQuery>();
+      foreach (var a in actions)
+      {
+        a(services);
+      }
       return services.BuildServiceProvider();
     }
 

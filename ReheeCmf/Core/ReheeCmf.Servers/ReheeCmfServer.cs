@@ -46,7 +46,7 @@ namespace System
       context.Services.AddSingleton<TenantSetting>(tenent);
 
       services.AddScoped<IGetCurrentTenant, HttpRequestGetCurrentTenant>();
-      services.AddSingleton<IIAsyncQuery, EFCoreAsyncQuery>();
+      services.AddSingleton<IAsyncQuery, EFCoreAsyncQuery>();
 
       context.Services.AddScoped<IContextScope<Tenant>, ContextScope<Tenant>>();
       context.Services.AddScoped<IContextScope<TokenDTO>, ContextScope<TokenDTO>>();
