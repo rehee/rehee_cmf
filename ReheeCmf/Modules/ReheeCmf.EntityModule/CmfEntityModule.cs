@@ -8,6 +8,13 @@ using ReheeCmf.ODatas.Commons;
 using ReheeCmf.ODatas.Helpers;
 using ReheeCmf.Reflects.ReflectPools;
 using ReheeCmf.Helpers;
+using Microsoft.AspNetCore.OData;
+using Microsoft.OData.ModelBuilder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OData;
+using ReheeCmf.ODatas.Converters;
+using Microsoft.AspNetCore.OData.Formatter.Serialization;
+
 namespace ReheeCmf.EntityModule
 {
   public class CmfEntityModule : ServiceModule
@@ -46,6 +53,32 @@ namespace ReheeCmf.EntityModule
           ODataEndpointMapping.New("DataApiController", "Query", "{entityName}", "entityName"),
           ODataEndpointMapping.New("DataApiController", "FindEntity", CrudOption.DataEndpoint, "entityName"),
     });
+      context.MvcBuilder.AddOData((opt, sp) =>
+      {
+        if (ODataPools.QueryNameBuilderMapping?.Any() == true)
+        {
+          var builder = new ODataConventionModelBuilder();
+          var entitySet = typeof(ODataConventionModelBuilder).GetMethod("EntitySet");
+          foreach (var m in ODataPools.QueryNameBuilderMapping)
+          {
+            var set = entitySet.MakeGenericMethod(
+              ODataPools.QueryNameKeyTypeMapping.GetValueOrDefault(m.Key)).Invoke(builder, new object[] { m.Key }).GetPropertyValue("EntityType");
+            m.Value.Invoke("Invoke", set.Content);
+          }
+          var edmModel = builder.GetEdmModel();
+          opt.AddRouteComponents(CrudOption.DTOProcessor, edmModel, action =>
+          {
+            action.AddSingleton<ODataPayloadValueConverter, ReheeCMFOdataConverter>();
+            action.AddSingleton<IODataSerializerProvider, ReheeCmfETagSerializerProvider>();
+          });
+          opt.Conventions.Add(ODataControllerActionConventionHelper.New(
+          CrudOption.DTOProcessor, "DTOProcessorController", "Query", "{dtoName}", "dtoName"));
+          opt.Conventions.Add(ODataControllerActionConventionHelper.New(
+          CrudOption.DTOProcessor, "DTOProcessorController", "Find", "{dtoName}/{queryKey}", "dtoName"));
+          ReflectPool.OdataEdmModelQueryDTO = edmModel;
+        }
+      });
+
     }
   }
 }
