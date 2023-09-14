@@ -10,7 +10,7 @@ using System.Net;
 
 namespace ReheeCmf.EntityModule.Controllers.v1_0
 {
-  public class DataApiControllerBase<T, TKey> : ReheeCmfController where T : class, IId<TKey> where TKey : IEquatable<TKey>
+  public abstract class DataApiControllerBase<T, TKey> : ReheeCmfController where T : class, IId<TKey> where TKey : IEquatable<TKey>
   {
     public DataApiControllerBase(IServiceProvider sp) : base(sp)
     {
