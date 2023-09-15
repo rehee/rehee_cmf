@@ -26,12 +26,12 @@ namespace ReheeCmf.Caches.MemoryCaches
     }
     public bool TryGetValue<TValue>(string key, out TValue? value)
     {
-      if (TryGetValue(key, out value))
+      if (TryGetValue(key, out var valueObj))
       {
         value = default;
         return false;
       }
-      if (value is TValue tv)
+      if (valueObj is TValue tv)
       {
         value = tv;
         return true;

@@ -29,7 +29,7 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     public virtual object Query(string dtoName)
     {
       Type type = null;
-      //queryMemoryCache.SetValue(new QuerySecondCache(true));
+      queryMemoryCache.SetValue(new QuerySecondCache(true));
       if (String.IsNullOrEmpty(dtoName) ||
         !ODataPools.QueryNameTypeMapping.TryGetValue(getkeyFromDto(dtoName), out type))
       {
