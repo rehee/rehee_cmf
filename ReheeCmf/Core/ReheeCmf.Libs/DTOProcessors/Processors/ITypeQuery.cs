@@ -9,6 +9,7 @@ namespace ReheeCmf.DTOProcessors.Processors
   public interface ITypeQuery
   {
     IQueryable Query(TokenDTO user);
+    IQueryable Query(TokenDTO user, string key);
     string TypeName { get; }
     Type Type { get; }
   }

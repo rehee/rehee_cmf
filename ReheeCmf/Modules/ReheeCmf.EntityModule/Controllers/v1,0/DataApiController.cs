@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.Extensions.DependencyInjection;
 using ReheeCmf.Authenticates;
 using ReheeCmf.Commons;
 using ReheeCmf.Entities;
 using ReheeCmf.Helpers;
 using ReheeCmf.Modules.Controllers;
+using ReheeCmf.Services;
 using System.ComponentModel.DataAnnotations;
 
 namespace ReheeCmf.EntityModule.Controllers.v1_0
@@ -13,8 +15,10 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
   [Route(CrudOption.DataApiEndpoint)]
   public class DataApiController : ReheeCmfController
   {
+    protected readonly IAsyncQuery asyncQuery;
     public DataApiController(IServiceProvider sp) : base(sp)
     {
+      asyncQuery = sp.GetService<IAsyncQuery>()!;
     }
 
     [EnableQuery()]
@@ -55,7 +59,7 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     }
     [HttpGet("{entityName}/{key}/item")]
     [CmfAuthorize(EntityName = "entityName", EntityRoleBase = true)]
-    public async Task<IActionResult> FindEntityItem(
+    public IActionResult FindEntityItem(
       string entityName, string key, CancellationToken ct)
     {
       var entity = EntityRelationHelper.GetEntityTypeAndKey(entityName);

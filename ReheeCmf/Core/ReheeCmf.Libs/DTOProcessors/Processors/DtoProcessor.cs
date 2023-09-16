@@ -88,6 +88,10 @@ namespace ReheeCmf.DTOProcessors.Processors
     {
       return QueryWithType(user);
     }
+    public virtual IQueryable Query(TokenDTO user, string key)
+    {
+      return QueryWithType(user).Where(b => b.QueryKey == key);
+    }
     public virtual IQueryable<T> QueryWithType(TokenDTO user)
     {
       throw new NotImplementedException();

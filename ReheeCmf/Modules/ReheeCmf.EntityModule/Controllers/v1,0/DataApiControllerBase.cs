@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Results;
+using Microsoft.Extensions.DependencyInjection;
 using ReheeCmf.Authenticates;
 using ReheeCmf.Commons;
 using ReheeCmf.Entities;
 using ReheeCmf.Helpers;
 using ReheeCmf.Modules.Controllers;
+using ReheeCmf.Services;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 
@@ -13,8 +15,10 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
 {
   public abstract class DataApiControllerBase<T, TKey> : ReheeCmfController where T : class, IId<TKey> where TKey : IEquatable<TKey>
   {
+    protected readonly IAsyncQuery asyncQuery;
     public DataApiControllerBase(IServiceProvider sp) : base(sp)
     {
+      asyncQuery = sp.GetService<IAsyncQuery>()!;
     }
     [EnableQuery()]
     [HttpGet]
@@ -36,7 +40,8 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     [CmfAuthorize(EntityName = "entityName", EntityRoleBase = true)]
     public virtual async Task<IActionResult> FindEntityItem(TKey key, CancellationToken ct)
     {
-      var result = context!.Query<T>(true).Where(b => b.Id.Equals(key)).FirstOrDefault();
+      var result = await asyncQuery.FirstOrDefaultAsync(
+          context!.Query<T>(true).Where(b => b.Id.Equals(key)), ct);
       if (result == null)
       {
         return Ok(StandardInputHelper.GetStandardProperty(Activator.CreateInstance(typeof(T))!, context));

@@ -12,4 +12,13 @@ namespace CmfDemo.Controllers
     {
     }
   }
+
+  [ApiController]
+  [Route("Api/Dto/Entity1DTO")]
+  public class Entity1DTOController : CmfDTOOOataController<Entity1DTO>
+  {
+    public Entity1DTOController(IServiceProvider sp) : base(sp)
+    {
+    }
+  }
 }

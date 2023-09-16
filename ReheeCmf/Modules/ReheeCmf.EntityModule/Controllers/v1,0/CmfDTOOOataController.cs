@@ -14,6 +14,7 @@ using ReheeCmf.Tenants;
 using ReheeCmf.Caches;
 using ReheeCmf.Services;
 using ReheeCmf.Helpers;
+using Microsoft.AspNetCore.OData.Results;
 
 namespace ReheeCmf.EntityModule.Controllers.v1_0
 {
@@ -47,15 +48,11 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     [HttpGet("{queryKey}")]
     [EnableQuery()]
     [CmfAuthorize(EntityName = "dtoName", PermissionClass = true)]
-    public virtual async Task<IActionResult> Find(string queryKey, CancellationToken ct)
+    public virtual SingleResult<T> Find(string queryKey, CancellationToken ct)
     {
-      var item = await asyncQuery.FirstOrDefaultAsync(queryService.QueryWithType(CurrentUser).Where(b => String.Equals(b.QueryKey, queryKey))
-        , ct);
-      if (item == null)
-      {
-        return NotFound();
-      }
-      return Ok(item);
+      return SingleResult.Create<T>(
+        queryService.QueryWithType(CurrentUser).Where(b => b.QueryKey == queryKey)
+        );
     }
 
 

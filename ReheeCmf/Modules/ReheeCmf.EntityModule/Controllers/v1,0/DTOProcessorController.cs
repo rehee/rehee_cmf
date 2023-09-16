@@ -19,7 +19,7 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     {
     }
 
-    private string getkeyFromDto(string dtoName)
+    private string? getKeyFromDto(string dtoName)
     {
       return ODataPools.QueryNameTypeMapping.Keys.FirstOrDefault(b => b.Equals(dtoName, StringComparison.OrdinalIgnoreCase));
     }
@@ -31,7 +31,7 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
       Type type = null;
       queryMemoryCache.SetValue(new QuerySecondCache(true));
       if (String.IsNullOrEmpty(dtoName) ||
-        !ODataPools.QueryNameTypeMapping.TryGetValue(getkeyFromDto(dtoName), out type))
+        !ODataPools.QueryNameTypeMapping.TryGetValue(getKeyFromDto(dtoName), out type))
       {
         StatusException.Throw(HttpStatusCode.NotFound);
       }
@@ -45,24 +45,27 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     [HttpGet("{dtoName}/{queryKey}/json")]
     [EnableQuery()]
     [CmfAuthorize(EntityName = "dtoName", PermissionClass = true)]
-    public virtual async Task<IActionResult> Find(string dtoName, string queryKey, CancellationToken ct)
+    public virtual object Find(string dtoName, string queryKey, CancellationToken ct)
     {
       Type type = null;
+      Type entityType = null;
       queryMemoryCache.SetValue(new QuerySecondCache(true));
       if (String.IsNullOrEmpty(dtoName) ||
-        !ODataPools.QueryNameTypeMapping.TryGetValue(getkeyFromDto(dtoName), out type))
+        !ODataPools.QueryNameTypeMapping.TryGetValue(getKeyFromDto(dtoName), out type))
+      {
+        StatusException.Throw(HttpStatusCode.NotFound);
+      }
+      if (String.IsNullOrEmpty(dtoName) ||
+        !ODataPools.QueryNameKeyTypeMapping.TryGetValue(getKeyFromDto(dtoName), out entityType))
       {
         StatusException.Throw(HttpStatusCode.NotFound);
       }
       var service = serviceProvider.GetService(type);
-      if (service is IFindByQueryKey find)
+      if (service is ITypeQuery find)
       {
-        return Ok(await find.FindAsync(currentUser, queryKey, ct));
+        return ODataResultHelper.GetSingleResult(entityType, find.Query(currentUser, queryKey));
       }
-      if (service is ITypeQuery qb)
-      {
-        return Ok(qb.Query(currentUser));
-      }
+
       return Ok(dtoName);
     }
 
@@ -73,7 +76,7 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     {
       Type type = null;
       if (String.IsNullOrEmpty(dtoName) ||
-        !ODataPools.QueryNameTypeMapping.TryGetValue(getkeyFromDto(dtoName), out type))
+        !ODataPools.QueryNameTypeMapping.TryGetValue(getKeyFromDto(dtoName), out type))
       {
         StatusException.Throw(HttpStatusCode.NotFound);
       }
@@ -100,7 +103,7 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     {
       Type type = null;
       if (String.IsNullOrEmpty(dtoName) || String.IsNullOrEmpty(dtoName) ||
-        !ODataPools.QueryNameTypeMapping.TryGetValue(getkeyFromDto(dtoName), out type))
+        !ODataPools.QueryNameTypeMapping.TryGetValue(getKeyFromDto(dtoName), out type))
       {
         StatusException.Throw(HttpStatusCode.NotFound);
       }
@@ -126,7 +129,7 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     {
       Type type = null;
       if (String.IsNullOrEmpty(dtoName) || String.IsNullOrEmpty(key) ||
-        !ODataPools.QueryNameTypeMapping.TryGetValue(getkeyFromDto(dtoName), out type))
+        !ODataPools.QueryNameTypeMapping.TryGetValue(getKeyFromDto(dtoName), out type))
       {
         StatusException.Throw(HttpStatusCode.NotFound);
       }
