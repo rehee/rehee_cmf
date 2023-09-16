@@ -13,6 +13,7 @@ namespace ReheeCmf.Tenants
     void AddOrUpdateTenant(TenantEntity tenant);
     void RemoveTenant(TenantEntity tenant);
     void ClearCashed();
+    
   }
 
   public class TenantStorage : ITenantStorage

@@ -25,11 +25,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
       sp = base.ConfigService(actions);
       return sp;
     }
-    [TearDown]
-    public void Cleanup()
-    {
-
-    }
+   
     [Test]
     public void ContextService_DbContext_Same_Instance_Test()
     {

@@ -34,6 +34,17 @@ namespace ReheeCmf.Helpers
       }
       return that.SetError(status, exception.Message);
     }
+    public static IContentResponse SetError(this IContentResponse that, IContentResponse response)
+    {
+      that.ErrorMessage = response.ErrorMessage;
+      that.ErrorCode = response.ErrorCode;
+      that.Status = response.Status;
+      if (response.Validation != null)
+      {
+        that.SetValidation(response.Validation.ToArray());
+      }
+      return that;
+    }
     public static T SetNotFound<T>(this T that, string? message = null) where T : IContentResponse
     {
       return that.SetError(HttpStatusCode.NotFound, message);

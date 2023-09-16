@@ -10,4 +10,12 @@ namespace ReheeCmf.Tenants
   {
     Guid? TenantID { get; set; }
   }
+  public interface ISetTenant : IWithTenant
+  {
+    void SetTenantID(Guid? tenantID);
+  }
+  public interface ISetTenantDetail
+  {
+    void SetTenantDetail(Tenant? tenant);
+  }
 }

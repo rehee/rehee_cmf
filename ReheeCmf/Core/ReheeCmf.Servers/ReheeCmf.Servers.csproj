@@ -18,5 +18,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ReheeCmf.Libs\ReheeCmf.Libs.csproj" />
     <ProjectReference Include="..\ReheeCmf.Modules\ReheeCmf.Modules.csproj" />
+    <ProjectReference Include="..\ReheeCmf.Odatas\ReheeCmf.ODatas.csproj" />
   </ItemGroup>
 </Project>

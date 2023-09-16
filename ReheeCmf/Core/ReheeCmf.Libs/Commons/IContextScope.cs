@@ -30,7 +30,7 @@
     }
 
     List<EventHandler<ContextScopeEventArgs<T>>> delegates = new List<EventHandler<ContextScopeEventArgs<T>>>();
-    private event EventHandler<ContextScopeEventArgs<T>> valueChange;
+    private event EventHandler<ContextScopeEventArgs<T>> valueChange = delegate { };
     public virtual event EventHandler<ContextScopeEventArgs<T>> ValueChange
     {
       add

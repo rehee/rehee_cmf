@@ -14,7 +14,7 @@
     public string? AccessToken { get; set; }
     public long? MaxFileUploadSize { get; set; }
     public string? AllowedRoles { get; set; }
-    public bool? AuthRequired { get; set; }
+    public bool AuthRequired { get; set; }
     public string? AllowedFileType { get; set; }
     public static FileServiceOption New(TenantEntity tenant, FileServiceOption option)
     {

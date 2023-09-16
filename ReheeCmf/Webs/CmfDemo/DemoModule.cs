@@ -17,19 +17,9 @@ using ReheeCmf.UserManagementModule;
 
 namespace CmfDemo
 {
-  public class DemoModule : CmfApiModule
+  public class DemoModule : CmfApiModule<ApplicationDbContext, ReheeCmfBaseUser>
   {
-    public override IEnumerable<ModuleDependOn> Depends()
-    {
-      return base.Depends().Concat(new ModuleDependOn[]
-      {
-        ModuleDependOn.New<CmfContextModule<ApplicationDbContext,ReheeCmfBaseUser>>(),
-        ModuleDependOn.New<CmfEntityModule>(),
-        ModuleDependOn.New<CmfUserManagementModule<ReheeCmfBaseUser,TenantIdentityRole,TenantIdentityUserRole>>()
-      });
-    }
     public override string ModuleTitle => "";
-
     public override string ModuleName => "";
 
 
@@ -39,14 +29,14 @@ namespace CmfDemo
       context.Services.AddTypeQuery<Entity1DTO, Entity1DTOProcessor>();
 
 
-      context.MvcBuilder.AddCmfOData();
+      
 
     }
     public override async Task ApplicationInitializationAsync(ServiceConfigurationContext context)
     {
       await base.ApplicationInitializationAsync(context);
-     
-        //options.EntityQueryUri ?? $"{current.Request.Scheme}://{current.Request.Host}{current.Request.PathBase}";
+
+      //options.EntityQueryUri ?? $"{current.Request.Scheme}://{current.Request.Host}{current.Request.PathBase}";
     }
     public override Task<IEnumerable<string>> GetPermissions(IContext? db, TokenDTO? user, CancellationToken ct = default)
     {

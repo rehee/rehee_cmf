@@ -2,6 +2,7 @@
 using ReheeCmf.Caches;
 using ReheeCmf.Commons.Encrypts;
 using ReheeCmf.Modules.Options;
+using ReheeCmf.ODatas;
 using ReheeCmf.Servers.Filters;
 using ReheeCmf.Utility.CmfRegisters;
 
@@ -115,6 +116,7 @@ namespace System
         options.AreaViewLocationFormats.Add("/Areas/{2}/Views/{1}/{0}.cshtml");
         options.AreaViewLocationFormats.Add("/Areas/{2}/Views/Shared/{0}.cshtml");
       });
+      context.MvcBuilder.AddCmfOData();
       //TODO: Authorize model need refactory
       var authorizeOption = configuration.GetOption<AuthorizeOption>() ?? new AuthorizeOption();
       services.AddSingleton<AuthorizeOption>(authorizeOption);

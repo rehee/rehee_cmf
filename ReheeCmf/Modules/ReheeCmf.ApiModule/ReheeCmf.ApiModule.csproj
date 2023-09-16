@@ -10,6 +10,10 @@
     
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <ProjectReference Include="..\..\Core\ReheeCmf.Servers\ReheeCmf.Servers.csproj" />
+    <ProjectReference Include="..\ReheeCmf.ContextModule\ReheeCmf.ContextModule.csproj" />
+    <ProjectReference Include="..\ReheeCmf.EntityModule\ReheeCmf.EntityModule.csproj" />
+    <ProjectReference Include="..\ReheeCmf.FileModule\ReheeCmf.FileModule.csproj" />
+    <ProjectReference Include="..\ReheeCmf.UserManagementModule\ReheeCmf.UserManagementModule.csproj" />
   </ItemGroup>
   
 </Project>

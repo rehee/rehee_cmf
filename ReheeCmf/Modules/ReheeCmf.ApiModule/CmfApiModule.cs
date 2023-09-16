@@ -3,11 +3,32 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using ReheeCmf.Modules.ApiVersions;
 using ReheeCmf.Modules;
+using ReheeCmf.Helpers;
+using System.IO;
+using ReheeCmf.ContextModule;
+using ReheeCmf.EntityModule;
+using ReheeCmf.UserManagementModule;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using ReheeCmf.Entities;
+using ReheeCmf.ContextModule.Entities;
+using ReheeCmf.FileModule;
 
 namespace ReheeCmf
 {
-  public abstract class CmfApiModule : ServiceModule
+  public abstract class CmfApiModule<TContext, TUser> : ServiceModule
+    where TContext : DbContext
+    where TUser : IdentityUser, ICmfUser, new()
   {
+    public override IEnumerable<ModuleDependOn> Depends()
+    {
+      return ModuleHelper.Depends(
+        ModuleDependOn.New<CmfContextModule<TContext, TUser>>(),
+        ModuleDependOn.New<CmfEntityModule>(),
+        ModuleDependOn.New<CmfUserManagementModule<TUser, TenantIdentityRole, TenantIdentityUserRole>>(),
+        ModuleDependOn.New<CmfFileModule>()
+        );
+    }
     public override void SwaggerConfiguration(SwaggerGenOptions setupAction)
     {
       setupAction.SwaggerDoc("v0", new Microsoft.OpenApi.Models.OpenApiInfo()
