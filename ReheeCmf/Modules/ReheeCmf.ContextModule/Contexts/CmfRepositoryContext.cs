@@ -204,6 +204,18 @@ namespace ReheeCmf.ContextModule.Contexts
     {
       return Query<T>(asNoTracking);
     }
+
+    public object? QueryWithKey(Type type, Type keyType, bool noTracking, object key)
+    {
+      return this.GetMap().Methods.FirstOrDefault(b => b.Name.Equals(nameof(QueryWithTypeAndKey)))!
+       .MakeGenericMethod(type, keyType).Invoke(this, new object[] { noTracking, key });
+    }
+    public IQueryable<T> QueryWithTypeAndKey<T, TKey>(bool asNoTracking, TKey key)
+      where T : class, IId<TKey>
+      where TKey : IEquatable<TKey>
+    {
+      return Query<T>(asNoTracking).Where(b => b.Id.Equals(key));
+    }
     public object? Find(Type type, object key)
     {
       return this.GetMap().Methods.FirstOrDefault(b => b.Name.Equals(nameof(FindWithType)))!

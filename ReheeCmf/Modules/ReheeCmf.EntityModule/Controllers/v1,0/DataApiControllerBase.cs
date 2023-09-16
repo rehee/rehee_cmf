@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Results;
 using ReheeCmf.Authenticates;
 using ReheeCmf.Commons;
 using ReheeCmf.Entities;
@@ -25,14 +26,11 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     [EnableQuery()]
     [HttpGet("{key}")]
     [CmfAuthorize(EntityName = "entityName", EntityRoleBase = true)]
-    public virtual T FindEntity(TKey key, CancellationToken ct)
+    public virtual SingleResult<T> FindEntity(TKey key, CancellationToken ct)
     {
-      var result = context!.Query<T>(true).Where(b => b.Id.Equals(key)).FirstOrDefault();
-      if (result == null)
-      {
-        StatusException.Throw(HttpStatusCode.NotFound);
-      }
-      return result!;
+      return SingleResult.Create<T>(
+        context!.Query<T>(true).Where(b => b.Id.Equals(key)));
+
     }
     [HttpGet("{key}/item")]
     [CmfAuthorize(EntityName = "entityName", EntityRoleBase = true)]

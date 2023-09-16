@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ReheeCmf.Caches.MemoryCaches;
 using ReheeCmf.Components;
 using ReheeCmf.ContextComponent;
 using ReheeCmf.ContextModule.Interceptors;
 using ReheeCmf.Enums;
-
 namespace ReheeCmf.ContextModule.Components
 {
   public class CmfDbContextBuilder : IDbContextBuilder
@@ -18,6 +19,16 @@ namespace ReheeCmf.ContextModule.Components
       {
         optionsBuilder.UseMemoryCache(mc);
       }
+      var logService = sp.GetService<ILogger<DbContext>>();
+      if (logService != null)
+      {
+        optionsBuilder.LogTo(s => logService.Log(LogLevel.Information, s), LogLevel.Information);
+      }
+      else
+      {
+        optionsBuilder.LogTo(Console.WriteLine, LogLevel.Information);
+      }
+
       if (!option.SQLType.HasValue)
       {
         optionsBuilder.UseSqlServer(option.DefaultConnectionString);

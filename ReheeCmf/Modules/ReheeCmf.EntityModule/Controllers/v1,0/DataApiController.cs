@@ -33,7 +33,7 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     [EnableQuery()]
     [HttpGet("{entityName}/{key}/Json")]
     [CmfAuthorize(EntityName = "entityName", EntityRoleBase = true)]
-    public IActionResult FindEntity(
+    public object? FindEntity(
       string entityName, string key, CancellationToken ct)
     {
       var entity = EntityRelationHelper.GetEntityTypeAndKey(entityName);
@@ -46,12 +46,12 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
       {
         return NotFound();
       }
-      var result = context!.Find(entity.Value.entityType, idResponse.Content!);
+      var result = context!.QueryWithKey(entity.Value.entityType, entity.Value.keyType, false, idResponse.Content!);
       if (result == null)
       {
         return NotFound();
       }
-      return Ok(result);
+      return ODataResultHelper.GetSingleResult(entity.Value.entityType, result);
     }
     [HttpGet("{entityName}/{key}/item")]
     [CmfAuthorize(EntityName = "entityName", EntityRoleBase = true)]
