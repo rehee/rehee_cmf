@@ -69,7 +69,7 @@ namespace ReheeCmf.ContextModule
 
         if (typeof(TUser) != typeof(IdentityUser))
         {
-          services.AddDefaultUser<IdentityUser>(sp =>
+          services.AddDefaultUser<TUser>(sp =>
             sp.GetService<TContext>()!);
         }
 

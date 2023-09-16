@@ -14,7 +14,7 @@ namespace ReheeCmf.Authenticates
       RoleLabel = "Roles",
       RoleIsMulti = true,
       UserDetailPropertyCreate = new string[] { "UserName", "Email", "Password", "PhoneNumber" },
-      UserDetailPropertyEdit = new string[] { "Id", "UserName", "Email", "PhoneNumber", "EmailConfirmed", "PhoneNumberConfirmed", "TwoFactorEnabled", "LockoutEnd", "LockoutEnabled", "AccessFailedCount" }
+      UserDetailPropertyEdit = new string[] {   "PhoneNumber", "EmailConfirmed", "PhoneNumberConfirmed", "TwoFactorEnabled", "LockoutEnd", "LockoutEnabled", "AccessFailedCount" }
     };
     public const string PasswordProperty = "Password";
     public static (string PropertyName, EnumInputType InputType, bool Editable)[] UserInputs =

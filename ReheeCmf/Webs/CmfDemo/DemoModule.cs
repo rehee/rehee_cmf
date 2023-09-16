@@ -1,5 +1,6 @@
 ﻿using CmfDemo.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using ReheeCmf;
 using ReheeCmf.Commons.DTOs;
 using ReheeCmf.ContextModule;
@@ -12,6 +13,7 @@ using ReheeCmf.EntityModule;
 using ReheeCmf.Modules;
 using ReheeCmf.ODatas;
 using ReheeCmf.Services;
+using ReheeCmf.UserManagementModule;
 
 namespace CmfDemo
 {
@@ -23,7 +25,7 @@ namespace CmfDemo
       {
         ModuleDependOn.New<CmfContextModule<ApplicationDbContext,ReheeCmfBaseUser>>(),
         ModuleDependOn.New<CmfEntityModule>(),
-        ModuleDependOn.New<CmfEntityModule>()
+        ModuleDependOn.New<CmfUserManagementModule<ReheeCmfBaseUser,TenantIdentityRole,TenantIdentityUserRole>>()
       });
     }
     public override string ModuleTitle => "";
@@ -40,7 +42,12 @@ namespace CmfDemo
       context.MvcBuilder.AddCmfOData();
 
     }
-
+    public override async Task ApplicationInitializationAsync(ServiceConfigurationContext context)
+    {
+      await base.ApplicationInitializationAsync(context);
+     
+        //options.EntityQueryUri ?? $"{current.Request.Scheme}://{current.Request.Host}{current.Request.PathBase}";
+    }
     public override Task<IEnumerable<string>> GetPermissions(IContext? db, TokenDTO? user, CancellationToken ct = default)
     {
       return Task.FromResult(Array.Empty<string>().AsEnumerable());

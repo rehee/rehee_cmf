@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0-preview-23424-02" />
+    <PackageReference Include="Moq.AutoMock" Version="3.5.0" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageReference Include="NUnit.Analyzers" Version="3.6.1" />
@@ -22,6 +23,7 @@
     <ProjectReference Include="..\..\Core\ReheeCmf.Servers\ReheeCmf.Servers.csproj" />
     <ProjectReference Include="..\..\Modules\ReheeCmf.ContextModule\ReheeCmf.ContextModule.csproj" />
     <ProjectReference Include="..\..\Modules\ReheeCmf.EntityModule\ReheeCmf.EntityModule.csproj" />
+    <ProjectReference Include="..\..\Modules\ReheeCmf.UserManagementModule\ReheeCmf.UserManagementModule.csproj" />
   </ItemGroup>
 
 </Project>

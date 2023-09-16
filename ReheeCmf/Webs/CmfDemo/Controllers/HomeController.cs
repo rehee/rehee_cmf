@@ -11,15 +11,18 @@ namespace CmfDemo.Controllers
   {
     private readonly ApplicationDbContext db;
     private readonly IContext context;
+    private readonly IServiceProvider sp;
 
-    public HomeController(ApplicationDbContext db, IContext context)
+    public HomeController(ApplicationDbContext db, IContext context,IServiceProvider sp)
     {
       this.db = db;
       this.context = context;
+      this.sp = sp;
     }
 
     public async Task<IActionResult> Index()
     {
+      var http = sp.GetService<IHttpContextAccessor>();
       var e1 = context.Query<Entity1>(true).ToList();
       e1.Reverse();
       var newE = new Entity1();

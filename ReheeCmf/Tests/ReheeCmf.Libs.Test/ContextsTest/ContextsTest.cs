@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Google.Protobuf.WellKnownTypes;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ReheeCmf.Caches;
 using ReheeCmf.Commons.DTOs;
 using ReheeCmf.ContextModule;
 using ReheeCmf.ContextModule.Contexts;
+using ReheeCmf.ContextModule.Entities;
 using ReheeCmf.ContextModule.Interceptors;
 using ReheeCmf.Contexts;
 using ReheeCmf.Helpers;
@@ -32,6 +34,8 @@ namespace ReheeCmf.Libs.Test.ContextsTest
       {
         SQLType = Enums.EnumSQLType.Memory,
         DefaultConnectionString = Guid.NewGuid().ToString(),
+        RoleType = typeof(TenantIdentityRole),
+        EntityKey_IdentityRole = typeof(TenantIdentityRole).Name
       });
 
       services!.AddMemoryCache();
