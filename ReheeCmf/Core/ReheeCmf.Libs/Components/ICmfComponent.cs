@@ -10,6 +10,7 @@ namespace ReheeCmf.Components
     THandler? CreateHandler<THandler>() where THandler : ICmfHandler;
     Type? HandlerType { get; set; }
     Type? EntityType { get; set; }
+    Type? PropertyType { get; set; }
     int Index { get; }
     int SubIndex { get; }
     string? Group { get; }

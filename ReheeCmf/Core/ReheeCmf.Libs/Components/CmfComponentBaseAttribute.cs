@@ -5,7 +5,6 @@ namespace ReheeCmf.Components
   [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
   public abstract class CmfComponentAttribute : Attribute, ICmfComponent
   {
-
     public int Index { get; set; }
     public int SubIndex { get; set; }
     public string? Group { get; set; }
@@ -13,6 +12,7 @@ namespace ReheeCmf.Components
     public bool SkipFollowing { get; set; }
     public virtual Type? HandlerType { get; set; }
     public virtual Type? EntityType { get; set; }
+    public virtual Type? PropertyType { get; set; }
 
     public virtual ICmfHandler? CreateHandler()
     {
@@ -21,7 +21,7 @@ namespace ReheeCmf.Components
         return null;
       }
       var handler = Activator.CreateInstance(HandlerType);
-      if(handler is ICmfHandler h)
+      if (handler is ICmfHandler h)
       {
         return h;
       }
