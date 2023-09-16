@@ -17,9 +17,9 @@ namespace ReheeCmf.ContextModule.Entities
   [ODataEntitySet<TenantIdentityUserLogin>]
   public class TenantIdentityUserLoginHandler : ODataEntitySetHandler<TenantIdentityUserLogin>
   {
-    public override object EntitySet(ODataConventionModelBuilder builder)
+    public override EntityTypeConfiguration<T> GetConfiguration<T>(ODataConventionModelBuilder builder)
     {
-      return builder.EntitySet<TenantIdentityUserLogin>(nameof(TenantIdentityUserLogin)).EntityType.HasKey(b => b.LoginProvider);
+      return base.GetConfiguration<T>(builder).HasKey(b => b.LoginProvider);
     }
   }
 }

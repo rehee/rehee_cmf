@@ -18,9 +18,10 @@ namespace ReheeCmf.ContextModule.Entities
   [ODataEntitySet<TenantIdentityUserToken>]
   public class TenantIdentityUserTokenSetHandler : ODataEntitySetHandler<TenantIdentityUserToken>
   {
-    public override object EntitySet(ODataConventionModelBuilder builder)
+    public override EntityTypeConfiguration<T> GetConfiguration<T>(ODataConventionModelBuilder builder)
     {
-      return builder.EntitySet<TenantIdentityUserToken>(nameof(TenantIdentityUserToken)).EntityType.HasKey(b => b.Value);
+      return base.GetConfiguration<T>(builder).HasKey(b => b.Value);
     }
+
   }
 }

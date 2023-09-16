@@ -17,9 +17,9 @@ namespace ReheeCmf.ContextModule.Entities
   [ODataEntitySet<TenantIdentityUserRole>]
   public class TenantIdentityUserRoleSetHandler : ODataEntitySetHandler<TenantIdentityUserRole>
   {
-    public override object EntitySet(ODataConventionModelBuilder builder)
+    public override EntityTypeConfiguration<T> GetConfiguration<T>(ODataConventionModelBuilder builder)
     {
-      return builder.EntitySet<TenantIdentityUserRole>(nameof(TenantIdentityUserRole)).EntityType.HasKey(b => b.RoleId);
+      return base.GetConfiguration<T>(builder).HasKey(b => b.RoleId);
     }
   }
 }

@@ -10,6 +10,9 @@ using ReheeCmf.Services;
 using ReheeCmf.UserManagementModule.Services;
 using ReheeCmf.ODatas;
 using ReheeCmf.ODatas.Helpers;
+using ReheeCmf.ODatas.Components;
+using Microsoft.OData.ModelBuilder;
+using System.Xml.Linq;
 namespace ReheeCmf.UserManagementModule
 {
   public class CmfUserManagementModule<TUser, TRole, TUserRole> : ServiceModule
@@ -39,13 +42,13 @@ namespace ReheeCmf.UserManagementModule
             .Invoke(builder, new object[] { CrudOption.UserEndpoint });
             var userEntrity = ue.GetPropertyValue("EntityType").Content;
             //builder.EntitySet<ReheeCmfBaseUser>("ReheeCmfBaseUser").EntityType.Property<bool>
-            ODataEntitySetExtensions.SetODataMapping(typeof(TUser), userEntrity);
+            //ODataEntitySetExtensions.SetODataMapping(typeof(TUser), userEntrity);
             builder.EntitySet<TUserRole>(CrudOption.UserRoleEndpoint).EntityType.HasKey(b => b.RoleId);
-            builder.EntitySet<TUser>(CrudOption.UserEndpoint).EntityType.Ignore(b => b.PasswordHash);
-            builder.EntitySet<TUser>(CrudOption.UserEndpoint).EntityType.Ignore(b => b.SecurityStamp);
-            builder.EntitySet<TUser>(CrudOption.UserEndpoint).EntityType.Ignore(b => b.ConcurrencyStamp);
-            builder.EntitySet<TUser>(CrudOption.UserEndpoint).EntityType.Ignore(b => b.AccessFailedCount);
-            
+            //builder.EntitySet<TUser>(CrudOption.UserEndpoint).EntityType.Ignore(b => b.PasswordHash);
+            //builder.EntitySet<TUser>(CrudOption.UserEndpoint).EntityType.Ignore(b => b.SecurityStamp);
+            //builder.EntitySet<TUser>(CrudOption.UserEndpoint).EntityType.Ignore(b => b.ConcurrencyStamp);
+            //builder.EntitySet<TUser>(CrudOption.UserEndpoint).EntityType.Ignore(b => b.ConcurrencyStamp);
+            ODataEntitySetFactory.GetHandler(typeof(TUser)).EntitySet(builder, CrudOption.Read);
             //if (context.BuilderUser?.Any() == true)
             //{
             //  foreach (var b in context.BuilderUser)
@@ -71,5 +74,18 @@ namespace ReheeCmf.UserManagementModule
       };
       return Task.FromResult(permissions);
     }
+  }
+
+  [ODataEntitySet<IdentityUser>]
+  public class UserBaseODataSet : ODataEntitySetHandler<IdentityUser>
+  {
+    public override void ConfigurationEntitySet<T>(EntityTypeConfiguration<T> entitySet)
+    {
+      entitySet.Ignore(b => b.PasswordHash);
+      entitySet.Ignore(b => b.SecurityStamp);
+      entitySet.Ignore(b => b.ConcurrencyStamp);
+      entitySet.Ignore(b => b.ConcurrencyStamp);
+    }
+
   }
 }
