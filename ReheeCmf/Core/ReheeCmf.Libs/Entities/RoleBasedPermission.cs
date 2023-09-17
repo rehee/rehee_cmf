@@ -8,8 +8,12 @@ using System.Threading.Tasks;
 
 namespace ReheeCmf.Entities
 {
-  public class RoleBasedPermission : EntityBase<Guid>
+  public class RoleBasedPermission : EntityBase<string>
   {
+    public RoleBasedPermission()
+    {
+      Id = Guid.NewGuid().ToString();
+    }
     public string? ModuleName { get; set; }
     public string? RoleName { get; set; }
     public string? Permissions { get; set; }
@@ -36,10 +40,7 @@ namespace ReheeCmf.Entities
     public override async Task BeforeCreateAsync(CancellationToken ct = default)
     {
       await base.BeforeCreateAsync(ct);
-      if (entity!.Id == Guid.Empty)
-      {
-        entity.Id = Guid.NewGuid();
-      }
+
       entity.NormalizationModuleName = entity.ModuleName?.Trim().ToUpper() ?? "";
       entity.NormalizationRoleName = entity.RoleName?.Trim().ToUpper() ?? "";
 
@@ -64,7 +65,7 @@ namespace ReheeCmf.Entities
       {
         result.Add(ValidationResultHelper.New("Module is Required", nameof(RoleBasedPermission.ModuleName)));
       }
-      
+
 
 
       return existing.Concat(result);
