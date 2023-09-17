@@ -31,6 +31,8 @@ namespace CmfDemo.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TenantID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -57,6 +59,8 @@ namespace CmfDemo.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Name1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TenantID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -73,9 +77,7 @@ namespace CmfDemo.Migrations
                     RoleName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Permissions = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NormalizationModuleName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NormalizationModuleName2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NormalizationRoleName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NormalizationRoleName2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TenantID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>

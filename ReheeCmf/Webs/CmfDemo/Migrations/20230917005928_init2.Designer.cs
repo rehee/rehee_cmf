@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CmfDemo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230911004529_init2")]
+    [Migration("20230917005928_init2")]
     partial class init2
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace CmfDemo.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.10")
+                .HasAnnotation("ProductVersion", "8.0.0-rc.1.23419.6")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -50,13 +50,16 @@ namespace CmfDemo.Migrations
                     b.ToTable("Entity1s");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
+            modelBuilder.Entity("ReheeCmf.ContextModule.Entities.ReheeCmfBaseUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -94,6 +97,9 @@ namespace CmfDemo.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("TenantID")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -278,13 +284,7 @@ namespace CmfDemo.Migrations
                     b.Property<string>("NormalizationModuleName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("NormalizationModuleName2")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("NormalizationRoleName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizationRoleName2")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Permissions")
@@ -377,7 +377,7 @@ namespace CmfDemo.Migrations
 
             modelBuilder.Entity("ReheeCmf.ContextModule.Entities.TenantIdentityUserClaim", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("ReheeCmf.ContextModule.Entities.ReheeCmfBaseUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -386,7 +386,7 @@ namespace CmfDemo.Migrations
 
             modelBuilder.Entity("ReheeCmf.ContextModule.Entities.TenantIdentityUserLogin", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("ReheeCmf.ContextModule.Entities.ReheeCmfBaseUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -401,7 +401,7 @@ namespace CmfDemo.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("ReheeCmf.ContextModule.Entities.ReheeCmfBaseUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -410,7 +410,7 @@ namespace CmfDemo.Migrations
 
             modelBuilder.Entity("ReheeCmf.ContextModule.Entities.TenantIdentityUserToken", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("ReheeCmf.ContextModule.Entities.ReheeCmfBaseUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

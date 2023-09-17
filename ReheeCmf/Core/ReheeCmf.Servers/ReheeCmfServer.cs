@@ -237,11 +237,8 @@ namespace System
       }
       foreach (var m in modules)
       {
-        if (m.WithPermission)
-        {
-          services.AddSingleton(m.GetType(), m);
-          ModuleOption.SetUpModule(m.ModuleName, m.GetType(), m.AddAssembly);
-        }
+        services.AddSingleton(m.GetType(), m);
+        ModuleOption.SetUpModule(m.ModuleName, m.GetType(), m.AddAssembly);
       }
 
       Func<IApiVersionDescriptionProvider?> apiVersionDescriptionProvider = () =>

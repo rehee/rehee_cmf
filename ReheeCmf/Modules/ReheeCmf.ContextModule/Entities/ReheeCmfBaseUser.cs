@@ -12,5 +12,7 @@ namespace ReheeCmf.ContextModule.Entities
 
 
     public Guid? TenantID { get; set; }
+
+    public virtual ICollection<TenantIdentityUserClaim> Claims { get; set; }
   }
 }

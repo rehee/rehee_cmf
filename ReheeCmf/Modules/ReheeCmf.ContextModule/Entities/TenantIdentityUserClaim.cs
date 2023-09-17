@@ -11,5 +11,6 @@ namespace ReheeCmf.ContextModule.Entities
   public class TenantIdentityUserClaim : IdentityUserClaim<string>, IWithTenant
   {
     public Guid? TenantID { get; set; }
+
   }
 }

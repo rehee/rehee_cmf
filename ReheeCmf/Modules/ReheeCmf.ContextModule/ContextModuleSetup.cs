@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ReheeCmf.Attributes;
@@ -9,6 +10,7 @@ using ReheeCmf.ContextModule.Contexts;
 using ReheeCmf.ContextModule.Interceptors;
 using ReheeCmf.ContextModule.Managers;
 using ReheeCmf.ContextModule.Providers;
+using ReheeCmf.ContextModule.Services;
 using ReheeCmf.Handlers.ContextHandlers;
 using ReheeCmf.Modules.Options;
 
@@ -69,7 +71,7 @@ namespace ReheeCmf.ContextModule
 
         if (typeof(TUser) != typeof(IdentityUser))
         {
-          services.AddDefaultUser<TUser>(sp =>
+          services.AddDefaultUser<TUser, TContext>(sp =>
             sp.GetService<TContext>()!);
         }
 
@@ -82,11 +84,18 @@ namespace ReheeCmf.ContextModule
 
       return services;
     }
-    public static IServiceCollection AddDefaultUser<TUser>(this IServiceCollection services, Func<IServiceProvider, DbContext> dbContext)
+    public static IServiceCollection AddDefaultUser<TUser, TContext>(this IServiceCollection services, Func<IServiceProvider, DbContext> dbContext)
       where TUser : IdentityUser, new()
+      where TContext : DbContext
     {
+
       services.AddScoped<IUserStore<TUser>>(sp =>
-          new UserStore<TUser>(dbContext(sp), sp.GetService<IdentityErrorDescriber>()));
+      {
+        return new UserStore<TUser, TenantIdentityRole, TContext, string, TenantIdentityUserClaim, TenantIdentityUserRole, TenantIdentityUserLogin,
+          TenantIdentityUserToken, TenantIdentityRoleClaim>(
+            sp.GetService<TContext>()!, sp.GetService<IdentityErrorDescriber>());
+      });
+
       services.AddScoped<IPasswordHasher<TUser>>(sp =>
         new PasswordHasher<TUser>(sp.GetService<IOptions<PasswordHasherOptions>>()));
       services.AddScoped<IEnumerable<IUserValidator<TUser>>>(sp =>
@@ -114,7 +123,7 @@ namespace ReheeCmf.ContextModule
          ));
 
       services.AddScoped<IUserClaimsPrincipalFactory<TUser>>(sp =>
-        new UserClaimsPrincipalFactory<TUser>(
+        new CmfUserClaimsPrincipalFactory<TUser>(sp,
            sp.GetService<UserManager<TUser>>()!,
            sp.GetService<IOptions<IdentityOptions>>()!
           ));

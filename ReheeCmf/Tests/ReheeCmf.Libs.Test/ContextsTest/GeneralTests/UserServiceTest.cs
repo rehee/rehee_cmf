@@ -43,7 +43,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
 
         if (typeof(ReheeCmfBaseUser) != typeof(IdentityUser))
         {
-          services.AddDefaultUser<ReheeCmfBaseUser>(sp =>
+          services.AddDefaultUser<ReheeCmfBaseUser, CmfIdentityContext<ReheeCmfBaseUser>>(sp =>
             sp.GetService<CmfIdentityContext<ReheeCmfBaseUser>>()!);
         }
         services.AddSingleton<UserManagementOption>(sp => UserManagementOption.Detault);

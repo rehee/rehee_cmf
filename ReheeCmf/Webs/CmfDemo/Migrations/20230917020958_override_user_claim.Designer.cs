@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CmfDemo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230915234811_add-username")]
-    partial class addusername
+    [Migration("20230917020958_override_user_claim")]
+    partial class override_user_claim
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -193,6 +193,9 @@ namespace CmfDemo.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ReheeCmfBaseUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<Guid?>("TenantID")
                         .HasColumnType("uniqueidentifier");
 
@@ -201,6 +204,8 @@ namespace CmfDemo.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ReheeCmfBaseUserId");
 
                     b.HasIndex("UserId");
 
@@ -378,6 +383,10 @@ namespace CmfDemo.Migrations
             modelBuilder.Entity("ReheeCmf.ContextModule.Entities.TenantIdentityUserClaim", b =>
                 {
                     b.HasOne("ReheeCmf.ContextModule.Entities.ReheeCmfBaseUser", null)
+                        .WithMany("Claims")
+                        .HasForeignKey("ReheeCmfBaseUserId");
+
+                    b.HasOne("ReheeCmf.ContextModule.Entities.ReheeCmfBaseUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -415,6 +424,11 @@ namespace CmfDemo.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ReheeCmf.ContextModule.Entities.ReheeCmfBaseUser", b =>
+                {
+                    b.Navigation("Claims");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,6 +1,8 @@
-﻿using ReheeCmf.ContextComponent;
+﻿using Microsoft.EntityFrameworkCore;
+using ReheeCmf.ContextComponent;
 using ReheeCmf.ContextModule.Components;
 using ReheeCmf.Handlers.ContextHandlers;
+using System.Reflection.Emit;
 
 namespace ReheeCmf.ContextModule.Contexts
 {
@@ -34,6 +36,8 @@ namespace ReheeCmf.ContextModule.Contexts
     protected override void OnModelCreating(ModelBuilder builder)
     {
       base.OnModelCreating(builder);
+      builder.Entity<TenantIdentityUserClaim>().HasKey(b => b.Id);
+
     }
 
     public override void Dispose()
@@ -63,6 +67,7 @@ namespace ReheeCmf.ContextModule.Contexts
     }
 
     public DbSet<TenantEntity> Tenants { get; set; }
+    public override DbSet<TenantIdentityUserClaim> UserClaims { get; set; }
     public DbSet<RoleBasedPermission> RoleBasedPermissions { get; set; }
 
   }
