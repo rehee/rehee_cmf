@@ -12,12 +12,15 @@ namespace System
   {
     public static async Task WebStartUp<T>(string[] args) where T : ServiceModule, new()
     {
-      
       var root = new T();
+      //TODO Module check need refectory. 
       var modules = ModuleHelper.GetAllService(root).ToArray();
+      //TODO this version is web host only. need implement for general host
       var builder = WebApplication.CreateBuilder(args);
 
-      var crudOption = builder.Configuration.GetOption<CrudOption>();
+      var crudOption = builder.Configuration.GetOption<CrudOption>() ?? new CrudOption();
+      builder.Services.AddSingleton<CrudOption>(crudOption);
+
       var context = new ServiceConfigurationContext
       {
         Services = builder.Services,
@@ -25,26 +28,19 @@ namespace System
         CrudOptions = crudOption,
         WebHost = builder.WebHost
       };
-      builder.Services.AddSingleton<CrudOption>(crudOption);
-      var serverModule = modules.Select(b =>
-      {
-        if (b is ServiceModule s)
-        {
-          return s;
-        }
-        return null;
-      }).Where(b => b != null).ToArray();
+
+      var serverModule = modules.Where(b => b is ServiceModule).Select(b => (b as ServiceModule)!).ToArray();
       foreach (var m in serverModule)
       {
         m.Constructor(context);
       }
       CmfRegister.Init();
-      ModuleHelper.BlizorAssemblies = serverModule.SelectMany(b => b.BlazorAssemblies()).Distinct().ToArray();
+      ModuleHelper.BlizorAssemblies = serverModule.SelectMany(b => b.BlazorAssemblies()).DistinctBy(b => b.FullName).ToArray();
       var configuration = context.Configuration;
       var services = context.Services;
-      var tenent = context.Configuration.GetOption<TenantSetting>() ?? new TenantSetting();
-      context.Tenant = tenent;
-      context.Services.AddSingleton<TenantSetting>(tenent);
+      var tenant = context.Configuration.GetOption<TenantSetting>() ?? new TenantSetting();
+      context.Tenant = tenant;
+      context.Services.AddSingleton<TenantSetting>(tenant);
 
       services.AddScoped<IGetCurrentTenant, HttpRequestGetCurrentTenant>();
       services.AddSingleton<IAsyncQuery, EFCoreAsyncQuery>();
@@ -57,11 +53,9 @@ namespace System
       if (apiSetting.RSAOption == null || string.IsNullOrEmpty(apiSetting.RSAOption.RSAPrivateKey) || string.IsNullOrEmpty(apiSetting.RSAOption.RSAPublicKey))
       {
         apiSetting.RSAOption = new RSAOption();
-        using (var ras = new RSACryptoServiceProvider())
-        {
-          apiSetting.RSAOption.RSAPrivateKey = ras.ToXmlString(true);
-          apiSetting.RSAOption.RSAPublicKey = ras.ToXmlString(false);
-        }
+        using var ras = new RSACryptoServiceProvider();
+        apiSetting.RSAOption.RSAPrivateKey = ras.ToXmlString(true);
+        apiSetting.RSAOption.RSAPublicKey = ras.ToXmlString(false);
       }
       services.AddSingleton<ApiSetting>(apiSetting);
       services.AddHttpContextAccessor();
@@ -73,9 +67,9 @@ namespace System
       var fileOption = configuration.GetOption<FileServiceOption>() ?? new FileServiceOption();
       services.AddSingleton<FileServiceOption>(fileOption);
 
-      if (!tenent.CustomService)
+      if (!tenant.CustomService)
       {
-        if (!tenent.TenentContext)
+        if (!tenant.TenentContext)
         {
           context.Services.AddScoped<ITenantStorage, SettingTenantStorage>();
         }
@@ -83,7 +77,7 @@ namespace System
       }
 
 
-
+      //TODO: Need Clean these logic
       var serviceMapping = new Dictionary<string, Func<HttpClient>>();
 
       services.AddSingleton<IServiceModuleMapping, ServiceModuleMapping>();
@@ -99,11 +93,12 @@ namespace System
       //  // 配置 HttpClientHandler 选项
       //})
       ;
+
       context.MvcBuilder = context.Services.AddControllersWithViews(option =>
       {
         option.Filters.Add(typeof(CmfExceptionFilter));
-        //option.Filters.Add(typeof(CmfMultiTenancyFilter));
-        //option.Filters.Add(typeof(CmfAuthorizationFilter));
+        option.Filters.Add(typeof(CmfMultiTenancyFilter));
+        option.Filters.Add(typeof(CmfAuthorizationFilter));
 
 
         foreach (var m in serverModule)
@@ -117,7 +112,7 @@ namespace System
         options.AreaViewLocationFormats.Add("/Areas/{2}/Views/Shared/{0}.cshtml");
       });
       context.MvcBuilder.AddCmfOData();
-      //TODO: Authorize model need refactory
+      //TODO: Authorize model need refectory
       var authorizeOption = configuration.GetOption<AuthorizeOption>() ?? new AuthorizeOption();
       services.AddSingleton<AuthorizeOption>(authorizeOption);
       //services.AddSingleton<IToken<IAuthorize>, EmptyIAuthorizeToken>();
@@ -226,8 +221,8 @@ namespace System
       //}
       var reverseModule = serverModule.Reverse();
 
-      
-      
+
+
       services.AddScoped<IGetRequestTokenService, GetRequestTokenService>();
 
       foreach (var m in reverseModule)
@@ -335,9 +330,8 @@ namespace System
       {
         await s.PostApplicationInitializationAsync(context);
       }
-
+      
       app.Run();
-
     }
   }
 }

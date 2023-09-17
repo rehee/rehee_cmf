@@ -13,12 +13,16 @@ using System.Net;
 
 namespace ReheeCmf.EntityModule.Controllers.v1_0
 {
-  public abstract class DataApiControllerBase<T, TKey> : ReheeCmfController where T : class, IId<TKey> where TKey : IEquatable<TKey>
+  public abstract class DataApiControllerBase<T, TKey> : ReheeCmfController, IWithEntityName where T : class, IId<TKey> where TKey : IEquatable<TKey>
   {
     protected readonly IAsyncQuery asyncQuery;
+
+    public string EntityName { get; protected set; }
+
     public DataApiControllerBase(IServiceProvider sp) : base(sp)
     {
       asyncQuery = sp.GetService<IAsyncQuery>()!;
+      EntityName = typeof(T).Name;
     }
     [EnableQuery()]
     [HttpGet]

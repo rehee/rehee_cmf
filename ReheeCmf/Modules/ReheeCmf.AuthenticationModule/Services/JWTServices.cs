@@ -519,25 +519,25 @@ namespace ReheeCmf.AuthenticationModule.Services
         {
           foreach (var m in moduleMap.Values)
           {
-            var p = await m.GetRoleBasedPermissionAsync(db, roles, null);
-            if (p.Success)
+            var p = await m!.GetRoleBasedPermissionAsync(db!, roles, "");
+            if (p.Success && !string.IsNullOrEmpty(p.Content))
             {
               permissions.AddRange(p.Content.Split(','));
             }
           }
-          var valueReadyToCache = permissions.ToArray();
+          var valueReadyToCache = permissions.Distinct().ToArray();
           rolePermissionCache.AddOrUpdate(roleKey, valueReadyToCache, (a, b) => valueReadyToCache);
         }
 
         claims.Add(new Claim(ConstOptions.PermissionType, String.Join(',', permissions)));
-        claims.Add(new Claim(ConstOptions.UserEmail, user.Email));
+        claims.Add(new Claim(ConstOptions.UserEmail, user.Email ?? ""));
         string avatar = String.Empty;
         try
         {
           if (user.GetType().IsImplement(typeof(ICmfUser)))
           {
             var cmfUser = user as ICmfUser;
-            avatar = cmfUser.Avatar;
+            avatar = cmfUser.Avatar ?? "";
           }
         }
         catch (Exception ex)

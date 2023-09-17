@@ -15,6 +15,7 @@ using ReheeCmf.ContextModule.Entities;
 using ReheeCmf.FileModule;
 using ReheeCmf.Modules.Permissions;
 using ReheeCmf.AuthenticationModule;
+using ReheeCmf.Commons.Jsons.Options;
 
 namespace ReheeCmf
 {
@@ -32,6 +33,25 @@ namespace ReheeCmf
         ModuleDependOn.New<CmfFileModule>()
         );
     }
+
+    public override void JsonConfiguration(ServiceConfigurationContext context)
+    {
+      base.JsonConfiguration(context);
+      context.MvcBuilder!
+        .AddJsonOptions(options =>
+        {
+          JsonOption.SetDefaultJsonSerializerOptions(options.JsonSerializerOptions);
+        });
+      //  .AddNewtonsoftJson(opts =>
+      //{
+      //  opts.SerializerSettings.ContractResolver = new DefaultContractResolver();
+      //  opts.SerializerSettings.Converters.Add(new StringEnumConverter());
+      //  opts.SerializerSettings.Converters.Add(new IsoDateTimeConverter2());
+      //  opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+      //});
+
+    }
+
     public override void SwaggerConfiguration(SwaggerGenOptions setupAction)
     {
       setupAction.SwaggerDoc("v0", new Microsoft.OpenApi.Models.OpenApiInfo()

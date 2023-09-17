@@ -13,11 +13,7 @@ namespace ReheeCmf.Entities
     public string? ModuleName { get; set; }
     public string? RoleName { get; set; }
     public string? Permissions { get; set; }
-    //[IgnoreUpdate]
-    //[IgnoreMapping]
     public string? NormalizationModuleName { get; set; }
-    //[IgnoreUpdate]
-    //[IgnoreMapping]
     public string? NormalizationRoleName { get; set; }
     [NotMapped]
     public string[] PermissionList

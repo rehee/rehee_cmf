@@ -48,7 +48,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
         }
         services.AddSingleton<UserManagementOption>(sp => UserManagementOption.Detault);
         services.AddScoped<IUserService, UserService<ReheeCmfBaseUser, TenantIdentityRole, TenantIdentityUserRole>>();
-
+        services!.AddScoped<IUserRoleService, CmfUserRoleService<ReheeCmfBaseUser, TenantIdentityRole>>();
       });
     }
 

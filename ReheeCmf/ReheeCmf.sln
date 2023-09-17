@@ -38,6 +38,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{24C91343-5687-4DBA-8DCB-F07F22245E51}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		version.props = version.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReheeCmf.EntityModule", "Modules\ReheeCmf.EntityModule\ReheeCmf.EntityModule.csproj", "{8DBB944C-65F0-4735-B9E0-4617544ED4DE}"
@@ -46,7 +47,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReheeCmf.ODatas", "Core\Reh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReheeCmf.UserManagementModule", "Modules\ReheeCmf.UserManagementModule\ReheeCmf.UserManagementModule.csproj", "{4B33C9C9-0F6F-4472-AEB9-58040EBA8AC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReheeCmf.FileModule", "Modules\ReheeCmf.FileModule\ReheeCmf.FileModule.csproj", "{93FDE38B-B577-40F3-95D1-7288A69A36A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReheeCmf.FileModule", "Modules\ReheeCmf.FileModule\ReheeCmf.FileModule.csproj", "{93FDE38B-B577-40F3-95D1-7288A69A36A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

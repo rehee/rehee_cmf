@@ -14,14 +14,14 @@ namespace ReheeCmf.Servers.Services
     private readonly ITenantStorage storage;
     private readonly FileServiceOption fileOption;
 
-    private Tenant tenant { get; set; }
+    private Tenant? tenant { get; set; }
     public TenantService(IGetCurrentTenant getCurrentTenant, ITenantStorage storage, FileServiceOption fileOption)
     {
       this.getCurrentTenant = getCurrentTenant;
       this.storage = storage;
       this.fileOption = fileOption;
     }
-    public Tenant GetTenant(string name = null)
+    public Tenant? GetTenant(string? name = null)
     {
       if (tenant != null)
       {
@@ -44,7 +44,7 @@ namespace ReheeCmf.Servers.Services
       }
       return null;
     }
-    public Tenant GetTenantById(Guid? tenantId = null)
+    public Tenant? GetTenantById(Guid? tenantId = null)
     {
       if (tenant != null)
       {

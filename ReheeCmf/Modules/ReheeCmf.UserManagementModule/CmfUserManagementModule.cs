@@ -29,6 +29,7 @@ namespace ReheeCmf.UserManagementModule
     public override async Task ConfigureServicesAsync(ServiceConfigurationContext context)
     {
       await base.ConfigureServicesAsync(context);
+      context.Services!.AddScoped<IUserRoleService, CmfUserRoleService<TUser, TRole>>();
       context.Services!.AddScoped<IUserService, UserService<TUser, TRole, TUserRole>>();
 
     }

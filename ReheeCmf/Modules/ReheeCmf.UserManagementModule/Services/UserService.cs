@@ -22,12 +22,14 @@ namespace ReheeCmf.UserManagementModule.Services
     private readonly UserManager<TUser> userManager;
     private readonly RoleManager<TRole> roleManager;
     private readonly IServiceProvider sp;
+    private readonly IUserRoleService userRoleService;
     public UserService(IServiceProvider sp)
     {
       option = sp.GetService<UserManagementOption>();
       this.userManager = sp.GetService<UserManager<TUser>>()!;
       this.roleManager = sp.GetService<RoleManager<TRole>>()!;
       this.sp = sp;
+      this.userRoleService = sp.GetService<IUserRoleService>()!;
     }
     protected virtual async Task<string> hashPasswordAsync(TUser? entity, string? password)
     {
@@ -85,15 +87,13 @@ namespace ReheeCmf.UserManagementModule.Services
     {
       properties.TryGetValueStringKey(UserManagementOption.PasswordProperty, out var password);
       var entity = new TUser();
-      StandardInputHelper.UpdateProperty(entity, 
+      StandardInputHelper.UpdateProperty(entity,
         properties.ToDictionWithKeys(option!.UserDetailPropertyCreate!.Concat(new string[] { option.RoleProperty! })));
       var result = String.IsNullOrEmpty(password) ? await userManager.CreateAsync(entity) : await userManager.CreateAsync(entity, password);
       checkResult(result);
-      var afterCreateUser = sp.GetService<IAfterUserCreate>();
-      if (afterCreateUser != null)
-      {
-        await afterCreateUser.AfterUserCreateAsync(entity, properties);
-      }
+
+
+      await userRoleService.UserRoleAsync(entity, properties);
       return entity.Id;
     }
 
@@ -195,9 +195,12 @@ namespace ReheeCmf.UserManagementModule.Services
         StatusException.Throw(HttpStatusCode.NotFound);
 
       }
-      StandardInputHelper.UpdateProperty(entity, 
+      StandardInputHelper.UpdateProperty(entity,
         properties.ToDictionWithKeys(option!.UserDetailPropertyEdit!.Concat(new string[] { option.RoleProperty! })));
-      await userManager.UpdateAsync(entity!);
+
+      var result = await userManager.UpdateAsync(entity!);
+      checkResult(result);
+      await userRoleService.UserRoleAsync(entity!, properties);
       return true;
     }
   }

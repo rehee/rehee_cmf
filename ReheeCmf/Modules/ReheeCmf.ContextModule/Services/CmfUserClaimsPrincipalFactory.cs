@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using ReheeCmf.Commons.Consts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,34 +19,22 @@ namespace ReheeCmf.ContextModule.Services
       context = sp.GetService<IContext>();
     }
 
-    //protected override async Task<ClaimsIdentity> GenerateClaimsAsync(TUser user)
-    //{
-    //  var userId = await UserManager.GetUserIdAsync(user).ConfigureAwait(false);
-    //  var userName = await UserManager.GetUserNameAsync(user).ConfigureAwait(false);
-    //  var id = new ClaimsIdentity("Identity.Application", // REVIEW: Used to match Application scheme
-    //      Options.ClaimsIdentity.UserNameClaimType,
-    //      Options.ClaimsIdentity.RoleClaimType);
-    //  id.AddClaim(new Claim(Options.ClaimsIdentity.UserIdClaimType, userId));
-    //  id.AddClaim(new Claim(Options.ClaimsIdentity.UserNameClaimType, userName!));
-    //  if (UserManager.SupportsUserEmail)
-    //  {
-    //    var email = await UserManager.GetEmailAsync(user).ConfigureAwait(false);
-    //    if (!string.IsNullOrEmpty(email))
-    //    {
-    //      id.AddClaim(new Claim(Options.ClaimsIdentity.EmailClaimType, email));
-    //    }
-    //  }
-    //  var claims = await context.Query<TenantIdentityUserClaim>(true).Where(b => b.UserId == userId).ToArrayAsync();
-    //  //if (UserManager.SupportsUserSecurityStamp)
-    //  //{
-    //  //  id.AddClaim(new Claim(Options.ClaimsIdentity.SecurityStampClaimType,
-    //  //      await UserManager.GetSecurityStampAsync(user).ConfigureAwait(false)));
-    //  //}
-    //  //if (UserManager.SupportsUserClaim)
-    //  //{
-    //  //  id.AddClaims(await UserManager.GetClaimsAsync(user).ConfigureAwait(false));
-    //  //}
-    //  return id;
-    //}
+    protected override async Task<ClaimsIdentity> GenerateClaimsAsync(TUser user)
+    {
+      var result = await base.GenerateClaimsAsync(user);
+      if (!result.Claims.Any(c => c.Type == ConstOptions.RoleType))
+      {
+        var roles = await UserManager.GetRolesAsync(user);
+        if (roles?.Any() == true)
+        {
+          foreach (var role in roles)
+          {
+            result.AddClaim(new Claim(ConstOptions.RoleType, role));
+          }
+        }
+
+      }
+      return result;
+    }
   }
 }

@@ -21,7 +21,7 @@ namespace ReheeCmf.Helpers
       var _settings = new JsonSerializerSettings() { DateParseHandling = DateParseHandling.None };
       var source = JsonConvert.DeserializeObject<JObject>(sourceJson, _settings);
       var content = JsonConvert.DeserializeObject<JObject>(patched, _settings);
-      source.Merge(content, new JsonMergeSettings()
+      source!.Merge(content, new JsonMergeSettings()
       {
         MergeArrayHandling = MergeArrayHandling.Replace,
         MergeNullValueHandling = MergeNullValueHandling.Merge,
