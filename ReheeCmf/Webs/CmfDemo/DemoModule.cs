@@ -11,6 +11,8 @@ using ReheeCmf.DTOProcessors;
 using ReheeCmf.DTOProcessors.Processors;
 using ReheeCmf.EntityModule;
 using ReheeCmf.Modules;
+using ReheeCmf.Modules.Helpers;
+using ReheeCmf.Modules.Permissions;
 using ReheeCmf.ODatas;
 using ReheeCmf.Services;
 using ReheeCmf.UserManagementModule;
@@ -27,10 +29,6 @@ namespace CmfDemo
     {
       await base.ConfigureServicesAsync(context);
       context.Services.AddTypeQuery<Entity1DTO, Entity1DTOProcessor>();
-
-
-      
-
     }
     public override async Task ApplicationInitializationAsync(ServiceConfigurationContext context)
     {

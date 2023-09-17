@@ -1,12 +1,14 @@
-﻿using System;
+﻿using ReheeCmf.Modules.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReheeCmf.UserManagementModule.Consts
+namespace ReheeCmf.Modules.Permissions
 {
-  public static class ConstCmfUserManagementModule
+  [ModulePermission]
+  public class ConstCmfUserManagementModule : IModulePermission
   {
     public const string PermissionReadUsers = "ConstCmfUserManagementModule_PermissionReadUsers";
     public const string PermissionCreateUser = "ConstCmfUserManagementModule_PermissionCreateUser";
@@ -17,6 +19,7 @@ namespace ReheeCmf.UserManagementModule.Consts
     public const string PermissionResetUserPassword = "ConstCmfUserManagementModule_PermissionResetUserPassword";
     public const string PermissionReadUserRolePermission = "ConstCmfUserManagementModule_PermissionReadUserRolePermission";
 
-
   }
+
+
 }

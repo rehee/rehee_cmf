@@ -7,8 +7,8 @@ namespace ReheeCmf.ContextModule
     where TContext : DbContext
     where TUser : IdentityUser, ICmfUser, new()
   {
-    public override string ModuleTitle => "CmfContextModule";
-    public override string ModuleName => "CmfContextModule";
+    public override string ModuleTitle => ConstModule.CmfContextModule;
+    public override string ModuleName => ConstModule.CmfContextModule;
     
 
     public override Task ConfigureServicesAsync(ServiceConfigurationContext context)

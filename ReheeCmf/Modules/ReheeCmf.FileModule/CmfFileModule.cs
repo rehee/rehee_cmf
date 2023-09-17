@@ -11,9 +11,9 @@ namespace ReheeCmf.FileModule
 {
   public class CmfFileModule : ServiceModule
   {
-    public override string ModuleTitle => nameof(CmfFileModule);
+    public override string ModuleTitle => ConstModule.CmfFileModule;
 
-    public override string ModuleName => nameof(CmfFileModule);
+    public override string ModuleName => ConstModule.CmfFileModule;
 
     public override async Task ConfigureServicesAsync(ServiceConfigurationContext context)
     {

@@ -5,6 +5,7 @@ using ReheeCmf.Commons.DTOs;
 using ReheeCmf.Modules;
 using ReheeCmf.Modules.Controllers;
 using ReheeCmf.Modules.Options;
+using ReheeCmf.Modules.Permissions;
 using ReheeCmf.StandardInputs.Properties;
 
 namespace ReheeCmf.AuthenticationModule.Controllers.v1._0
@@ -22,7 +23,7 @@ namespace ReheeCmf.AuthenticationModule.Controllers.v1._0
     }
 
     [HttpGet("{roleName}")]
-    [CmfAuthorize(EntityNameForce = ConstAuthentication.PermissionReadRoleBasedAccess, EntityRoleBase = true)]
+    [CmfAuthorize(EntityNameForce = ConstCmfAuthenticationModule.ReadRoleBasedAccess, EntityRoleBase = true)]
     public async Task<IActionResult> Get(string roleName, CancellationToken ct)
     {
       var property = new Dictionary<string, StandardProperty[]>();
@@ -41,7 +42,7 @@ namespace ReheeCmf.AuthenticationModule.Controllers.v1._0
     }
 
     [HttpPut("{roleName}")]
-    [CmfAuthorize(EntityNameForce = ConstAuthentication.PermissionUpdateRoleBasedAccess, EntityRoleBase = true)]
+    [CmfAuthorize(EntityNameForce = ConstCmfAuthenticationModule.UpdateRoleBasedAccess, EntityRoleBase = true)]
     public async Task<IActionResult> Put(
       string roleName, Dictionary<string, StandardProperty[]> properties, CancellationToken ct)
     {

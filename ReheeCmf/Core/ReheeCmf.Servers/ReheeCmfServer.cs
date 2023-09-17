@@ -226,8 +226,8 @@ namespace System
       //}
       var reverseModule = serverModule.Reverse();
 
-      services.AddScoped<IJWTService>(sp => default(IJWTService));
-      services.AddScoped<TokenManagement>(sp => new TokenManagement());
+      
+      
       services.AddScoped<IGetRequestTokenService, GetRequestTokenService>();
 
       foreach (var m in reverseModule)

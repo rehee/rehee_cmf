@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReheeCmf.Commons.Consts
+namespace ReheeCmf.Modules.Permissions
 {
-  public class ConstAuthentication
+  public interface IModulePermission
   {
-    public const string SavedTokenHeader = "access_token";
   }
 }

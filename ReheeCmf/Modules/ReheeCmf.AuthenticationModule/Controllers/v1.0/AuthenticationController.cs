@@ -20,7 +20,7 @@ namespace ReheeCmf.AuthenticationModule.Controllers.v1._0
 
     public AuthenticationController(IJWTService jwt, IServiceProvider sp) : base(sp)
     {
-      this.jwt = jwt;
+      this.jwt = sp.GetService<IJWTService>();
     }
 
     [HttpPost("GetToken")]

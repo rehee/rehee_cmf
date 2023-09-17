@@ -19,9 +19,9 @@ namespace ReheeCmf.EntityModule
 {
   public class CmfEntityModule : ServiceModule
   {
-    public override string ModuleTitle => nameof(CmfEntityModule);
+    public override string ModuleTitle => ConstModule.CmfEntityModule;
 
-    public override string ModuleName => nameof(CmfEntityModule);
+    public override string ModuleName => ConstModule.CmfEntityModule;
 
     public override Task<IEnumerable<string>> GetPermissions(IContext? db, TokenDTO? user, CancellationToken ct = default)
     {

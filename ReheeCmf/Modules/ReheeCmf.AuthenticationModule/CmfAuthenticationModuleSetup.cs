@@ -16,16 +16,11 @@ namespace ReheeCmf.AuthenticationModule
   public static class CmfAuthenticationModuleSetup
   {
     public static IServiceCollection AddCmfAuthentication<TUser>(
-      this IServiceCollection services, IConfiguration configuration, CrudOption? optionCrud = null)
+      this IServiceCollection services, IConfiguration configuration)
     where TUser : IdentityUser, ICmfUser, new()
     {
-      var tokenConfig = configuration.GetOption<TokenManagement>();
+      var tokenConfig = configuration.GetOption<TokenManagement>() ?? new TokenManagement();
       services.AddSingleton<TokenManagement>(tokenConfig);
-      if (optionCrud == null)
-      {
-        optionCrud = configuration.GetOption<CrudOption>();
-        services.AddSingleton<CrudOption>(optionCrud);
-      }
       var tokenValidationParameters = new TokenValidationParameters
       {
         ValidateIssuerSigningKey = true,
@@ -50,18 +45,18 @@ namespace ReheeCmf.AuthenticationModule
       services.AddScoped<IUserTokenStorage, UserTokenStorage>();
       services.AddScoped<IUserLockendStorage, UserLockendStorage>();
       services.AddScoped<IJWTService, JWTService<TUser>>();
-      //  (sp =>
-      //{
-      //  return new JWTService<TUser>(
-      //    sp,
-      //    sp.GetService<UserManager<TUser>>(),
-      //    sp.GetService<SignInManager<TUser>>(),
-      //    tokenConfig,
-      //    sp.GetService<IHttpContextAccessor>(),
-      //    optionCrud,
-      //    sp.GetService<IUserTokenStorage>(),
-      //    sp.GetService<IUserLockendStorage>());
-      //});
+    //  (sp =>
+    //{
+    //  return new JWTService<TUser>(
+    //    sp,
+    //    sp.GetService<UserManager<TUser>>(),
+    //    sp.GetService<SignInManager<TUser>>(),
+    //    tokenConfig,
+    //    sp.GetService<IHttpContextAccessor>(),
+    //    sp.GetService<CrudOption>(),
+    //    sp.GetService<IUserTokenStorage>(),
+    //    sp.GetService<IUserLockendStorage>());
+    //});
       services.AddScoped<IJWTService<TUser>>(sp =>
       {
         var service = sp.GetService<IJWTService>();

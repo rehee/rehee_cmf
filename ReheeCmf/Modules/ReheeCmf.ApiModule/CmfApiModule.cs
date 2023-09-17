@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Identity;
 using ReheeCmf.Entities;
 using ReheeCmf.ContextModule.Entities;
 using ReheeCmf.FileModule;
+using ReheeCmf.Modules.Permissions;
+using ReheeCmf.AuthenticationModule;
 
 namespace ReheeCmf
 {
@@ -25,6 +27,7 @@ namespace ReheeCmf
       return ModuleHelper.Depends(
         ModuleDependOn.New<CmfContextModule<TContext, TUser>>(),
         ModuleDependOn.New<CmfEntityModule>(),
+        ModuleDependOn.New<CmfAuthenticationModule<TUser>>(),
         ModuleDependOn.New<CmfUserManagementModule<TUser, TenantIdentityRole, TenantIdentityUserRole>>(),
         ModuleDependOn.New<CmfFileModule>()
         );

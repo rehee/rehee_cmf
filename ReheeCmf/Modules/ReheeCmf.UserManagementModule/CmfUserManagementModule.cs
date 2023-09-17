@@ -13,6 +13,8 @@ using ReheeCmf.ODatas.Helpers;
 using ReheeCmf.ODatas.Components;
 using Microsoft.OData.ModelBuilder;
 using System.Xml.Linq;
+using ReheeCmf.Modules.Helpers;
+using ReheeCmf.Modules.Permissions;
 namespace ReheeCmf.UserManagementModule
 {
   public class CmfUserManagementModule<TUser, TRole, TUserRole> : ServiceModule
@@ -20,9 +22,9 @@ namespace ReheeCmf.UserManagementModule
     where TRole : IdentityRole, new()
     where TUserRole : IdentityUserRole<string>, new()
   {
-    public override string ModuleTitle => "CmfUserManagementModule";
+    public override string ModuleTitle => ConstModule.CmfUserManagementModule;
 
-    public override string ModuleName => "CmfUserManagementModule";
+    public override string ModuleName => ConstModule.CmfUserManagementModule;
 
     public override async Task ConfigureServicesAsync(ServiceConfigurationContext context)
     {
@@ -68,11 +70,7 @@ namespace ReheeCmf.UserManagementModule
 
     public override Task<IEnumerable<string>> GetPermissions(IContext? db, TokenDTO? user, CancellationToken ct = default)
     {
-      IEnumerable<string> permissions = new string[]
-      {
-
-      };
-      return Task.FromResult(permissions);
+      return Task.FromResult(ModulePermissionComponentHelper.GetPermission<ConstCmfUserManagementModule>()!);
     }
   }
 
@@ -86,6 +84,5 @@ namespace ReheeCmf.UserManagementModule
       entitySet.Ignore(b => b.ConcurrencyStamp);
       entitySet.Ignore(b => b.ConcurrencyStamp);
     }
-
   }
 }
