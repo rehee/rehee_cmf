@@ -26,13 +26,13 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     [CmfAuthorize(EntityName = "entityName", EntityRoleBase = true)]
     public IActionResult Query(string entityName)
     {
-      //queryMemoryCache.SetValue(new QueryMemoryCache(true));
+      queryMemoryCache.SetValue(new Caches.QuerySecondCache(true));
       var entity = EntityRelationHelper.GetEntityTypeAndKey(entityName);
       if (entity == null)
       {
         return NotFound();
       }
-      return Ok(context!.Query(entity.Value.entityType, true));
+      return Ok(context!.Query(entity.Value.entityType, true, true));
     }
     [EnableQuery()]
     [HttpGet("{entityName}/{key}/Json")]
@@ -50,7 +50,7 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
       {
         return NotFound();
       }
-      var result = context!.QueryWithKey(entity.Value.entityType, entity.Value.keyType, false, idResponse.Content!);
+      var result = context!.QueryWithKey(entity.Value.entityType, entity.Value.keyType, true, idResponse.Content!, true);
       if (result == null)
       {
         return NotFound();

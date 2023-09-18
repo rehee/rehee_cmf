@@ -10,5 +10,11 @@ namespace ReheeCmf.DTOProcessors
   {
     string? QueryKey { get; set; }
   }
-  
+
+  public interface IQueryId<T>
+  {
+    T? Id { get; set; }
+    EnumIdType IdType { get; }
+  }
+
 }

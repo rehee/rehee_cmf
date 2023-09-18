@@ -1,14 +1,33 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using ReheeCmf.Commons.Interfaces;
+﻿using ReheeCmf.Commons.Interfaces;
 using ReheeCmf.Handlers.ChangeHandlers;
-using System;
-using System.Collections.Generic;
 
 namespace ReheeCmf.ContextModule.Contexts
 {
   public class CmfRepositoryContext : IContext, ICrudTracker
   {
     protected readonly DbContext context;
+    protected ITenantContext? TenantContext
+    {
+      get
+      {
+        if (context is ITenantContext tc)
+        {
+          return tc;
+        }
+        return null;
+      }
+    }
+    protected ITokenDTOContext? TokenDTOContext
+    {
+      get
+      {
+        if (context is ITokenDTOContext tc)
+        {
+          return tc;
+        }
+        return null;
+      }
+    }
     public object Context => context;
     protected readonly IServiceProvider sp;
     protected ConcurrentDictionary<int, IChangeHandler>? EntityChangeHandlerMapper { get; set; }
@@ -20,14 +39,10 @@ namespace ReheeCmf.ContextModule.Contexts
       {
         ct.Context = this;
       }
-      EntityChangeHandlerMapper = new ConcurrentDictionary<int, IChangeHandler>();
-      scopeTenant = sp.GetService<IContextScope<Tenant>>()!;
-      tenant = scopeTenant?.Value;
-      scopeTenant!.ValueChange += ScopeTenant_ValueChange;
 
-      scopeUser = sp.GetService<IContextScope<TokenDTO>>()!;
-      user = scopeUser?.Value;
-      scopeUser!.ValueChange += CmfRepositoryContext_ValueChange;
+      EntityChangeHandlerMapper = new ConcurrentDictionary<int, IChangeHandler>();
+
+
 
       if (context != null)
       {
@@ -71,10 +86,7 @@ namespace ReheeCmf.ContextModule.Contexts
         return;
       }
       IsDispose = true;
-      scopeTenant!.ValueChange -= ScopeTenant_ValueChange;
-      tenant = null;
-      scopeUser!.ValueChange -= CmfRepositoryContext_ValueChange;
-      user = null;
+
       if (EntityChangeHandlerMapper != null)
       {
         foreach (var v in EntityChangeHandlerMapper.Values)
@@ -97,34 +109,21 @@ namespace ReheeCmf.ContextModule.Contexts
       }
     }
 
-    private void CmfRepositoryContext_ValueChange(object? sender, ContextScopeEventArgs<TokenDTO> e)
-    {
-      user = e.Value;
-    }
-    private void ScopeTenant_ValueChange(object? sender, ContextScopeEventArgs<Tenant> e)
-    {
-      tenant = e.Value;
-    }
+    public TokenDTO? User => TokenDTOContext?.User;
+    public Tenant? ThisTenant => TenantContext?.ThisTenant;
 
-    protected Tenant? tenant { get; set; }
-    private readonly IContextScope<Tenant> scopeTenant;
-    protected TokenDTO? user { get; set; }
-    private readonly IContextScope<TokenDTO> scopeUser;
-
-    public TokenDTO? User => user;
-
-    public Tenant? ThisTenant => tenant;
-
-    public bool IgnoreTenant { get; protected set; }
+    public bool IgnoreTenant => TenantContext?.IgnoreTenant ?? false;
     public void SetIgnoreTenant(bool ignore)
     {
-      IgnoreTenant = true;
+      TenantContext?.SetIgnoreTenant(ignore);
     }
     public Guid? TenantID
     {
-      get => tenant?.TenantID;
+      get => TenantContext?.TenantID;
       set { }
     }
+
+
 
     public async Task AddAsync<T>(T entity, CancellationToken cancellationToken) where T : class
     {
@@ -195,26 +194,34 @@ namespace ReheeCmf.ContextModule.Contexts
           Value = b.SelectValue,
         }).ToArray();
     }
-    public object? Query(Type type, bool noTracking)
+    public object? Query(Type type, bool noTracking, bool readCheck = false)
     {
       return this.GetMap().Methods.FirstOrDefault(b => b.Name.Equals(nameof(QueryWithType)))!
-        .MakeGenericMethod(type).Invoke(this, new object[] { noTracking });
+        .MakeGenericMethod(type).Invoke(this, new object[] { noTracking, readCheck });
     }
-    public IQueryable<T> QueryWithType<T>(bool asNoTracking) where T : class
+    public IQueryable<T> QueryWithType<T>(bool asNoTracking, bool readCheck = false) where T : class
     {
-      return Query<T>(asNoTracking);
+      if (!readCheck)
+      {
+        return Query<T>(asNoTracking);
+      }
+      return Query<T>(asNoTracking).WhereCheck<T>(User);
     }
 
-    public object? QueryWithKey(Type type, Type keyType, bool noTracking, object key)
+    public object? QueryWithKey(Type type, Type keyType, bool noTracking, object key, bool readCheck = false)
     {
       return this.GetMap().Methods.FirstOrDefault(b => b.Name.Equals(nameof(QueryWithTypeAndKey)))!
-       .MakeGenericMethod(type, keyType).Invoke(this, new object[] { noTracking, key });
+       .MakeGenericMethod(type, keyType).Invoke(this, new object[] { noTracking, key , readCheck });
     }
-    public IQueryable<T> QueryWithTypeAndKey<T, TKey>(bool asNoTracking, TKey key)
+    public IQueryable<T> QueryWithTypeAndKey<T, TKey>(bool asNoTracking, TKey key, bool readCheck = false)
       where T : class, IId<TKey>
       where TKey : IEquatable<TKey>
     {
-      return Query<T>(asNoTracking).Where(b => b.Id.Equals(key));
+      if (!readCheck)
+      {
+        return Query<T>(asNoTracking).Where(b => b.Id.Equals(key));
+      }
+      return Query<T>(asNoTracking).Where(b => b.Id.Equals(key)).WhereCheck(User);
     }
     public object? Find(Type type, object key)
     {
@@ -259,11 +266,19 @@ namespace ReheeCmf.ContextModule.Contexts
     }
     public int SaveChanges(TokenDTO? user)
     {
+      if (User == null)
+      {
+        SetUser(user);
+      }
       return context.SaveChanges();
     }
 
     public async Task<int> SaveChangesAsync(TokenDTO? user, CancellationToken ct = default)
     {
+      if (User == null)
+      {
+        SetUser(user);
+      }
       return await context.SaveChangesAsync(ct);
     }
     public void SetReadOnly(bool readOnly)
@@ -272,7 +287,7 @@ namespace ReheeCmf.ContextModule.Contexts
     }
     public void SetTenant(Tenant tenant)
     {
-      this.tenant = tenant;
+      TenantContext?.SetTenant(tenant);
     }
 
     public async Task AfterSaveChangesAsync(CancellationToken ct = default)
@@ -335,6 +350,15 @@ namespace ReheeCmf.ContextModule.Contexts
         .Aggregate((a, b) => a.Concat(b));
     }
 
-
+    public void SetUser(TokenDTO? user)
+    {
+      TokenDTOContext?.SetUser(user);
+    }
+    public Guid? CrossTenantID => TenantContext?.CrossTenant?.TenantID;
+    public Tenant? CrossTenant => TenantContext?.CrossTenant;
+    public void SetCrossTenant(Tenant? tenant)
+    {
+      TenantContext?.SetCrossTenant(tenant);
+    }
   }
 }

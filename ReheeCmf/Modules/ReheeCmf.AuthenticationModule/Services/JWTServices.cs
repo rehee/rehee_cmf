@@ -197,17 +197,20 @@ namespace ReheeCmf.AuthenticationModule.Services
         result.SetError(HttpStatusCode.Forbidden);
         return result;
       }
-      var userName = validation.Content.Claims.FirstOrDefault(b => b.Type == ClaimTypes.NameIdentifier).Value;
-      var user = await userManager.FindByNameAsync(userName);
+      var claims = validation.Content.Claims;
+      var userName = claims.FirstOrDefault(b => b.Type == ClaimTypes.NameIdentifier).Value;
 
-      if (user == null)
-      {
-        result.SetError(HttpStatusCode.Forbidden);
-        return result;
-      }
       var isImpersonate = validation.Content.Claims.Any(b => b.Type == ConstJWT.ImpersonateFlag && b.Value == "true");
       if (isImpersonate)
       {
+        var tenantIdFromToken = claims.FirstOrDefault(b => b.Type == Common.TenantIDHeader)?.Value;
+        var context = sp.GetService<IContext>();
+        if (context.TenantID?.ToString() != tenantIdFromToken)
+        {
+          result.SetError(HttpStatusCode.Forbidden);
+          return result;
+        }
+        context.SetIgnoreTenant(true);
         var tIS = sp.GetService<ITenantImpersonateService<TUser>>();
         if (tIS == null)
         {
@@ -223,6 +226,13 @@ namespace ReheeCmf.AuthenticationModule.Services
       }
       else
       {
+        var user = await userManager.FindByNameAsync(userName);
+
+        if (user == null)
+        {
+          result.SetError(HttpStatusCode.Forbidden);
+          return result;
+        }
         if (await isLockoutAsync(user.UserName))
         {
           result.SetError(HttpStatusCode.Forbidden);
@@ -490,6 +500,7 @@ namespace ReheeCmf.AuthenticationModule.Services
       }
       try
       {
+
         var claims = (await signInManager.ClaimsFactory.CreateAsync(user)).Claims.ToList();
         if (impersonate == true && user.ImpersonateRoles?.Any() == true)
         {
@@ -498,7 +509,7 @@ namespace ReheeCmf.AuthenticationModule.Services
             claims.Add(new Claim(ConstOptions.RoleType, r));
           }
         }
-        var db = sp.GetService<IContext>();
+
         var moduleMap = ModuleOption.ModuleMap.ToDictionary(b => b.Key, b => sp.GetService(b.Value) as ServiceModule);
         foreach (var s in ModuleOption.ExtureModuleMap)
         {
@@ -508,15 +519,18 @@ namespace ReheeCmf.AuthenticationModule.Services
           }
           moduleMap.TryAdd(s.Key, s.Value);
         }
-        var roles = claims.Where(b => b.Type.IndexOf(ConstOptions.RoleType) >= 0).Select(b => b.Value).ToList();
+
+        var roles = claims.Where(b => b.Type.IndexOf(ConstOptions.RoleType) >= 0).Select(b => b.Value).Distinct().ToList();
         var permissions = new List<string>();
         var roleKey = String.Join(",", roles.OrderBy(b => b)).ToLower() + "_" + tenantId?.ToString() ?? Guid.Empty.ToString();
+        var db = sp.GetService<IContext>();
         if (tokenManagement.CachedPermission && rolePermissionCache.TryGetValue(roleKey, out var cachedValue))
         {
           permissions = cachedValue.ToList();
         }
         else
         {
+          db.SetIgnoreTenant(false);
           foreach (var m in moduleMap.Values)
           {
             var p = await m!.GetRoleBasedPermissionAsync(db!, roles, "");
@@ -587,6 +601,7 @@ namespace ReheeCmf.AuthenticationModule.Services
           TenantID = user.TenantID,
           Claims = dtoClaims,
         };
+
         if (refreshToken)
         {
           tokenDto.RefreshTokenString = (await getRefreshToken(user.UserName, impersonate ?? false)).Content;
@@ -596,11 +611,9 @@ namespace ReheeCmf.AuthenticationModule.Services
           tokenDto.RefreshTokenString = currentRefreshToken;
         }
         await userTokenStorage.AddOrUpdateTokenAsync(user.UserName, tokenDto);
+
         result.SetSuccess(tokenDto);
-        db = null;
-        moduleMap = null;
-        permissions.Clear();
-        permissions = null;
+
         return result;
       }
       catch (Exception ex)

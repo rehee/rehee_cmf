@@ -4,6 +4,7 @@ using ReheeCmf.Authenticates;
 using ReheeCmf.Commons;
 using ReheeCmf.Commons.DTOs;
 using ReheeCmf.Contexts;
+using ReheeCmf.Enums;
 using ReheeCmf.Helpers;
 using ReheeCmf.Services;
 using ReheeCmf.StandardInputs.StandardItems;
@@ -23,9 +24,11 @@ namespace ReheeCmf.UserManagementModule.Services
     private readonly RoleManager<TRole> roleManager;
     private readonly IServiceProvider sp;
     private readonly IUserRoleService userRoleService;
+    private readonly IAsyncQuery? asyncQuery;
     public UserService(IServiceProvider sp)
     {
       option = sp.GetService<UserManagementOption>();
+      asyncQuery = sp.GetService<IAsyncQuery>();
       this.userManager = sp.GetService<UserManager<TUser>>()!;
       this.roleManager = sp.GetService<RoleManager<TRole>>()!;
       this.sp = sp;
@@ -87,8 +90,8 @@ namespace ReheeCmf.UserManagementModule.Services
     {
       properties.TryGetValueStringKey(UserManagementOption.PasswordProperty, out var password);
       var entity = new TUser();
-      StandardInputHelper.UpdateProperty(entity,
-        properties.ToDictionWithKeys(option!.UserDetailPropertyCreate!.Concat(new string[] { option.RoleProperty! })));
+
+      StandardInputHelper.UpdateProperty(entity, properties, option!.UserDetailPropertyCreate!.Concat(new string[] { option.RoleProperty! }), EnumPropertyUpdateType.Combine);
       var result = String.IsNullOrEmpty(password) ? await userManager.CreateAsync(entity) : await userManager.CreateAsync(entity, password);
       checkResult(result);
 
@@ -116,7 +119,12 @@ namespace ReheeCmf.UserManagementModule.Services
 
     public IEnumerable GetAllRoles()
     {
-      return roleManager.Roles;
+      var query = roleManager.Roles;
+      if (asyncQuery != null)
+      {
+        query = asyncQuery.AsNoTracking(query);
+      }
+      return query;
     }
 
     public IEnumerable? GetAllUserRoles()
@@ -150,15 +158,26 @@ namespace ReheeCmf.UserManagementModule.Services
       {
         return default;
       }
-      return
+      var query =
         from role in context.Query<TRole>(true)
         join userRole in context.Query<TUserRole>(true).Where(b => b.UserId.Equals(userId)) on role.Id equals userRole.RoleId
         select role.Name;
+      if (asyncQuery == null)
+      {
+        return query;
+      }
+      return asyncQuery.AsNoTracking(query);
+
     }
 
     public IEnumerable ReadUsers(string? role, TokenDTO? user = null)
     {
-      return userManager.Users;
+      var query = userManager.Users;
+      if (asyncQuery != null)
+      {
+        query = asyncQuery.AsNoTracking(query);
+      }
+      return query.WhereCheck(user);
     }
 
     public async Task<bool> ResetPassword(string userId, string? password, TokenDTO? user, bool forgot = false, string? token = null)
@@ -193,11 +212,8 @@ namespace ReheeCmf.UserManagementModule.Services
       if (entity == null)
       {
         StatusException.Throw(HttpStatusCode.NotFound);
-
       }
-      StandardInputHelper.UpdateProperty(entity,
-        properties.ToDictionWithKeys(option!.UserDetailPropertyEdit!.Concat(new string[] { option.RoleProperty! })));
-
+      StandardInputHelper.UpdateProperty(entity, properties, option!.UserDetailPropertyEdit!.Concat(new string[] { option.RoleProperty! }), EnumPropertyUpdateType.Combine);
       var result = await userManager.UpdateAsync(entity!);
       checkResult(result);
       await userRoleService.UserRoleAsync(entity!, properties);

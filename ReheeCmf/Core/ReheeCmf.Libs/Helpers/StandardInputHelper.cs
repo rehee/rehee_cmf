@@ -140,7 +140,7 @@ namespace ReheeCmf.Helpers
 
 
 
-    public static void UpdateProperty(object? input, Dictionary<string, string?> properties)
+    public static void UpdateProperty(object? input, Dictionary<string, string?> properties, IEnumerable<string>? adjustProperties = null, EnumPropertyUpdateType updateType = EnumPropertyUpdateType.NotSpecified)
     {
       if (input == null)
       {
@@ -150,7 +150,8 @@ namespace ReheeCmf.Helpers
       var mapper = type.GetMap();
       var ignoreAttr = typeof(IgnoreUpdateAttribute);
       var noMappingAttr = typeof(IgnoreMappingAttribute);
-
+      var inputAttr = typeof(FormInputsAttribute);
+      var adjust = adjustProperties?.ToArray() ?? Array.Empty<string>();
       foreach (var property in mapper.Properties
         .Where(b => !b.CustomAttributes.Any(c => c.AttributeType == ignoreAttr || c.AttributeType == noMappingAttr)))
       {
@@ -158,6 +159,31 @@ namespace ReheeCmf.Helpers
         if (!properties.TryGetValue(key ?? property.Name, out var stringValue))
         {
           continue;
+        }
+        if (updateType == EnumPropertyUpdateType.AdjustOnly)
+        {
+          if (!adjust.Any(b => String.Equals(key, b, StringComparison.OrdinalIgnoreCase)))
+          {
+            continue;
+          }
+        }
+        var attr = property.GetCustomAttribute<FormInputsAttribute>();
+        if (updateType == EnumPropertyUpdateType.Combine)
+        {
+          if (!adjust.Any(b => String.Equals(key, b, StringComparison.OrdinalIgnoreCase)))
+          {
+            if (attr == null)
+            {
+              continue;
+            }
+          }
+        }
+        if (attr != null)
+        {
+          if (attr.InputType == EnumInputType.Ignore)
+          {
+            continue;
+          }
         }
         var objectValue = StringValueHelper.GetObjValue(stringValue, property.PropertyType);
         if (objectValue.Success != true)
@@ -167,5 +193,6 @@ namespace ReheeCmf.Helpers
         property.SetValue(input, objectValue.Content);
       }
     }
+  
   }
 }

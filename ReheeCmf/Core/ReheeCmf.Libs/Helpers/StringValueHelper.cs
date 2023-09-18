@@ -145,6 +145,15 @@ namespace ReheeCmf.Helpers
             }
             return returnIfNullable();
           }
+          if (type!.IsEnum)
+          {
+            if (Enum.TryParse(type, input, out var enumResult))
+            {
+              result.SetSuccess(enumResult);
+              return result;
+            }
+            return returnIfNullable();
+          }
           if (Int32.TryParse(input, out var Int32Value))
           {
             result.SetSuccess(Int32Value);

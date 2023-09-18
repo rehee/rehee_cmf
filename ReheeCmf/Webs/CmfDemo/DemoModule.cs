@@ -42,7 +42,7 @@ namespace CmfDemo
     }
   }
 
-  public class Entity1DTO : CmfDTOBase
+  public class Entity1DTO : CmfDTOBase<int>
   {
     public string? Name1 { get; set; }
     public string? Name2 { get; set; }

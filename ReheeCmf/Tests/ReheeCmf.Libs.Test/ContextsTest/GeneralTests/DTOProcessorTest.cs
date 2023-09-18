@@ -80,7 +80,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
     }
   }
 
-  internal class TestEntity1DTO : CmfDTOBase
+  internal class TestEntity1DTO : CmfDTOBase<int>
   {
     public string? Name1 { get; set; }
     public string? Name2 { get; set; }

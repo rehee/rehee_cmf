@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using ReheeCmf.ContextComponent;
 using ReheeCmf.ContextModule.Components;
+using ReheeCmf.Contexts;
 using ReheeCmf.Handlers.ContextHandlers;
 using System.Reflection.Emit;
 
@@ -15,15 +17,34 @@ namespace ReheeCmf.ContextModule.Contexts
     TenantIdentityUserRole,
     TenantIdentityUserLogin,
     TenantIdentityRoleClaim,
-    TenantIdentityUserToken>, IIdentityContext, IWithContext
+    TenantIdentityUserToken>, IIdentityContext, IWithContext, ITenantContext, ITokenDTOContext
     where TUser : IdentityUser, ICmfUser, new()
   {
     protected readonly IServiceProvider sp;
     public IContext? Context { get; set; }
+    protected readonly IContextScope<Tenant> scopeTenant;
+    protected readonly IContextScope<TokenDTO> scopeUser;
     public CmfIdentityContext(IServiceProvider sp)
     {
       this.sp = sp;
+      scopeTenant = sp.GetService<IContextScope<Tenant>>()!;
+      SetTenant(scopeTenant!.Value);
+      scopeTenant.ValueChange += ScopeTenant_ValueChange;
+      scopeUser = sp.GetService<IContextScope<TokenDTO>>()!;
+      SetUser(scopeUser!.Value);
+      scopeUser.ValueChange += ScopeUser_ValueChange;
     }
+
+    private void ScopeUser_ValueChange(object? sender, ContextScopeEventArgs<TokenDTO> e)
+    {
+      SetUser(e.Value);
+    }
+
+    private void ScopeTenant_ValueChange(object? sender, ContextScopeEventArgs<Tenant> e)
+    {
+      SetTenant(e.Value);
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
       base.OnConfiguring(optionsBuilder);
@@ -59,6 +80,10 @@ namespace ReheeCmf.ContextModule.Contexts
       {
         return;
       }
+      scopeTenant.ValueChange -= ScopeTenant_ValueChange;
+      scopeUser.ValueChange -= ScopeUser_ValueChange;
+      ThisTenant = null;
+      CrossTenant = null;
       IsDispose = true;
       if (Context != null)
       {
@@ -66,9 +91,48 @@ namespace ReheeCmf.ContextModule.Contexts
       }
     }
 
+    public Tenant? ThisTenant { get; protected set; }
+
+    public bool IgnoreTenant { get; protected set; }
+
+    public Guid? TenantID
+    {
+      get => ThisTenant?.TenantID;
+      set { }
+    }
+
+    public Guid? CrossTenantID => CrossTenant?.TenantID;
+
+    public Tenant? CrossTenant { get; protected set; }
+    public void SetTenant(Tenant? tenant)
+    {
+      ThisTenant = tenant;
+    }
+
+    public void SetReadOnly(bool readOnly)
+    {
+
+    }
+
+    public void SetIgnoreTenant(bool ignore)
+    {
+      IgnoreTenant = ignore;
+    }
+
+    public void SetCrossTenant(Tenant? tenant)
+    {
+      CrossTenant = tenant;
+    }
+    public TokenDTO? User { get; protected set; }
+    public void SetUser(TokenDTO? user)
+    {
+      User = user;
+    }
+
     public DbSet<TenantEntity> Tenants { get; set; }
     public override DbSet<TenantIdentityUserClaim> UserClaims { get; set; }
     public DbSet<RoleBasedPermission> RoleBasedPermissions { get; set; }
+
 
   }
 }

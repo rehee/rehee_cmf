@@ -29,7 +29,7 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     [CmfAuthorize(EntityName = "entityName", EntityRoleBase = true)]
     public virtual IEnumerable<T> Query()
     {
-      return context!.Query<T>(true);
+      return context!.Query<T>(true).WhereCheck(context.User);
     }
     [EnableQuery()]
     [HttpGet("{key}")]
@@ -37,7 +37,7 @@ namespace ReheeCmf.EntityModule.Controllers.v1_0
     public virtual SingleResult<T> FindEntity(TKey key, CancellationToken ct)
     {
       return SingleResult.Create<T>(
-        context!.Query<T>(true).Where(b => b.Id.Equals(key)));
+        context!.Query<T>(true).Where(b => b.Id.Equals(key)).WhereCheck(context.User));
 
     }
     [HttpGet("{key}/item")]

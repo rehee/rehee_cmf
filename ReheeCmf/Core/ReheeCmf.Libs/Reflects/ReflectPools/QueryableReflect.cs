@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReheeCmf.Reflects.ReflectPools
+namespace ReheeCmf.Helpers
 {
   public static class QueryableReflect
   {
@@ -26,7 +26,7 @@ namespace ReheeCmf.Reflects.ReflectPools
       }
       return query.Where(readCheck(user).Compile());
     }
-    public static IQueryable<T> WhereCheck<T>(this IQueryable<T> query, TokenDTO user)
+    public static IQueryable<T> WhereCheck<T>(this IQueryable<T> query, TokenDTO? user)
     {
       var readCheck = ReflectPool.GetReadCheck<T>();
       if (readCheck == null)

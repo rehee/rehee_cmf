@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ReheeCmf.Attributes
 {
-  [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+  
   public class ReadCheckAttribute : Attribute
   {
   }
-  public delegate Expression<Func<T, bool>> ReadCheck<T>(TokenDTO user);
+  public delegate Expression<Func<T, bool>> ReadCheck<T>(TokenDTO? user);
 }

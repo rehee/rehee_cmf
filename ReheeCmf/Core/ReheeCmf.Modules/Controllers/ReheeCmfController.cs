@@ -56,6 +56,7 @@ namespace ReheeCmf.Modules.Controllers
       currentTenant = null;
       tenantDetail.ValueChange -= TenantDetail_ValueChange;
     }
+    [NonAction]
     public ValueTask DisposeAsync()
     {
       Dispose(true);

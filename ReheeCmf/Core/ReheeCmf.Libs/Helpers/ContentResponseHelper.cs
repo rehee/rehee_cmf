@@ -8,12 +8,14 @@ namespace ReheeCmf.Helpers
     {
       response.ContentObject = contentResponse;
       response.Success = true;
+      response.Status = HttpStatusCode.OK;
       return response;
     }
     public static IContentResponse<T> SetSuccess<T>(this IContentResponse<T> response, T? contentResponse)
     {
       response.Content = contentResponse;
       response.Success = true;
+      response.Status = HttpStatusCode.OK;
       return response;
     }
     public static void SetMultiResponse<T>(this IContentResponse<IEnumerable<T>> that, IEnumerable<IContentResponse<T>> sources)

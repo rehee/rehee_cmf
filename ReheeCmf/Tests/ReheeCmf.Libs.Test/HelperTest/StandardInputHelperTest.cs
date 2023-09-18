@@ -65,6 +65,9 @@ namespace ReheeCmf.Libs.Test.HelperTest
        new TestCaseData(
         "[1,2,3]",typeof(int[]),true, new int[]{ 1,2,3 }
         ),
+       new TestCaseData(
+        "Get",typeof(EnumHttpMethod?),true,EnumHttpMethod.Get
+        ),
     };
 
     [TestCaseSource(nameof(GetStrValue_Test_Data))]

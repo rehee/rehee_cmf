@@ -6,12 +6,19 @@ using System.Threading.Tasks;
 
 namespace ReheeCmf.Contexts
 {
-  public interface ITenantContext : IWithTenant
+  public interface ITenantContext : IWithTenant, ICrossTenant
   {
     Tenant? ThisTenant { get; }
     void SetTenant(Tenant tenant);
     void SetReadOnly(bool readOnly);
     bool IgnoreTenant { get; }
     void SetIgnoreTenant(bool ignore);
+
+  }
+  public interface ICrossTenant
+  {
+    Guid? CrossTenantID { get; }
+    Tenant? CrossTenant { get; }
+    void SetCrossTenant(Tenant? tenant);
   }
 }

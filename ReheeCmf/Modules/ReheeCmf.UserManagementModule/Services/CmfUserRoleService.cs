@@ -51,6 +51,10 @@ namespace ReheeCmf.UserManagementModule.Services
       {
         rolesFromProperty = new string[] { roleValue };
       }
+      if (rolesFromProperty == null)
+      {
+        return;
+      }
       var roles = asyncQuery.AsNoTracking(roleManager.Roles).Select(b => b.Name).ToArray();
       var roleChecks = roles.Where(b => rolesFromProperty!.Any(r => String.Equals(r, b, StringComparison.OrdinalIgnoreCase))).ToArray();
       if (roleChecks?.Length <= 0)

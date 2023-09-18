@@ -34,23 +34,23 @@ namespace ReheeCmf.Reflects.ReflectPools
 
     public static void SetQueryAndFindCheck(Type type)
     {
-      var readCheck = type.GetMap().Properties.FirstOrDefault(b => b.HasCustomAttribute<ReadCheckAttribute>());
+      var readCheck = type.GetMap().Fields.FirstOrDefault(b => b.HasCustomAttribute<ReadCheckAttribute>());
       EntityReadCheckInPool funcRead = null;
       object funcReadObj = null;
       if (readCheck != null)
       {
         funcReadObj = readCheck.GetValue(null);
-        funcRead = (user) => readCheck.PropertyType.GetMethod("Invoke").Invoke(readCheck.GetValue(null), new object[] { user });
+        funcRead = (user) => readCheck.FieldType.GetMethod("Invoke").Invoke(readCheck.GetValue(null), new object[] { user });
       }
       EntityQueryReadCheck.AddOrUpdate(type, funcRead, (s, f) => funcRead);
       EntityQueryReadCheckObj.AddOrUpdate(type, funcReadObj, (s, f) => funcReadObj);
 
-      var findCheck = type.GetMap().Properties.FirstOrDefault(b => b.HasCustomAttribute<FindCheckAttribute>());
+      var findCheck = type.GetMap().Fields.FirstOrDefault(b => b.HasCustomAttribute<FindCheckAttribute>());
       object findCheckObj = null;
       EntityReadCheckInPool funcFind = null;
       if (findCheck != null)
       {
-        funcFind = (user) => findCheck.PropertyType.GetMethod("Invoke").Invoke(findCheck.GetValue(null), new object[] { user });
+        funcFind = (user) => findCheck.FieldType.GetMethod("Invoke").Invoke(findCheck.GetValue(null), new object[] { user });
         findCheckObj = findCheck.GetValue(null);
       }
       EntityQueryFindCheck.AddOrUpdate(type, funcFind, (s, f) => funcFind);

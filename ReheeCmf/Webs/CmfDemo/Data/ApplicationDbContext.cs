@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ReheeCmf.Attributes;
 using ReheeCmf.Commons.Interfaces;
 using ReheeCmf.Components.ChangeComponents;
 using ReheeCmf.ContextModule.Contexts;
@@ -25,6 +26,8 @@ namespace CmfDemo.Data
     public string? Name1 { get; set; }
     public string? Name2 { get; set; }
 
+    [ReadCheck]
+    public static ReadCheck<Entity1> Entity1ReadCheck = (user) => b => b.Id > 20;
   }
 
   [EntityChangeTracker<Entity1>]
