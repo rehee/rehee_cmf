@@ -27,8 +27,34 @@ namespace ReheeCmf.ContextModule.Managers
     {
       try
       {
-        context.SetIgnoreTenant(true);
-        return await base.ValidateTwoFactorSecurityStampAsync(principal);
+        if (Guid.TryParse(principal.Claims.FirstOrDefault(b => b.Type == Common.TenantIDHeader)?.Value, out var tenantId))
+        {
+          context.SetIgnoreTenant(true);
+          if (principal == null || principal.Identity?.Name == null)
+          {
+            return null;
+          }
+          var name = principal.Identity.Name.ToUpper();
+          var users = await UserManager.Users.Where(b => b.NormalizedUserName == name).AsNoTracking().ToArrayAsync();
+          TUser? user = null;
+          if (typeof(TUser).IsImplement<IWithTenant>())
+          {
+            user = users.Select(b => b as IWithTenant).FirstOrDefault(b => b.TenantID == tenantId) as TUser;
+          }
+          if (user == null)
+          {
+            return null;
+          }
+          if (await ValidateSecurityStampAsync(user, principal.FindFirstValue(Options.ClaimsIdentity.SecurityStampClaimType)))
+          {
+            return user;
+          }
+          return null;
+        }
+        else
+        {
+          return await base.ValidateTwoFactorSecurityStampAsync(principal);
+        }
       }
       catch
       {
@@ -77,4 +103,5 @@ namespace ReheeCmf.ContextModule.Managers
     }
 
   }
+
 }
