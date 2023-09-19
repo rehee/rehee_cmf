@@ -14,7 +14,7 @@ namespace ReheeCmf.Handlers.ChangeHandlers
     int SubIndex { get; }
     string? Group { get; }
 
-    EnumEntityChange Status { get; }
+    EnumEntityState EntityState { get; }
 
     void Init(IServiceProvider sp, object entity, int index, int subindex, string? group = null);
     Task BeforeCreateAsync(CancellationToken ct = default);

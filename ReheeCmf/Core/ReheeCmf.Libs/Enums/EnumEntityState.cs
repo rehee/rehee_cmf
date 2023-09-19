@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace ReheeCmf.Enums
 {
-  public enum EnumEntityChange
+  public enum EnumEntityState
   {
-    NoChanges,
-    Create,
-    Update,
-    Delete
+    NotSpecified,
+    Added,
+    Modified,
+    Deleted,
+    Unchanged,
   }
 }

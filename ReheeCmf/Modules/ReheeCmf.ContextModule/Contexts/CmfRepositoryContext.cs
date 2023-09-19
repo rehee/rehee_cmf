@@ -1,4 +1,5 @@
 ﻿using ReheeCmf.Commons.Interfaces;
+using ReheeCmf.Enums;
 using ReheeCmf.Handlers.ChangeHandlers;
 
 namespace ReheeCmf.ContextModule.Contexts
@@ -211,7 +212,7 @@ namespace ReheeCmf.ContextModule.Contexts
     public object? QueryWithKey(Type type, Type keyType, bool noTracking, object key, bool readCheck = false)
     {
       return this.GetMap().Methods.FirstOrDefault(b => b.Name.Equals(nameof(QueryWithTypeAndKey)))!
-       .MakeGenericMethod(type, keyType).Invoke(this, new object[] { noTracking, key , readCheck });
+       .MakeGenericMethod(type, keyType).Invoke(this, new object[] { noTracking, key, readCheck });
     }
     public IQueryable<T> QueryWithTypeAndKey<T, TKey>(bool asNoTracking, TKey key, bool readCheck = false)
       where T : class, IId<TKey>
@@ -298,15 +299,15 @@ namespace ReheeCmf.ContextModule.Contexts
       }
       foreach (var h in EntityChangeHandlerMapper.Values)
       {
-        switch (h.Status)
+        switch (h.EntityState)
         {
-          case Enums.EnumEntityChange.Update:
+          case EnumEntityState.Modified:
             await h.AfterUpdateAsync(ct);
             break;
-          case Enums.EnumEntityChange.Delete:
+          case EnumEntityState.Deleted:
             await h.AfterDeleteAsync(ct);
             break;
-          case Enums.EnumEntityChange.Create:
+          case EnumEntityState.Added:
             await h.AfterCreateAsync(ct);
             break;
         }
@@ -359,6 +360,38 @@ namespace ReheeCmf.ContextModule.Contexts
     public void SetCrossTenant(Tenant? tenant)
     {
       TenantContext?.SetCrossTenant(tenant);
+    }
+
+    public void TrackEntity(object entity, EnumEntityState enumEntityStatus = EnumEntityState.Modified)
+    {
+      try
+      {
+        var entry = this.context.Entry(entity);
+        if (entry == null)
+        {
+          return;
+        }
+        switch (enumEntityStatus)
+        {
+          case EnumEntityState.Modified:
+            entry.State = EntityState.Modified;
+            break;
+          case EnumEntityState.Added:
+            entry.State = EntityState.Added;
+            break;
+          case EnumEntityState.Deleted:
+            entry.State = EntityState.Deleted;
+            break;
+          case EnumEntityState.Unchanged:
+            entry.State = EntityState.Unchanged;
+            break;
+        }
+      }
+      catch
+      {
+
+      }
+
     }
   }
 }

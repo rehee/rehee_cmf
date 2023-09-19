@@ -12,7 +12,7 @@
     public int Index { get; protected set; }
     public int SubIndex { get; protected set; }
     public string? Group { get; protected set; }
-    public EnumEntityChange Status { get; protected set; }
+    public EnumEntityState EntityState { get; protected set; }
 
     public virtual void Init(IServiceProvider sp, object entity, int index, int subindex, string? group = null)
     {
@@ -39,7 +39,7 @@
       this.SubIndex = subindex;
       this.Group = group;
 
-      Status = EnumEntityChange.NoChanges;
+      EntityState = EnumEntityState.Unchanged;
     }
     public virtual void Dispose()
     {
@@ -59,38 +59,38 @@
     }
     public virtual Task AfterCreateAsync(CancellationToken ct = default)
     {
-      Status = EnumEntityChange.NoChanges;
+      EntityState = EnumEntityState.Unchanged;
       return Task.CompletedTask;
     }
 
     public virtual Task AfterDeleteAsync(CancellationToken ct = default)
     {
-      Status = EnumEntityChange.NoChanges;
+      EntityState = EnumEntityState.Unchanged;
       return Task.CompletedTask;
     }
 
     public virtual Task AfterUpdateAsync(CancellationToken ct = default)
     {
-      Status = EnumEntityChange.NoChanges;
+      EntityState = EnumEntityState.Unchanged;
       return Task.CompletedTask;
     }
 
     public virtual async Task BeforeCreateAsync(CancellationToken ct = default)
     {
       await SetTenant(ct);
-      Status = EnumEntityChange.Create;
+      EntityState = EnumEntityState.Added;
     }
 
     public virtual Task BeforeDeleteAsync(CancellationToken ct = default)
     {
-      Status = EnumEntityChange.Delete;
+      EntityState = EnumEntityState.Deleted;
       return Task.CompletedTask;
 
     }
 
     public virtual Task BeforeUpdateAsync(EntityChanges[] propertyChange, CancellationToken ct = default)
     {
-      Status = EnumEntityChange.Update;
+      EntityState = EnumEntityState.Modified;
       return Task.CompletedTask;
     }
 

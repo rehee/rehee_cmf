@@ -12,6 +12,7 @@ namespace ReheeCmf.Contexts
     void Add(Type type, object? value);
     void Delete(Type type, object key);
 
+    void TrackEntity(object entity, EnumEntityState enumEntityStatus = EnumEntityState.Modified);
     IEnumerable<KeyValueItemDTO> GetKeyValueItemDTO(Type type);
   }
   public interface ITokenDTOContext
