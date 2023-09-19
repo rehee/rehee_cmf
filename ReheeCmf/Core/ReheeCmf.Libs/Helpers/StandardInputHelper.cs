@@ -150,10 +150,15 @@ namespace ReheeCmf.Helpers
       var mapper = type.GetMap();
       var ignoreAttr = typeof(IgnoreUpdateAttribute);
       var noMappingAttr = typeof(IgnoreMappingAttribute);
+      var timestampAttr = typeof(TimestampAttribute);
       var inputAttr = typeof(FormInputsAttribute);
+      var attributesNeedIgnore = new Type[]
+      {
+        ignoreAttr,noMappingAttr,timestampAttr
+      };
       var adjust = adjustProperties?.ToArray() ?? Array.Empty<string>();
       foreach (var property in mapper.Properties
-        .Where(b => !b.CustomAttributes.Any(c => c.AttributeType == ignoreAttr || c.AttributeType == noMappingAttr)))
+        .Where(b => !b.CustomAttributes.Select(b=>b.AttributeType).Intersect(attributesNeedIgnore).Any()))
       {
         var key = properties.Keys.FirstOrDefault(b => String.Equals(b, property.Name, StringComparison.OrdinalIgnoreCase));
         if (!properties.TryGetValue(key ?? property.Name, out var stringValue))
@@ -193,6 +198,6 @@ namespace ReheeCmf.Helpers
         property.SetValue(input, objectValue.Content);
       }
     }
-  
+
   }
 }
