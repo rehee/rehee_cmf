@@ -348,8 +348,12 @@ namespace ReheeCmf.Helpers
       return result;
     }
 
-    public static string? StringValue(this object input, Type? type = null)
+    public static string? StringValue(this object? input, Type? type = null)
     {
+      if (input == null)
+      {
+        return null;
+      }
       var response = GetStrValue(input, type ?? input.GetType());
       if (response.Success)
       {

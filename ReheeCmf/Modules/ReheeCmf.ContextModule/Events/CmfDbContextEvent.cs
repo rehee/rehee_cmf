@@ -100,7 +100,6 @@ namespace ReheeCmf.ContextModule.Events
           case EntityState.Modified:
             var handlersUpdate = db.GetHandlers(entity);
             var entityChanges = e.Entry.Properties.Where(b =>
-           //b.IsModified ||
            b.CurrentValue.StringValue(b.Metadata.ClrType) != b.OriginalValue.StringValue(b.Metadata.ClrType))
              .Select(p => new EntityChanges(p.Metadata.Name, p.Metadata.ClrType, p.CurrentValue, p.OriginalValue))
              .ToArray();
