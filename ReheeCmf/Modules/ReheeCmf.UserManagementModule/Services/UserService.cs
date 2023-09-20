@@ -172,7 +172,21 @@ namespace ReheeCmf.UserManagementModule.Services
 
     public IEnumerable ReadUsers(string? role, TokenDTO? user = null)
     {
-      var query = userManager.Users;
+      IQueryable<TUser> query;
+      if (!String.IsNullOrEmpty(role))
+      {
+        var nomolize = role.ToUpper();
+        var context = sp.GetService<IContext>()!;
+        query =
+          from u in query = context.Query<TUser>(true)
+          join ur in context.Query<TUserRole>(true) on u.Id equals ur.UserId
+          join r in context.Query<TRole>(true).Where(b => b.NormalizedName == nomolize) on ur.RoleId equals r.Id
+          select u;
+      }
+      else
+      {
+        query = userManager.Users;
+      }
       if (asyncQuery != null)
       {
         query = asyncQuery.AsNoTracking(query);

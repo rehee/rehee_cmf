@@ -19,16 +19,16 @@ namespace ReheeCmf.UserManagementModule.Controllers.v1._0
 
     public UserManageController(IServiceProvider sp) : base(sp)
     {
-      us = sp.GetService<IUserService>();
+      us = sp.GetService<IUserService>()!;
     }
 
     [EnableQuery()]
     [HttpGet("json/{role?}")]
     [CmfAuthorize(EntityNameForce = ConstCmfUserManagementModule.PermissionReadUsers, EntityRoleBase = true)]
-    public async Task<IActionResult> GetUser(string role)
+    public IActionResult GetUser(string? role)
     {
       var path = Request.Path.Value;
-      if (path.Contains("/json", StringComparison.OrdinalIgnoreCase))
+      if (path?.Contains("/json", StringComparison.OrdinalIgnoreCase) != true)
       {
         return NotFound();
       }
@@ -41,11 +41,11 @@ namespace ReheeCmf.UserManagementModule.Controllers.v1._0
         role = roleString as string;
       }
       var result = us.ReadUsers(role, currentUser);
-      return this.StatusCode(200, result);
+      return Ok(result);
     }
     [HttpGet("Roles/{userId?}")]
     [CmfAuthorize(EntityNameForce = ConstCmfUserManagementModule.PermissionReadUsers, EntityRoleBase = true)]
-    public async Task<IActionResult> GetUserRoles(string userId)
+    public IActionResult GetUserRoles(string userId)
     {
       return Ok(us.GetUserRoles(userId, currentUser));
     }
@@ -61,13 +61,13 @@ namespace ReheeCmf.UserManagementModule.Controllers.v1._0
     }
     [HttpPost("Detail")]
     [CmfAuthorize(EntityNameForce = ConstCmfUserManagementModule.PermissionCreateUser, EntityRoleBase = true)]
-    public async Task<IActionResult> CreateUser(Dictionary<string, string> properties)
+    public async Task<IActionResult> CreateUser(Dictionary<string, string?> properties)
     {
       return Ok(await us.CreateUserAsync(properties, currentUser));
     }
     [HttpPut("Detail/{id?}")]
     [CmfAuthorize(EntityNameForce = ConstCmfUserManagementModule.PermissionEditUser, EntityRoleBase = true)]
-    public async Task<IActionResult> UpdateUser(string id, Dictionary<string, string> properties, CancellationToken ct)
+    public async Task<IActionResult> UpdateUser(string id, Dictionary<string, string?> properties, CancellationToken ct)
     {
       return Ok(await us.UpdateUserAsync(id, properties, currentUser, ct));
     }
@@ -80,7 +80,7 @@ namespace ReheeCmf.UserManagementModule.Controllers.v1._0
     }
     [HttpPost(CrudOption.RoleEndpoint)]
     [CmfAuthorize(EntityNameForce = ConstCmfUserManagementModule.PermissionCreateUser, EntityRoleBase = true)]
-    public async Task<IActionResult> CreateRolesAsync(Dictionary<string, string> data, CancellationToken ct)
+    public async Task<IActionResult> CreateRolesAsync(Dictionary<string, string?> data, CancellationToken ct)
     {
       return Ok(await us.CreateRoleAsync(data, currentUser, ct));
     }
@@ -140,13 +140,13 @@ namespace ReheeCmf.UserManagementModule.Controllers.v1._0
     }
 
     [HttpPost(CrudOption.ForgotPasswordEndpoint)]
-    public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO dto, CancellationToken ct)
+    public IActionResult ForgotPassword(ForgotPasswordDTO dto, CancellationToken ct)
     {
 
       return Ok();
     }
     [HttpPut(CrudOption.ForgotPasswordEndpoint)]
-    public async Task<IActionResult> ForgotPasswordUpdate(ForgotPasswordDTO dto, CancellationToken ct)
+    public IActionResult ForgotPasswordUpdate(ForgotPasswordDTO dto, CancellationToken ct)
     {
 
       return Ok();
