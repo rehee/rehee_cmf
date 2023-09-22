@@ -14,7 +14,7 @@ namespace ReheeCmf.Commons.Jsons.Converters
   {
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-      if (DateTime.TryParseExact(reader.GetString(), Common.DateTimeFormats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out DateTime result))
+      if (DateTime.TryParseExact(reader.GetString(), Common.DateTimeFormats, Common.Culture, DateTimeStyles.AssumeUniversal, out DateTime result))
       {
         return result;
       }
@@ -32,7 +32,7 @@ namespace ReheeCmf.Commons.Jsons.Converters
   {
     public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-      if (DateTime.TryParseExact(reader.GetString(), Common.DateTimeFormats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out DateTime result))
+      if (DateTime.TryParseExact(reader.GetString(), Common.DateTimeFormats, Common.Culture, DateTimeStyles.AssumeUniversal, out DateTime result))
       {
         return result;
       }

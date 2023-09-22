@@ -32,6 +32,7 @@ namespace ReheeCmf.Commons.Jsons.Options
       }
       //options.PropertyNameCaseInsensitive = true;
       options.PropertyNamingPolicy = null;
+      options.PropertyNameCaseInsensitive = true;
       options.Converters.Add(new JsonStringEnumConverter());
       options.Converters.Add(new UtcDateTimeConverter());
       options.Converters.Add(new UtcDateTimeOffsetConverter());

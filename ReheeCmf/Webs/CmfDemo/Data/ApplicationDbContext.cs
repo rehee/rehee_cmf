@@ -7,6 +7,7 @@ using ReheeCmf.ContextModule.Contexts;
 using ReheeCmf.ContextModule.Entities;
 using ReheeCmf.Entities;
 using ReheeCmf.Handlers.EntityChangeHandlers;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CmfDemo.Data
 {
@@ -25,6 +26,8 @@ namespace CmfDemo.Data
   {
     public string? Name1 { get; set; }
     public string? Name2 { get; set; }
+    [NotMapped]
+    public DateTime? Date1 { get; set; }
 
     [ReadCheck]
     public static ReadCheck<Entity1> Entity1ReadCheck = (user) => b => b.Id > 20;

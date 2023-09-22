@@ -28,7 +28,7 @@ namespace ReheeCmf.UserManagementModule.Controllers.v1._0
     public IActionResult GetUser(string? role)
     {
       var path = Request.Path.Value;
-      if (path?.Contains("/json", StringComparison.OrdinalIgnoreCase) != true)
+      if (path?.Contains("/json", StringComparison.OrdinalIgnoreCase) == true)
       {
         return NotFound();
       }
