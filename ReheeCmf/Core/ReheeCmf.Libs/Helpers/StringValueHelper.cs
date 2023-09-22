@@ -208,7 +208,7 @@ namespace ReheeCmf.Helpers
           return result;
         case TypeCode.DateTime:
 
-          if (DateTime.TryParseExact(input, Common.DateTimeFormats, Common.Culture, DateTimeStyles.AssumeUniversal, out var date))
+          if (DateTime.TryParseExact(input, Common.DateTimeFormats, Common.DateCulture, DateTimeStyles.AssumeUniversal, out var date))
           {
             result.SetSuccess(date);
             return result;
@@ -219,7 +219,7 @@ namespace ReheeCmf.Helpers
           switch (type.Name)
           {
             case nameof(DateTimeOffset):
-              if (DateTimeOffset.TryParseExact(input, Common.DateTimeFormats, Common.Culture, DateTimeStyles.AssumeUniversal, out var dateOffSet))
+              if (DateTimeOffset.TryParseExact(input, Common.DateTimeFormats, Common.DateCulture, DateTimeStyles.AssumeUniversal, out var dateOffSet))
               {
                 result.SetSuccess(dateOffSet);
                 return result;

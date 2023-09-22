@@ -30,9 +30,9 @@ namespace System
     public static string ClientUrlHeader = "ClientUrl";
     public static string EmptyGuid = "00000000-0000-0000-0000-000000000000";
 
-    public static CultureInfo Culture => CultureInfo.GetCultureInfo(CultureName ?? DefaultCulture);
-    public static string? CultureName { get; set; }
-    public const string DefaultCulture = "en-GB";
+    public static CultureInfo DateCulture => CultureInfo.GetCultureInfo(DateCultureName ?? DefaultDateCulture);
+    public static string? DateCultureName { get; set; }
+    public const string DefaultDateCulture = "en-GB";
     public static string[] EmptyString = new string[]
     {
       " ","\r","\n","\r\n","\t"
