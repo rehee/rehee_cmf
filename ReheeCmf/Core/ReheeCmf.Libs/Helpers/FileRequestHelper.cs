@@ -74,7 +74,7 @@ namespace ReheeCmf.Helpers
         return result;
       }
       if (!String.IsNullOrEmpty(options.AllowedFileType) &&
-        !options.AllowedFileType.Split(",").Contains(fileName.GetFileExtension()))
+        !options.AllowedFileType.Split(",").Any(b => string.Equals(b, fileName.GetFileExtension(), StringComparison.OrdinalIgnoreCase)))
       {
         result.SetError(errorMessage: $"File type not allowed");
         return result;
