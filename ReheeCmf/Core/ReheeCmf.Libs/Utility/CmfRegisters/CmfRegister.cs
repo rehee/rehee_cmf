@@ -37,9 +37,10 @@ namespace ReheeCmf.Utility.CmfRegisters
         {
           if (type.CustomAttributes.Any(b => b.AttributeType.IsImplement<IRegistrableAttribute>()))
           {
-            
+
             Attribute.GetCustomAttributes(type).RegisterAll(type);
           }
+          CmfRegister.RegistController(type);
           foreach (var property in type.GetProperties())
           {
 

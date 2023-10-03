@@ -4,6 +4,7 @@ using ReheeCmf.Commons.Encrypts;
 using ReheeCmf.Modules.Options;
 using ReheeCmf.ODatas;
 using ReheeCmf.Servers.Filters;
+using ReheeCmf.Servers.Middlewares;
 using ReheeCmf.Utility.CmfRegisters;
 
 namespace System
@@ -96,11 +97,10 @@ namespace System
 
       context.MvcBuilder = context.Services.AddControllersWithViews(option =>
       {
+        //option.Filters.Add(typeof(CmfMultiTenancyFilter));
+        //option.Filters.Add(typeof(CmfAuthorizationFilter));
         option.Filters.Add(typeof(CmfExceptionFilter));
-        option.Filters.Add(typeof(CmfMultiTenancyFilter));
-        option.Filters.Add(typeof(CmfAuthorizationFilter));
-
-
+        option.Filters.Add(typeof(CmfAuthorizationActionFilter));
         foreach (var m in serverModule)
         {
           m.FiltersConfiguration(option.Filters);
@@ -307,6 +307,9 @@ namespace System
         await s.PreApplicationInitializationAsync(context);
       }
       app.UseRouting();
+      app.UseMiddleware<CmfMultiTenancyMiddleware>();
+      app.UseMiddleware<CmfMiddlewareAuthorization>();
+      
       foreach (var s in serverModule)
       {
         await s.ApplicationInitializationAsync(context);
@@ -330,7 +333,7 @@ namespace System
       {
         await s.PostApplicationInitializationAsync(context);
       }
-      
+
       app.Run();
     }
   }

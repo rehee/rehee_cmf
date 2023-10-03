@@ -9,7 +9,7 @@ using ReheeCmf.Commons.Consts;
 
 namespace ReheeCmf.Servers.Filters
 {
-  public class CmfAuthorizationFilter : IAsyncActionFilter
+  public class CmfAuthorizationActionFilter : IAsyncActionFilter
   {
     private readonly IAuthorize auth;
     private readonly IContextScope<Tenant> tenant;
@@ -18,7 +18,7 @@ namespace ReheeCmf.Servers.Filters
     private readonly TenantSetting tenantSetting;
     private readonly IDTOSignInManager<ClaimsPrincipalDTO> tus;
 
-    public CmfAuthorizationFilter(IAuthorize auth, IJWTService jwt, IContextScope<Tenant> tenant, IContextScope<TokenDTO> scopeUser, TenantSetting tenantSetting, IDTOSignInManager<ClaimsPrincipalDTO> tus)
+    public CmfAuthorizationActionFilter(IAuthorize auth, IJWTService jwt, IContextScope<Tenant> tenant, IContextScope<TokenDTO> scopeUser, TenantSetting tenantSetting, IDTOSignInManager<ClaimsPrincipalDTO> tus)
     {
       this.auth = auth;
       this.jwt = jwt;
@@ -66,76 +66,13 @@ namespace ReheeCmf.Servers.Filters
         goto gotoNext;
       }
       IEnumerable<string> permissionsFromToken = Enumerable.Empty<string>();
-      string token;
-      ContentResponse<TokenDTO> validateTokenResult = new ContentResponse<TokenDTO>();
-      if (context.HttpContext.Request.Headers.TryGetValue(ConstOptions.AuthorizeHeader, out var t))
+      if (scopeUser.Value != null)
       {
-        token = t.FirstOrDefault();
-        validateTokenResult = await auth.ValidateAndConvert(token);
-        if (!validateTokenResult.Success)
-        {
-          context.Result = new StatusCodeResult(401);
-          return;
-        }
-        var user = validateTokenResult.Content;
-        scopeUser.SetValue(user);
-        var systemApi = user.IsSystemToken;
-        if (systemApi == true)
-        {
-          goto gotoNext;
-        }
-        var tId = tenant?.Value.TenantID?.ToString() ?? Common.EmptyGuid;
-        var tokenTid = user?.TenantID?.ToString() ?? Common.EmptyGuid;
-        if (!tId.Equals(tokenTid))
-        {
-          context.Result = new StatusCodeResult(401);
-          return;
-        }
-
-        var fullAccessRole = await auth.FullAccessRole();
-        if (!String.IsNullOrEmpty(fullAccessRole))
-        {
-          user.Roles.Contains(fullAccessRole);
-          goto gotoNext;
-        }
-        permissionsFromToken = user.Permissions.Where(b => !String.IsNullOrEmpty(b)).ToArray();
+        permissionsFromToken = scopeUser.Value.Permissions ?? Enumerable.Empty<string>();
       }
-      else if (context.HttpContext.User?.Identity?.IsAuthenticated == true)
-      {
-        if (tenantSetting.EnableTenant && tenant.Value?.TenantID != null)
-        {
-          var withTenant = context.HttpContext.User.TryGetClaim(Common.TenantIDHeader, out var tenantIdString);
-          if (withTenant == true && Guid.TryParse(tenantIdString, out var userGUid))
-          {
-            if (!userGUid.Equals(tenant.Value.TenantID))
-            {
-              await tus.LogoutAsync(CancellationToken.None);
-              goto startvalidation;
-            }
-          }
-          else
-          {
-            var login = await tus.LoginAsync(new ClaimsPrincipalDTO { User = context.HttpContext.User, KeepLogin = true }, CancellationToken.None);
-            if (!login.Success)
-            {
-              goto startvalidation;
-            }
-          }
-        }
-
-        var userName = context.HttpContext.User.Identity.Name;
-        validateTokenResult = await jwt.GetTokenDTO(userName);
-        if (validateTokenResult.Success)
-        {
-          scopeUser.SetValue(validateTokenResult.Content);
-        }
-      }
-    startvalidation:
-
-
       if (cmfAttr.AuthOnly)
       {
-        if (validateTokenResult?.Success != true)
+        if (scopeUser.Value == null)
         {
           context.Result = new StatusCodeResult(401);
           return;
