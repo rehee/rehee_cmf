@@ -280,6 +280,10 @@ namespace ReheeCmf.AuthenticationModule.Services
       try
       {
         var tokenExceptHeader = token.Split(' ').LastOrDefault();
+        if (String.IsNullOrEmpty(tokenExceptHeader) || tokenExceptHeader.StartsWith("Bear"))
+        {
+          return result;
+        }
         var claim = handler.ValidateToken(tokenExceptHeader, validationParameter, out var token2);
         var systemApi = claim.Claims.FirstOrDefault(b => b.Type == Common.SystemApiClaimType);
         if (systemApi != null)

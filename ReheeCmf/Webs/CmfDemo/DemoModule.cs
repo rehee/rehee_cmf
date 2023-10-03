@@ -16,6 +16,10 @@ using ReheeCmf.Modules.Permissions;
 using ReheeCmf.ODatas;
 using ReheeCmf.Services;
 using ReheeCmf.UserManagementModule;
+using System.Net;
+using System.Text;
+using System.Threading.RateLimiting;
+using static Dropbox.Api.TeamLog.ActorLogInfo;
 
 namespace CmfDemo
 {
@@ -29,11 +33,39 @@ namespace CmfDemo
     {
       await base.ConfigureServicesAsync(context);
       context.Services.AddTypeQuery<Entity1DTO, Entity1DTOProcessor>();
+      context.Services.AddRateLimiter(_ =>
+      {
+        _.OnRejected = async (context, ct) =>
+        {
+          context.HttpContext.Response.StatusCode =(int)StatusCodes.Status429TooManyRequests;
+          string responseText = "Too Many Request";
+          
+          context.HttpContext.Response.ContentType = "text/plain";
+          await context.HttpContext.Response.WriteAsync(responseText);
+        };
+        _.GlobalLimiter = PartitionedRateLimiter.CreateChained(
+        PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+        {
+          return RateLimitPartition.GetTokenBucketLimiter
+           ("UnAuthUser", _ =>
+             new TokenBucketRateLimiterOptions
+             {
+               TokenLimit = 10,
+               TokensPerPeriod = 1,
+               QueueLimit = 1,
+               AutoReplenishment = true,
+               ReplenishmentPeriod = TimeSpan.FromSeconds(1),
+             });
+
+
+        }));
+      });
     }
+
     public override async Task ApplicationInitializationAsync(ServiceConfigurationContext context)
     {
       await base.ApplicationInitializationAsync(context);
-
+      context.App.UseRateLimiter();
       //options.EntityQueryUri ?? $"{current.Request.Scheme}://{current.Request.Host}{current.Request.PathBase}";
     }
     public override Task<IEnumerable<string>> GetPermissions(IContext? db, TokenDTO? user, CancellationToken ct = default)

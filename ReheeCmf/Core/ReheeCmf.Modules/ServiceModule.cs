@@ -220,6 +220,10 @@ namespace ReheeCmf.Modules
     {
       return Task.CompletedTask;
     }
+    public virtual Task BeforePreApplicationInitializationAsync(ServiceConfigurationContext context)
+    {
+      return Task.CompletedTask;
+    }
     public virtual Task PreApplicationInitializationAsync(ServiceConfigurationContext context)
     {
       return Task.CompletedTask;

@@ -297,19 +297,22 @@ namespace System
 
       app.UseAuthentication();
       app.UseAuthorization();
-
+      foreach (var s in serverModule)
+      {
+        await s.BeforePreApplicationInitializationAsync(context);
+      }
 
       var mapper = new Dictionary<string, string>();
 
+      app.UseRouting();
 
       foreach (var s in serverModule)
       {
         await s.PreApplicationInitializationAsync(context);
       }
-      app.UseRouting();
       app.UseMiddleware<CmfMultiTenancyMiddleware>();
       app.UseMiddleware<CmfMiddlewareAuthorization>();
-      
+
       foreach (var s in serverModule)
       {
         await s.ApplicationInitializationAsync(context);
