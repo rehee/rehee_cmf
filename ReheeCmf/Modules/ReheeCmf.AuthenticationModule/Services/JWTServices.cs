@@ -233,7 +233,7 @@ namespace ReheeCmf.AuthenticationModule.Services
           result.SetError(HttpStatusCode.Forbidden);
           return result;
         }
-        if (await isLockoutAsync(user.UserName))
+        if (await isLockoutAsync(user.UserName, user))
         {
           result.SetError(HttpStatusCode.Forbidden);
           return result;
@@ -328,7 +328,7 @@ namespace ReheeCmf.AuthenticationModule.Services
     {
       if (claim?.Identity?.IsAuthenticated == true)
       {
-        if (await isLockoutAsync(claim.Identity.Name))
+        if (await isLockoutAsync(claim.Identity.Name, null))
         {
           return false;
         }
@@ -403,7 +403,7 @@ namespace ReheeCmf.AuthenticationModule.Services
         TenantID = guidAvaliable ? tId : null,
         Claims = additionalClaim,
       };
-      if (tokenManagement.CheckUserEveryRequest && await isLockoutAsync(dto.UserName))
+      if (tokenManagement.CheckUserEveryRequest && await isLockoutAsync(dto.UserName, null))
       {
         return result;
       }
@@ -439,7 +439,12 @@ namespace ReheeCmf.AuthenticationModule.Services
       if (httpContext.HttpContext.User.Identity.IsAuthenticated)
       {
         var userName = httpContext.HttpContext.User.Identity.Name;
-        if (await isLockoutAsync(userName))
+        var user = await userManager.FindByNameAsync(userName);
+        if (user == null)
+        {
+          return result;
+        }
+        if (await isLockoutAsync(userName, user))
         {
           return result;
         }
@@ -449,12 +454,6 @@ namespace ReheeCmf.AuthenticationModule.Services
           result.SetSuccess(userSaved);
           return result;
         }
-        var user = await userManager.FindByNameAsync(userName);
-        if (user == null || await isLockoutAsync(user.UserName))
-        {
-          return result;
-        }
-
         return await getTokenDTO(user);
       }
       else
@@ -480,7 +479,7 @@ namespace ReheeCmf.AuthenticationModule.Services
         result.SetError(HttpStatusCode.Forbidden);
         return result;
       }
-      if (await isLockoutAsync(user.UserName))
+      if (await isLockoutAsync(user.UserName, user))
       {
         result.SetError(HttpStatusCode.Forbidden);
         return result;
@@ -497,7 +496,7 @@ namespace ReheeCmf.AuthenticationModule.Services
     protected async Task<ContentResponse<TokenDTO>> getTokenDTO(TUser user, bool refreshToken = false, string currentRefreshToken = null, bool? impersonate = null)
     {
       var result = new ContentResponse<TokenDTO>();
-      if (await isLockoutAsync(user.UserName))
+      if (await isLockoutAsync(user.UserName, user))
       {
         result.SetError(HttpStatusCode.Forbidden);
         return result;
@@ -640,14 +639,14 @@ namespace ReheeCmf.AuthenticationModule.Services
       }
       return false;
     }
-    private async Task<bool> isLockoutAsync(string userName)
+    private async Task<bool> isLockoutAsync(string userName, TUser? user)
     {
       var userLockCheck = await userLockendStorage.GetUserLockendAsync(userName);
       if (userLockCheck.HasRecord)
       {
         return userLockCheck.Lockend.HasValue && userLockCheck.Lockend.Value > new DateTimeOffset(DateTime.Now);
       }
-      var user = await userManager.FindByNameAsync(userName);
+      user = user ?? await userManager.FindByNameAsync(userName);
       if (user == null)
       {
         return true;

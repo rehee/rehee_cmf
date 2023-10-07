@@ -289,6 +289,8 @@ namespace ReheeCmf.ContextModule.Contexts
     public void SetTenant(Tenant tenant)
     {
       TenantContext?.SetTenant(tenant);
+
+
     }
 
     public async Task AfterSaveChangesAsync(CancellationToken ct = default)
