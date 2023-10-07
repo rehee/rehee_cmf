@@ -9,7 +9,7 @@ namespace ReheeCmf.ContextModule
   {
     public override string ModuleTitle => ConstModule.CmfContextModule;
     public override string ModuleName => ConstModule.CmfContextModule;
-    
+
 
     public override Task ConfigureServicesAsync(ServiceConfigurationContext context)
     {
@@ -19,11 +19,7 @@ namespace ReheeCmf.ContextModule
 
     public override Task<IEnumerable<string>> GetPermissions(IContext? db, TokenDTO? user, CancellationToken ct = default)
     {
-      IEnumerable<string> result = new string[]
-      {
-
-      };
-      return Task.FromResult(result);
+      return Task.FromResult(Enumerable.Empty<string>());
     }
   }
 }

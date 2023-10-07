@@ -13,11 +13,12 @@ namespace ReheeCmf.Tenants
     void AddOrUpdateTenant(TenantEntity tenant);
     void RemoveTenant(TenantEntity tenant);
     void ClearCashed();
-    
+
   }
 
   public class TenantStorage : ITenantStorage
   {
+    private static object Locker { get; set; } = new object();
     private readonly IContext context;
     private static Lazy<ConcurrentDictionary<Guid, TenantEntity>> _tenantCache =
       new Lazy<ConcurrentDictionary<Guid, TenantEntity>>(() => new ConcurrentDictionary<Guid, TenantEntity>());
@@ -28,9 +29,9 @@ namespace ReheeCmf.Tenants
     }
     public IEnumerable<TenantEntity> GetAllTenants()
     {
-      if (lastUpdated == null || lastUpdated.Value <= DateTime.UtcNow)
+      if (lastUpdated == null)
       {
-        lock (this)
+        lock (Locker)
         {
           var tenants = context.Query<TenantEntity>(true).ToArray();
           _tenantCache.Value.Clear();
@@ -46,6 +47,7 @@ namespace ReheeCmf.Tenants
     public void AddOrUpdateTenant(TenantEntity tenant)
     {
       _tenantCache.Value.AddOrUpdate(tenant.Id, tenant, (b, c) => tenant);
+
     }
     public void RemoveTenant(TenantEntity tenant)
     {
@@ -55,6 +57,7 @@ namespace ReheeCmf.Tenants
     public void ClearCashed()
     {
       _tenantCache.Value.Clear();
+      lastUpdated = null;
     }
   }
 }
