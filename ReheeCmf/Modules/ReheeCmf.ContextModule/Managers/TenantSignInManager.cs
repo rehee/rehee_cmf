@@ -1,26 +1,20 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ReheeCmf.Commons;
-using ReheeCmf.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReheeCmf.ContextModule.Managers
 {
   public class TenantSignInManager<TUser> : SignInManager<TUser> where TUser : IdentityUser, new()
   {
     private readonly IContext context;
+    private readonly ITenantService tenantService;
 
-    public TenantSignInManager(IContext context, UserManager<TUser> userManager, IHttpContextAccessor contextAccessor, IUserClaimsPrincipalFactory<TUser> claimsFactory, IOptions<IdentityOptions> optionsAccessor, ILogger<SignInManager<TUser>> logger, IAuthenticationSchemeProvider schemes, IUserConfirmation<TUser> confirmation) : base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes, confirmation)
+    public TenantSignInManager(IContext context, ITenantService tenantService, UserManager<TUser> userManager, IHttpContextAccessor contextAccessor, IUserClaimsPrincipalFactory<TUser> claimsFactory, IOptions<IdentityOptions> optionsAccessor, ILogger<SignInManager<TUser>> logger, IAuthenticationSchemeProvider schemes, IUserConfirmation<TUser> confirmation) : base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes, confirmation)
     {
       this.context = context;
+      this.tenantService = tenantService;
     }
 
     public override async Task<TUser> ValidateSecurityStampAsync(ClaimsPrincipal principal)
@@ -29,6 +23,11 @@ namespace ReheeCmf.ContextModule.Managers
       {
         if (Guid.TryParse(principal.Claims.FirstOrDefault(b => b.Type == Common.TenantIDHeader)?.Value, out var tenantId))
         {
+          var tenant = tenantService.GetTenantById(tenantId);
+          if (tenant != null)
+          {
+            context.SetTenant(tenant);
+          }
           context.SetIgnoreTenant(true);
           if (principal == null || principal.Identity?.Name == null)
           {
@@ -70,6 +69,15 @@ namespace ReheeCmf.ContextModule.Managers
     {
       try
       {
+        if (user is IWithTenant tenantUser)
+        {
+          var tenant = tenantService.GetTenantById(tenantUser.TenantID);
+          if (tenant != null)
+          {
+            context.SetTenant(tenant);
+          }
+        }
+
         context.SetIgnoreTenant(true);
         return await base.ValidateSecurityStampAsync(user, securityStamp);
       }
@@ -87,6 +95,14 @@ namespace ReheeCmf.ContextModule.Managers
     {
       try
       {
+        if (Guid.TryParse(principal.Claims.FirstOrDefault(b => b.Type == Common.TenantIDHeader)?.Value, out var tenantId))
+        {
+          var tenant = tenantService.GetTenantById(tenantId);
+          if (tenant != null)
+          {
+            context.SetTenant(tenant);
+          }
+        }
         context.SetIgnoreTenant(true);
         return await base.ValidateTwoFactorSecurityStampAsync(principal);
       }

@@ -134,6 +134,7 @@ namespace ReheeCmf.ContextModule
       services.AddScoped<SignInManager<TUser>>(sp =>
         new TenantSignInManager<TUser>(
           sp.GetService<IContext>()!,
+          sp.GetService<ITenantService>()!,
           sp.GetService<UserManager<TUser>>()!,
           sp.GetService<IHttpContextAccessor>()!,
           sp.GetService<IUserClaimsPrincipalFactory<TUser>>()!,
