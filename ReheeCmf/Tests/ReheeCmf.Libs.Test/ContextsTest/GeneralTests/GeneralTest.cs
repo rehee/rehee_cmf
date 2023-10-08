@@ -25,7 +25,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
       sp = base.ConfigService(actions);
       return sp;
     }
-   
+
     [Test]
     public void ContextService_DbContext_Same_Instance_Test()
     {
@@ -195,6 +195,7 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
       using var context = serviceProvider!.GetService<IContext>()!;
       using var db = serviceProvider!.GetService<TDbContext>()!;
       var storage = serviceProvider.GetService<ITenantStorage>();
+      storage?.ClearCashed();
       var tenant1 = new TenantEntity()
       {
         TenantName = "TenantName1",

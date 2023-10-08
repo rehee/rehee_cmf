@@ -33,21 +33,34 @@ namespace ReheeCmf.Tenants
       {
         lock (Locker)
         {
-          var tenants = context.Query<TenantEntity>(true).ToArray();
-          _tenantCache.Value.Clear();
-          foreach (var t in tenants)
+          context.UseDefaultConnection();
+          try
           {
-            _tenantCache.Value.AddOrUpdate(t.Id, t, (b, c) => t);
+            var tenants = context.Query<TenantEntity>(true).ToArray();
+            _tenantCache.Value.Clear();
+            foreach (var t in tenants)
+            {
+              _tenantCache.Value.AddOrUpdate(t.Id, t, (b, c) => t);
+            }
+            lastUpdated = DateTime.UtcNow;
           }
-          lastUpdated = DateTime.UtcNow;
+          catch
+          {
+
+          }
+          finally
+          {
+            context.UseTenantConnection();
+          }
+
         }
       }
+
       return _tenantCache.Value.Values;
     }
     public void AddOrUpdateTenant(TenantEntity tenant)
     {
       _tenantCache.Value.AddOrUpdate(tenant.Id, tenant, (b, c) => tenant);
-
     }
     public void RemoveTenant(TenantEntity tenant)
     {

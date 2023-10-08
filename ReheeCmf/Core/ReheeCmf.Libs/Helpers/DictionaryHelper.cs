@@ -8,8 +8,13 @@ namespace ReheeCmf.Helpers
 {
   public static class DictionaryHelper
   {
-    public static bool TryGetValueStringKey<K>(this IDictionary<string, K?> dictionary, string key, out K? k)
+    public static bool TryGetValueStringKey<K>(this IDictionary<string, K?>? dictionary, string key, out K? k)
     {
+      if (dictionary == null)
+      {
+        k = default(K?);
+        return false;
+      }
       var dKey = dictionary.Keys.FirstOrDefault(b => String.Equals(b, key, StringComparison.OrdinalIgnoreCase));
       if (dKey == null)
       {

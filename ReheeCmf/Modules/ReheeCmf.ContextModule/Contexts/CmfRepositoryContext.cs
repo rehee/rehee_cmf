@@ -1,12 +1,19 @@
-﻿using ReheeCmf.Commons.Interfaces;
+﻿using Microsoft.IdentityModel.Tokens;
+using ReheeCmf.Commons.Interfaces;
 using ReheeCmf.Enums;
 using ReheeCmf.Handlers.ChangeHandlers;
+using ReheeCmf.MultiTenants;
+using ReheeCmf.Tenants;
 
 namespace ReheeCmf.ContextModule.Contexts
 {
   public class CmfRepositoryContext : IContext, ICrudTracker
   {
+    protected readonly CrudOption? crudOption;
+    protected readonly TenantConnection? tenantConnection;
+
     protected readonly DbContext context;
+    public bool? ReadOnly { get; set; }
     protected ITenantContext? TenantContext
     {
       get
@@ -40,6 +47,8 @@ namespace ReheeCmf.ContextModule.Contexts
       {
         ct.Context = this;
       }
+      this.crudOption = sp.GetService<CrudOption>();
+      this.tenantConnection = sp.GetService<TenantConnection>();
 
       EntityChangeHandlerMapper = new ConcurrentDictionary<int, IChangeHandler>();
 
@@ -284,13 +293,20 @@ namespace ReheeCmf.ContextModule.Contexts
     }
     public void SetReadOnly(bool readOnly)
     {
-
+      ReadOnly = readOnly;
+      TenantContext?.SetReadOnly(readOnly);
     }
     public void SetTenant(Tenant tenant)
     {
       TenantContext?.SetTenant(tenant);
-
-
+    }
+    public void UseDefaultConnection()
+    {
+      TenantContext?.UseDefaultConnection();
+    }
+    public void UseTenantConnection()
+    {
+      TenantContext?.UseTenantConnection();
     }
 
     public async Task AfterSaveChangesAsync(CancellationToken ct = default)

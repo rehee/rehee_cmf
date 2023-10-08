@@ -13,7 +13,7 @@ using ReheeCmf.ContextModule.Providers;
 using ReheeCmf.ContextModule.Services;
 using ReheeCmf.Handlers.ContextHandlers;
 using ReheeCmf.Modules.Options;
-
+using ReheeCmf.MultiTenants;
 using ReheeCmf.Reflects.ReflectPools;
 using System.ComponentModel.DataAnnotations;
 
@@ -40,6 +40,8 @@ namespace ReheeCmf.ContextModule
       services.AddMemoryKeyValueCache<ICmfDbCommandInterceptor>(1);
       services.AddDbContext<TContext>();
 
+      var tenantConnection = configuration.GetOption<TenantConnection>();
+      services.AddSingleton<TenantConnection>(tenantConnection);
       var contextFactory = typeof(TContext).GetComponentsByHandler<IContextFactoryHandler>();
       if (contextFactory?.Any() == true)
       {

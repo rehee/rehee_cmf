@@ -15,6 +15,7 @@ namespace ReheeCmf.Contexts
     void TrackEntity(object entity, EnumEntityState enumEntityStatus = EnumEntityState.Modified);
     IEnumerable<KeyValueItemDTO> GetKeyValueItemDTO(Type type);
   }
+ 
   public interface ITokenDTOContext
   {
     TokenDTO? User { get; }
