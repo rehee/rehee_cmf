@@ -18,6 +18,7 @@ using System.Text;
 using ReheeCmf.Services;
 using ReheeCmf.Responses;
 using ReheeCmf.Modules;
+using System.Security.Principal;
 
 namespace ReheeCmf.AuthenticationModule.Services
 {
@@ -388,6 +389,7 @@ namespace ReheeCmf.AuthenticationModule.Services
       var expdate = DateTimeOffset.FromUnixTimeSeconds(b).UtcDateTime;
       var expTimeSpend = (expdate - DateTime.UtcNow);
       var guidAvaliable = Guid.TryParse(getFromClain(Common.TenantIDHeader).FirstOrDefault() ?? "", out var tId);
+
       var dto = new TokenDTO()
       {
         UserName = identity.Identity.Name,
@@ -402,6 +404,7 @@ namespace ReheeCmf.AuthenticationModule.Services
         IsSystemToken = identity.Claims.Any(b => b.Type == Common.SystemApiClaimType),
         TenantID = guidAvaliable ? tId : null,
         Claims = additionalClaim,
+        Impersonate = isImpersonate == true ? true : null,
       };
       if (tokenManagement.CheckUserEveryRequest && await isLockoutAsync(dto.UserName, null))
       {
@@ -564,7 +567,7 @@ namespace ReheeCmf.AuthenticationModule.Services
         }
         claims.Add(new Claim(ConstOptions.AvatarType, avatar ?? ""));
         claims.Add(new Claim(Common.TenantIDHeader, user.TenantID?.ToString() ?? ""));
-        if (impersonate == true)
+        if (impersonate == true && claims.Any(b => b.Type.Equals(ConstJWT.ImpersonateFlag)))
         {
           claims.Add(new Claim(ConstJWT.ImpersonateFlag, "true"));
         }
@@ -603,6 +606,7 @@ namespace ReheeCmf.AuthenticationModule.Services
           Permissions = permissions.ToArray(),
           TenantID = user.TenantID,
           Claims = dtoClaims,
+          Impersonate = impersonate == true ? true : null
         };
 
         if (refreshToken)

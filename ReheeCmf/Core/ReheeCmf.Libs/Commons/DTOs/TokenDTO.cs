@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ReheeCmf.Commons.DTOs
@@ -20,6 +21,8 @@ namespace ReheeCmf.Commons.DTOs
     public bool? IsSystemToken { get; set; }
     public ulong ExpireSecond { get; set; }
     public Guid? TenantID { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public bool? Impersonate { get; set; }
     public Dictionary<string, string>? Claims { get; set; }
   }
 }
