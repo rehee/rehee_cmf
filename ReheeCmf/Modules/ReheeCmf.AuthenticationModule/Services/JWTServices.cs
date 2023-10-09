@@ -19,6 +19,7 @@ using ReheeCmf.Services;
 using ReheeCmf.Responses;
 using ReheeCmf.Modules;
 using System.Security.Principal;
+using ReheeCmf.Enums;
 
 namespace ReheeCmf.AuthenticationModule.Services
 {
@@ -163,6 +164,7 @@ namespace ReheeCmf.AuthenticationModule.Services
 
         claims.Add(userClaim);
         claims.Add(new Claim(Common.TenantIDHeader, this.tenantId?.ToString() ?? ""));
+        claims.Add(new Claim(Common.TokenType, EnumTokenType.RefreshToken.ToString()));
         if (impersonate)
         {
           claims.Add(new Claim(ConstJWT.ImpersonateFlag, "true"));
@@ -199,6 +201,11 @@ namespace ReheeCmf.AuthenticationModule.Services
         return result;
       }
       var claims = validation.Content.Claims;
+      if (!Enum.TryParse<EnumTokenType>(claims?.FirstOrDefault(b => b.Type == Common.TokenType)?.Value, out var type) || type != EnumTokenType.RefreshToken)
+      {
+        result.SetError(HttpStatusCode.Forbidden);
+        return result;
+      }
       var userName = claims.FirstOrDefault(b => b.Type == ClaimTypes.NameIdentifier).Value;
 
       var isImpersonate = validation.Content.Claims.Any(b => b.Type == ConstJWT.ImpersonateFlag && b.Value == "true");
@@ -239,7 +246,7 @@ namespace ReheeCmf.AuthenticationModule.Services
           result.SetError(HttpStatusCode.Forbidden);
           return result;
         }
-        return await getTokenDTO(user, tokenManagement.RefreshTokenExtention, token);
+        return await GetTokenAsync(user, tokenManagement.RefreshTokenExtention, false, CancellationToken.None, token);
       }
 
     }

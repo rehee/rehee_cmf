@@ -99,7 +99,7 @@ namespace ReheeCmf.ContextModule.Contexts
     {
       var crudOption = this.crudOption ?? sp.GetService<CrudOption>();
       var tenantConnection = this.tenantConnection ?? sp.GetService<TenantConnection>();
-      if (crudOption.SQLType == Enums.EnumSQLType.Memory)
+      if (crudOption?.SQLType == Enums.EnumSQLType.Memory)
       {
         return;
       }

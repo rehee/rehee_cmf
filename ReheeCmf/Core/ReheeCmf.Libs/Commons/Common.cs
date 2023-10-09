@@ -25,6 +25,7 @@ namespace System
     public static Type IgnoreProperty = typeof(IgnoreUpdateAttribute);
     public static string TemplatepPttern = "\\[[^\\[]+\\]";
     public static string TenantIDHeader = "TenantID";
+    public static string TokenType = "TokenType";
     public static string TenantNameHeader = "TenantName";
     public static string TenantUrlName = "tenant";
     public static string ClientUrlHeader = "ClientUrl";
