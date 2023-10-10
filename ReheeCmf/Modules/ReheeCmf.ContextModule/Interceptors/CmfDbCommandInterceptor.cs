@@ -6,6 +6,8 @@ using ReheeCmf.Commons.Jsons.Options;
 using ReheeCmf.ContextModule.Readers;
 using ReheeCmf.Tenants;
 using System.Data.Common;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 namespace ReheeCmf.ContextModule.Interceptors
@@ -32,7 +34,18 @@ namespace ReheeCmf.ContextModule.Interceptors
         {
           tenant_key = tenant.Value?.TenantID.ToString() + (tenant.Value?.IgnoreTenant == true ? "_Ignore" : "");
         }
-        var key = $"{tenant_key}_{command.CommandText}_{command.Connection?.ConnectionString ?? ""}";
+        var sqlQuery = command.CommandText;
+
+        // 替换参数值为实际的值
+        foreach (DbParameter parameter in command.Parameters)
+        {
+          var parameterName = parameter.ParameterName;
+          var parameterValue = parameter.Value.ToString(); // 将参数值转换为字符串
+
+          sqlQuery = sqlQuery.Replace(parameterName, parameterValue);
+        }
+        var hash = ComputeHash(sqlQuery);
+        var key = $"{hash}_{command.Connection?.ConnectionString ?? ""}";
         if (mc.TryGetValue<string>(key, out var value))
         {
           if (value != null && value is string json)
@@ -41,7 +54,8 @@ namespace ReheeCmf.ContextModule.Interceptors
             {
               try
               {
-                return new EFTableRowsDataReader(JsonSerializer.Deserialize<EFTableRows>(json, JsonOption.DefaultOption)!);
+                //return new EFTableRowsDataReader(JsonSerializer.Deserialize<EFTableRows>(json, JsonOption.DefaultOption)!);
+                return new EFTableRowsDataReader(Newtonsoft.Json.JsonConvert.DeserializeObject<EFTableRows>(json)!);
               }
               catch { }
             }
@@ -55,9 +69,9 @@ namespace ReheeCmf.ContextModule.Interceptors
           tableRows = dbReaderLoader.LoadAndClose();
         }
 
-        var jsonResponse = JsonSerializer.Serialize(tableRows, JsonOption.DefaultOption);
-        //var obj = JsonConvert.DeserializeObject<EFTableRows>(json);
-        mc.Set(key, jsonResponse, 0.05d);
+        //var jsonResponse = JsonSerializer.Serialize(tableRows, JsonOption.DefaultOption);
+        var jsonResponse = Newtonsoft.Json.JsonConvert.SerializeObject(tableRows);
+        mc.Set(key, jsonResponse, 0.0833d);
         return new EFTableRowsDataReader(tableRows);
       }
       else
@@ -65,6 +79,15 @@ namespace ReheeCmf.ContextModule.Interceptors
         return base.ReaderExecuted(command, eventData, result);
       }
 
+    }
+    private static string ComputeHash(string input)
+    {
+      using (var sha256 = SHA256.Create())
+      {
+        var bytes = Encoding.UTF8.GetBytes(input);
+        var hashBytes = sha256.ComputeHash(bytes);
+        return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+      }
     }
   }
 }

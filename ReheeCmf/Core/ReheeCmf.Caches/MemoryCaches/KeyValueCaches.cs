@@ -26,7 +26,7 @@ namespace ReheeCmf.Caches.MemoryCaches
     }
     public bool TryGetValue<TValue>(string key, out TValue? value)
     {
-      if (TryGetValue(key, out var valueObj))
+      if (!TryGetValue(key, out var valueObj))
       {
         value = default;
         return false;
@@ -41,9 +41,10 @@ namespace ReheeCmf.Caches.MemoryCaches
     }
     public void Set<TValue>(string key, TValue value, double expireMins)
     {
+      var expireValue = DateTimeOffset.UtcNow.AddMinutes(expireMins > 0 ? expireMins : 30);
+      this.keyLastVisit.AddOrUpdate(key, expireValue, (k, b) => expireValue);
       this.Set(key, value);
-      var expireValue = DateTimeOffset.UtcNow.AddMinutes(expireMins > 0 ? 30 : expireMins);
-      this.keyLastVisit.TryUpdate(key, expireValue, expireValue);
+
     }
 
     public Task SetAsync<TValue>(string key, TValue value, double expireMins, CancellationToken ct)
