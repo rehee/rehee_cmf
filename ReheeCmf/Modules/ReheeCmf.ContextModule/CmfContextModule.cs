@@ -11,10 +11,10 @@ namespace ReheeCmf.ContextModule
     public override string ModuleName => ConstModule.CmfContextModule;
 
 
-    public override Task ConfigureServicesAsync(ServiceConfigurationContext context)
+    public override async Task ConfigureServicesAsync(ServiceConfigurationContext context)
     {
+      await base.ConfigureServicesAsync(context);
       context.Services!.AddContextModule<TContext, TUser>(context.Configuration!);
-      return Task.CompletedTask;
     }
 
     public override Task<IEnumerable<string>> GetPermissions(IContext? db, TokenDTO? user, CancellationToken ct = default)

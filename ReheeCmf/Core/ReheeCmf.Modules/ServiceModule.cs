@@ -1,6 +1,10 @@
 ﻿
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.DependencyInjection;
+using ReheeCmf.Authenticates;
+using ReheeCmf.Helpers;
 using ReheeCmf.Modules.ApiVersions;
+using ReheeCmf.Tenants;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace ReheeCmf.Modules
@@ -122,9 +126,9 @@ namespace ReheeCmf.Modules
         result.SetValidation(ValidationResultHelper.New("dto is Required", nameof(dto)));
         return result;
       }
-      if (dto?.Items?.Length == 0)
+      if (dto?.Items == null)
       {
-        result.SetValidation(ValidationResultHelper.New("Items is empty", nameof(dto.Items)));
+        result.SetValidation(ValidationResultHelper.New("Items is null", nameof(dto.Items)));
         return result;
       }
       var roleNameNormalization = roleName.ToUpper();
@@ -172,31 +176,89 @@ namespace ReheeCmf.Modules
       {
         await db.SaveChangesAsync(user, ct);
       }
-
+      var cache = CacheBaseHelper.GetCache(this.GetType());
+      var tenantId = db.TenantID?.ToString() ?? "";
+      Func<string, string> cacheKey = b => $"{tenantId}_{b}";
+      cache?.Set<IEnumerable<string>>(cacheKey(roleName.ToUpper()), matchedPermissions.ToArray(), -1);
       return result;
 
     }
 
-    public virtual Task<ContentResponse<string>> GetRoleBasedPermissionAsync(IContext db,
+    public virtual async Task<ContentResponse<string>> GetRoleBasedPermissionAsync(IContext db,
       IEnumerable<string> roleNames, string token, CancellationToken ct = default)
     {
       var result = new ContentResponse<string>();
       var upperRoleName = roleNames.Select(b => b.ToUpper());
-      var roleInDb = db.Query<RoleBasedPermission>(true)
-        .Where(b => b.ModuleName == ModuleName && upperRoleName.Any(c => c == b.NormalizationRoleName))
-        .ToArray()
-        .SelectMany(b => b.PermissionList)
-        .Distinct()
-        .ToArray();
-      if (roleInDb.Length <= 0)
+      if (upperRoleName?.Any() != true)
       {
         result.SetSuccess("");
-        return Task.FromResult(result);
+        return result;
       }
-      result.SetSuccess(
-        string.Join(",", roleInDb));
+      var asyncQuery = db.ServiceProvider!.GetService<IAsyncQuery>()!;
+      var cachedPermission = db.ServiceProvider?.GetService<TokenManagement>()?.CachedPermission == true;
+      var tenantId = db.TenantID?.ToString() ?? "";
+      Func<string, string> cacheKey = b => $"{tenantId}_{b}";
+      var typedCache = db.ServiceProvider?.GetMemoryKeyValueCacheByType(this.GetType());
+      var roleInCache = upperRoleName.Select(b => (b, typedCache?.Get<IEnumerable<string>>(cacheKey(b)))).Where(b => b.Item2 != null);
+      string[]? roleNameQuery = null;
+      if (cachedPermission)
+      {
+        roleNameQuery = upperRoleName.Where(b => roleInCache.Select(b => b.b).Contains(b) != true).ToArray();
+        if (roleNameQuery?.Length == 0)
+        {
+          var cacheValue = roleInCache.Where(b => b.Item2 != null).SelectMany(b => b.Item2!).Distinct();
+          result.SetSuccess(
+            string.Join(",", cacheValue));
+          return result;
+        }
+      }
+      else
+      {
+        roleNameQuery = upperRoleName.ToArray();
+      }
+      var roleInDb =
+              (await asyncQuery.ToArrayAsync(db.Query<RoleBasedPermission>(true)
+              .Where(b => b.ModuleName == ModuleName && roleNameQuery.Any(c => c == b.NormalizationRoleName)), ct))
 
-      return Task.FromResult(result);
+              .Select(b => (b.RoleName, b.PermissionList))
+              .DistinctBy(b => b.RoleName)
+              .ToArray();
+      if (roleInDb.Length <= 0)
+      {
+        if (!cachedPermission)
+        {
+          result.SetSuccess("");
+          return result;
+        }
+      }
+
+      if (cachedPermission)
+      {
+        foreach (var role in roleNameQuery)
+        {
+          var roleQuery = roleInDb.Where(b => b.RoleName == role).Select(b => b.PermissionList).FirstOrDefault();
+          if (roleQuery != null)
+          {
+            typedCache?.Set<IEnumerable<string>>(cacheKey(role), roleQuery.ToArray(), -1);
+          }
+          else
+          {
+            typedCache?.Set<IEnumerable<string>>(cacheKey(role), Enumerable.Empty<string>(), -1);
+          }
+        }
+        var finallCache = upperRoleName.Select(b => (b, typedCache?.Get<IEnumerable<string>>(cacheKey(b)))).Where(b => b.Item2 != null).SelectMany(b => b.Item2!).Distinct();
+        result.SetSuccess(
+          string.Join(",", finallCache));
+      }
+      else
+      {
+        var r = roleInDb.SelectMany(b => b.PermissionList).Distinct();
+        result.SetSuccess(
+          string.Join(",", r));
+      }
+
+
+      return result;
     }
 
     public virtual IEnumerable<Type> SharedEntityTypes => Enumerable.Empty<Type>();
@@ -214,6 +276,8 @@ namespace ReheeCmf.Modules
     }
     public virtual Task ConfigureServicesAsync(ServiceConfigurationContext context)
     {
+      var type = this.GetType();
+      CmfMemoryCasheHelper.AddMemoryKeyValueCacheByType(context.Services!, type, null);
       return Task.CompletedTask;
     }
     public virtual Task PostConfigureServicesAsync(ServiceConfigurationContext context)

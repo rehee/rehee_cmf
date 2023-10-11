@@ -537,25 +537,33 @@ namespace ReheeCmf.AuthenticationModule.Services
         var permissions = new List<string>();
         var roleKey = String.Join(",", roles.OrderBy(b => b)).ToLower() + "_" + tenantId?.ToString() ?? Guid.Empty.ToString();
         var db = sp.GetService<IContext>();
-        if (tokenManagement.CachedPermission && rolePermissionCache.TryGetValue(roleKey, out var cachedValue))
+        //if (tokenManagement.CachedPermission && rolePermissionCache.TryGetValue(roleKey, out var cachedValue))
+        //{
+        //  permissions = cachedValue.ToList();
+        //}
+        //else
+        //{
+        //  db.SetIgnoreTenant(false);
+        //  foreach (var m in moduleMap.Values)
+        //  {
+        //    var p = await m!.GetRoleBasedPermissionAsync(db!, roles, "");
+        //    if (p.Success && !string.IsNullOrEmpty(p.Content))
+        //    {
+        //      permissions.AddRange(p.Content.Split(','));
+        //    }
+        //  }
+        //  var valueReadyToCache = permissions.Distinct().ToArray();
+        //  rolePermissionCache.AddOrUpdate(roleKey, valueReadyToCache, (a, b) => valueReadyToCache);
+        //}
+        db.SetIgnoreTenant(false);
+        foreach (var m in moduleMap.Values)
         {
-          permissions = cachedValue.ToList();
-        }
-        else
-        {
-          db.SetIgnoreTenant(false);
-          foreach (var m in moduleMap.Values)
+          var p = await m!.GetRoleBasedPermissionAsync(db!, roles, "");
+          if (p.Success && !string.IsNullOrEmpty(p.Content))
           {
-            var p = await m!.GetRoleBasedPermissionAsync(db!, roles, "");
-            if (p.Success && !string.IsNullOrEmpty(p.Content))
-            {
-              permissions.AddRange(p.Content.Split(','));
-            }
+            permissions.AddRange(p.Content.Split(','));
           }
-          var valueReadyToCache = permissions.Distinct().ToArray();
-          rolePermissionCache.AddOrUpdate(roleKey, valueReadyToCache, (a, b) => valueReadyToCache);
         }
-
         claims.Add(new Claim(ConstOptions.PermissionType, String.Join(',', permissions)));
         claims.Add(new Claim(ConstOptions.UserEmail, user.Email ?? ""));
         string avatar = String.Empty;

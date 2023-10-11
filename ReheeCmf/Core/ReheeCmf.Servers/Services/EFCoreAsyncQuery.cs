@@ -20,5 +20,9 @@ namespace ReheeCmf.Servers.Services
     {
       return query.AsNoTracking();
     }
+    public Task<T[]> ToArrayAsync<T>(IQueryable<T> query, CancellationToken ct)
+    {
+      return query.ToArrayAsync(ct);
+    }
   }
 }

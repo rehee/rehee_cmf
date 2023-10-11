@@ -10,5 +10,6 @@ namespace ReheeCmf.Services
   {
     Task<T?> FirstOrDefaultAsync<T>(IQueryable<T> query, CancellationToken ct);
     IQueryable<T> AsNoTracking<T>(IQueryable<T> query) where T : class;
+    Task<T[]> ToArrayAsync<T>(IQueryable<T> query, CancellationToken ct);
   }
 }

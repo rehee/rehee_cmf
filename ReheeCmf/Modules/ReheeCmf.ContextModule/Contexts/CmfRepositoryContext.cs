@@ -38,6 +38,7 @@ namespace ReheeCmf.ContextModule.Contexts
     }
     public object Context => context;
     protected readonly IServiceProvider sp;
+    public IServiceProvider? ServiceProvider => sp;
     protected ConcurrentDictionary<int, IChangeHandler>? EntityChangeHandlerMapper { get; set; }
     public CmfRepositoryContext(IServiceProvider sp, DbContext context)
     {

@@ -25,7 +25,7 @@ namespace ReheeCmf.UserManagementModule
     public override string ModuleTitle => ConstModule.CmfUserManagementModule;
 
     public override string ModuleName => ConstModule.CmfUserManagementModule;
-
+    
     public override async Task ConfigureServicesAsync(ServiceConfigurationContext context)
     {
       await base.ConfigureServicesAsync(context);

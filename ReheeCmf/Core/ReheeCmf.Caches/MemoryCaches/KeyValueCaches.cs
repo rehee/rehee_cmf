@@ -41,7 +41,7 @@ namespace ReheeCmf.Caches.MemoryCaches
     }
     public void Set<TValue>(string key, TValue value, double expireMins)
     {
-      var expireValue = DateTimeOffset.UtcNow.AddMinutes(expireMins > 0 ? expireMins : 30);
+      var expireValue = expireMins > 0 ? DateTimeOffset.UtcNow.AddMinutes(expireMins) : DateTimeOffset.UtcNow.AddYears(1);
       this.keyLastVisit.AddOrUpdate(key, expireValue, (k, b) => expireValue);
       this.Set(key, value);
 
