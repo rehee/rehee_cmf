@@ -60,7 +60,7 @@ namespace ReheeCmf.Servers.Services
     public IEnumerable<Tenant> GetAllTenant()
     {
       var current = DateTime.UtcNow;
-      return storage.GetAllTenants().Where(b => !b.LicenceEnd.HasValue || b.LicenceEnd <= current).Select(b => b.GetTenant(fileOption));
+      return storage.GetAllTenants().Where(b => !b.LicenceEnd.HasValue || b.LicenceEnd >= current).Select(b => b.GetTenant(fileOption));
     }
 
 
