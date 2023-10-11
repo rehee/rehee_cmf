@@ -208,7 +208,7 @@ namespace ReheeCmf.AuthenticationModule.Services
       }
       var userName = claims.FirstOrDefault(b => b.Type == ClaimTypes.NameIdentifier).Value;
 
-      var isImpersonate = validation.Content.Claims.Any(b => b.Type == ConstJWT.ImpersonateFlag && b.Value == "true");
+      var isImpersonate = validation.Content.Claims.Any(b => b.Type == ConstJWT.ImpersonateFlag && b.Value?.ToLower() == "true");
       if (isImpersonate)
       {
         var tenantIdFromToken = claims.FirstOrDefault(b => b.Type == Common.TenantIDHeader)?.Value;
@@ -359,7 +359,7 @@ namespace ReheeCmf.AuthenticationModule.Services
       }
       var identity = tokenCheck.Content;
       var userName = identity?.Identity?.Name;
-      var isImpersonate = identity.Claims.Any(b => b.Type.Equals(ConstJWT.ImpersonateFlag) && b.Value == "true");
+      var isImpersonate = identity.Claims.Any(b => b.Type.Equals(ConstJWT.ImpersonateFlag) && b.Value?.ToLower() == "true");
       if (checkName == true && isImpersonate != true)
       {
         if (!await CheckUser(identity))
