@@ -9,9 +9,16 @@
     <BaseOutputPath>..\..\..\bin</BaseOutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0-2.final" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.8.0-2.final" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0-2.final" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\Components\ReheeCmf.ContextComponent\ReheeCmf.ContextComponent.csproj" />
     <ProjectReference Include="..\..\Core\ReheeCmf.Libs\ReheeCmf.Libs.csproj" />
     <ProjectReference Include="..\..\Core\ReheeCmf.Modules\ReheeCmf.Modules.csproj" />
+    <ProjectReference Include="..\..\Core\ReheeCmf.Odatas\ReheeCmf.ODatas.csproj" />
+    <ProjectReference Include="..\ReheeCmf.ContextModule\ReheeCmf.ContextModule.csproj" />
   </ItemGroup>
-
+  
 </Project>
