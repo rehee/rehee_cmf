@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using ReheeCmf;
 using ReheeCmf.Commons.DTOs;
+using ReheeCmf.ContentManagementModule;
 using ReheeCmf.ContextModule;
 using ReheeCmf.ContextModule.Contexts;
 using ReheeCmf.ContextModule.Entities;
@@ -25,6 +26,12 @@ namespace CmfDemo
 {
   public class DemoModule : CmfApiModule<ApplicationDbContext, ReheeCmfBaseUser>
   {
+    public override IEnumerable<ModuleDependOn> Depends()
+    {
+      return base.Depends().Concat([
+        ModuleDependOn.New<CmfContentManagememntModule>(),
+      ]);
+    }
     public override string ModuleTitle => "";
     public override string ModuleName => "";
 
@@ -37,9 +44,9 @@ namespace CmfDemo
       {
         _.OnRejected = async (context, ct) =>
         {
-          context.HttpContext.Response.StatusCode =(int)StatusCodes.Status429TooManyRequests;
+          context.HttpContext.Response.StatusCode = (int)StatusCodes.Status429TooManyRequests;
           string responseText = "Too Many Request";
-          
+
           context.HttpContext.Response.ContentType = "text/plain";
           await context.HttpContext.Response.WriteAsync(responseText);
         };

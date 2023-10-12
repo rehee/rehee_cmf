@@ -15,6 +15,7 @@ using ReheeCmf.Handlers.ContextHandlers;
 using ReheeCmf.Modules.Options;
 using ReheeCmf.MultiTenants;
 using ReheeCmf.Reflects.ReflectPools;
+using ReheeCmf.Utility.CmfRegisters;
 using System.ComponentModel.DataAnnotations;
 
 namespace ReheeCmf.ContextModule
@@ -171,8 +172,14 @@ namespace ReheeCmf.ContextModule
           SetName: b.Value.Item2
           );
       });
+      var entityFromRegister = (CmfRegister.RegistrableEntityPool.Values.SelectMany(b => b.QueryableEntities) ?? Enumerable.Empty<Type>())
+        .Select(p => (
+          EntityType: p,
+          TypeName: p.Name,
+          SetName: p.Name
+          ));
 
-      var allProperties = properties.Concat(entityForContext);
+      var allProperties = properties.Concat(entityForContext).Concat(entityFromRegister);
       //var setMethod = dbType.GetMap().Methods.Where(b => b.Name == "Set" && b.GetParameters().Length == 0).FirstOrDefault();
 
       foreach (var p in allProperties)

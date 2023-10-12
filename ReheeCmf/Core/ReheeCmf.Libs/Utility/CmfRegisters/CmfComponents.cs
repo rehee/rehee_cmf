@@ -14,6 +14,9 @@ namespace ReheeCmf.Utility.CmfRegisters
       new ConcurrentDictionary<int, ICmfComponent>();
     public static ConcurrentDictionary<int, ICmfHandler> SingletonHandlerPool =
       new ConcurrentDictionary<int, ICmfHandler>();
+    public static ConcurrentDictionary<Type, IRegistrableEntity> RegistrableEntityPool =
+      new ConcurrentDictionary<Type, IRegistrableEntity>();
+
     public static void RegisterComponent(Attribute attribute, Type decorate)
     {
       if (attribute is ICmfComponent != true)
@@ -30,6 +33,20 @@ namespace ReheeCmf.Utility.CmfRegisters
         component.EntityType = decorate;
       }
       ComponentPool.TryAdd(component!.GetHashCode(), component);
+
+    }
+
+    public static void RegisterEntityComponent(Attribute attribute, Type decorate)
+    {
+      if (attribute is not RegistrableEntityAttribute)
+      {
+        return;
+      }
+      var handler = Activator.CreateInstance(decorate);
+      if (handler is IRegistrableEntity typedHandler)
+      {
+        RegistrableEntityPool.AddOrUpdate(decorate, typedHandler, (a, b) => typedHandler);
+      }
 
     }
 

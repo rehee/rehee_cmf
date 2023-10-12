@@ -9,10 +9,9 @@ namespace ReheeCmf.Utility.CmfRegisters
 {
   public static partial class CmfRegister
   {
-    private static Action<Attribute, Type>[] Registers { get; set; } = new Action<Attribute, Type>[]
-    {
-      RegisterComponent
-    };
+    private static Action<Attribute, Type>[] Registers { get; set; } = [
+      RegisterComponent,
+      RegisterEntityComponent];
     public static void SetRegisters(IEnumerable<Action<Attribute, Type>> registers)
     {
       Registers = registers.ToArray();

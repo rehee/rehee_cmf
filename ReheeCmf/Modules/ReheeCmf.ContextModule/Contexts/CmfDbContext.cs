@@ -1,4 +1,5 @@
-﻿using ReheeCmf.ContextComponent;
+﻿using Microsoft.Extensions.Options;
+using ReheeCmf.ContextComponent;
 using ReheeCmf.ContextModule.Components;
 using ReheeCmf.Contexts;
 using ReheeCmf.Handlers.ContextHandlers;
@@ -50,6 +51,11 @@ namespace ReheeCmf.ContextModule.Contexts
     protected override void OnModelCreating(ModelBuilder builder)
     {
       base.OnModelCreating(builder);
+      var handler = this.GetType().GetComponentsByHandler<IDbContextBuilder>().OrderBy(b => b.Index);
+      foreach (var h in handler)
+      {
+        h.SingletonHandler<IDbContextBuilder>()?.OnModelCreating(builder, sp, this);
+      }
     }
 
     public override void Dispose()

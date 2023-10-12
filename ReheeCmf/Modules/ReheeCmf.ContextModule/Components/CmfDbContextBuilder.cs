@@ -1,11 +1,9 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
 using ReheeCmf.Caches.MemoryCaches;
-using ReheeCmf.Components;
 using ReheeCmf.ContextComponent;
 using ReheeCmf.ContextModule.Interceptors;
 using ReheeCmf.Enums;
+using ReheeCmf.Utility.CmfRegisters;
 namespace ReheeCmf.ContextModule.Components
 {
   public class CmfDbContextBuilder : IDbContextBuilder
@@ -63,7 +61,13 @@ namespace ReheeCmf.ContextModule.Components
 
     public virtual void OnModelCreating(ModelBuilder builder, IServiceProvider sp, DbContext context)
     {
-
+      if (context is ITenantContext tenantContext)
+      {
+        foreach (var handler in CmfRegister.RegistrableEntityPool.Values)
+        {
+          handler.RegisterEntity(builder, tenantContext);
+        }
+      }
     }
 
   }

@@ -49,6 +49,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReheeCmf.UserManagementModu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReheeCmf.FileModule", "Modules\ReheeCmf.FileModule\ReheeCmf.FileModule.csproj", "{93FDE38B-B577-40F3-95D1-7288A69A36A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReheeCmf.ContentManagementModule", "Modules\ReheeCmf.ContentManagementModule\ReheeCmf.ContentManagementModule.csproj", "{D4D2E8F6-1A44-48E3-913A-CEE90C482E78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,10 @@ Global
 		{93FDE38B-B577-40F3-95D1-7288A69A36A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93FDE38B-B577-40F3-95D1-7288A69A36A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93FDE38B-B577-40F3-95D1-7288A69A36A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4D2E8F6-1A44-48E3-913A-CEE90C482E78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4D2E8F6-1A44-48E3-913A-CEE90C482E78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4D2E8F6-1A44-48E3-913A-CEE90C482E78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4D2E8F6-1A44-48E3-913A-CEE90C482E78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -130,6 +136,7 @@ Global
 		{30C7D27B-CA00-485F-8ABD-F1B5B5AE50C4} = {5536617D-9F78-416E-A7A7-02DC861D9A3D}
 		{4B33C9C9-0F6F-4472-AEB9-58040EBA8AC3} = {AB5383BD-B1E6-40F0-AF19-A444CCBE769B}
 		{93FDE38B-B577-40F3-95D1-7288A69A36A0} = {AB5383BD-B1E6-40F0-AF19-A444CCBE769B}
+		{D4D2E8F6-1A44-48E3-913A-CEE90C482E78} = {AB5383BD-B1E6-40F0-AF19-A444CCBE769B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D6A34A30-5D65-4622-BB92-A37DE5D89EB2}

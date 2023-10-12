@@ -65,7 +65,11 @@ namespace ReheeCmf.ContextModule.Contexts
     {
       base.OnModelCreating(builder);
       builder.Entity<TenantIdentityUserClaim>().HasKey(b => b.Id);
-
+      var handler = this.GetType().GetComponentsByHandler<IDbContextBuilder>().OrderBy(b => b.Index);
+      foreach (var h in handler)
+      {
+        h.SingletonHandler<IDbContextBuilder>()?.OnModelCreating(builder, sp, this);
+      }
     }
 
     public override void Dispose()

@@ -18,6 +18,10 @@ namespace ReheeCmf.Helpers
       {
         return null;
       }
+      if (propertyInfo == null)
+      {
+        return null;
+      }
       return propertyInfo.PropertyType;
     }
     public static (Type entityType, Type keyType, string entityName)? GetEntityTypeAndKey(string entityType)
