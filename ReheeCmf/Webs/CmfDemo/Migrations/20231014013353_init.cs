@@ -54,6 +54,36 @@ namespace CmfDemo.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CmsEntityMetadata",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EntityName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EntityNameNormalization = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PermissionCreate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PermissionRead = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PermissionUpdate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PermissionDelete = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RuleCreate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RuleRead = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RuleUpdate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RuleDelete = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AsSplitQuery = table.Column<bool>(type: "bit", nullable: true),
+                    SelectedProperties = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    QueryBeforeFilter = table.Column<bool>(type: "bit", nullable: true),
+                    HideProperty = table.Column<bool>(type: "bit", nullable: true),
+                    TenantID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreateUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateUserId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CmsEntityMetadata", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Entity1s",
                 columns: table => new
                 {
@@ -72,7 +102,7 @@ namespace CmfDemo.Migrations
                 name: "RoleBasedPermissions",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ModuleName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RoleName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Permissions = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -143,6 +173,7 @@ namespace CmfDemo.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TenantID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ReheeCmfBaseUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -150,6 +181,11 @@ namespace CmfDemo.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserClaims_AspNetUsers_ReheeCmfBaseUserId",
+                        column: x => x.ReheeCmfBaseUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_AspNetUserClaims_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -225,6 +261,108 @@ namespace CmfDemo.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CmsEntity",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CmsEntityMetadataId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: true),
+                    PublishedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpPublishedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsPublished = table.Column<bool>(type: "bit", nullable: true, computedColumnSql: "CASE \r\n  WHEN [Status] = 2 THEN CAST(1 AS bit)\r\n  WHEN [Status] = 4 AND [PublishedDate] IS NOT NULL AND [PublishedDate] >= CONVERT(datetimeoffset, SYSDATETIMEOFFSET()) AT TIME ZONE 'UTC' THEN CAST(1 AS bit)\r\n  WHEN [Status] = 4 AND [UpPublishedDate] IS NOT NULL AND [UpPublishedDate] < CONVERT(datetimeoffset, SYSDATETIMEOFFSET()) AT TIME ZONE 'UTC' THEN CAST(0 AS bit)\r\n  ELSE CAST(0 AS bit)\r\nEND"),
+                    TenantID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreateUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateUserId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CmsEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CmsEntity_CmsEntityMetadata_CmsEntityMetadataId",
+                        column: x => x.CmsEntityMetadataId,
+                        principalTable: "CmsEntityMetadata",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CmsPropertyMetadata",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CmsEntityMetadataId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    PropertyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PropertyNameNormalization = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PropertyType = table.Column<int>(type: "int", nullable: false),
+                    InputType = table.Column<int>(type: "int", nullable: false),
+                    NotNull = table.Column<bool>(type: "bit", nullable: true),
+                    Unique = table.Column<bool>(type: "bit", nullable: true),
+                    PermissionCreate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PermissionRead = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PermissionUpdate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PermissionDelete = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RuleCreate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RuleRead = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RuleUpdate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RuleDelete = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TenantID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreateUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateUserId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CmsPropertyMetadata", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CmsPropertyMetadata_CmsEntityMetadata_CmsEntityMetadataId",
+                        column: x => x.CmsEntityMetadataId,
+                        principalTable: "CmsEntityMetadata",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CmsProperty",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CmsEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CmsPropertyMetadataId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ValueUpdateStamp = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ValueString = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ValueBoolean = table.Column<bool>(type: "bit", nullable: true),
+                    ValueInt16 = table.Column<short>(type: "smallint", nullable: true),
+                    ValueInt32 = table.Column<int>(type: "int", nullable: true),
+                    ValueInt64 = table.Column<long>(type: "bigint", nullable: true),
+                    ValueSingle = table.Column<float>(type: "real", nullable: true),
+                    ValueDouble = table.Column<double>(type: "float", nullable: true),
+                    ValueDecimal = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    ValueGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ValueDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ValueDateTimeOffset = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    TenantID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreateUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdateUserId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CmsProperty", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CmsProperty_CmsEntity_CmsEntityId",
+                        column: x => x.CmsEntityId,
+                        principalTable: "CmsEntity",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_CmsProperty_CmsPropertyMetadata_CmsPropertyMetadataId",
+                        column: x => x.CmsPropertyMetadataId,
+                        principalTable: "CmsPropertyMetadata",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -236,6 +374,11 @@ namespace CmfDemo.Migrations
                 column: "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserClaims_ReheeCmfBaseUserId",
+                table: "AspNetUserClaims",
+                column: "ReheeCmfBaseUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -263,6 +406,26 @@ namespace CmfDemo.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CmsEntity_CmsEntityMetadataId",
+                table: "CmsEntity",
+                column: "CmsEntityMetadataId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CmsProperty_CmsEntityId",
+                table: "CmsProperty",
+                column: "CmsEntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CmsProperty_CmsPropertyMetadataId",
+                table: "CmsProperty",
+                column: "CmsPropertyMetadataId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CmsPropertyMetadata_CmsEntityMetadataId",
+                table: "CmsPropertyMetadata",
+                column: "CmsEntityMetadataId");
         }
 
         /// <inheritdoc />
@@ -284,6 +447,9 @@ namespace CmfDemo.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CmsProperty");
+
+            migrationBuilder.DropTable(
                 name: "Entity1s");
 
             migrationBuilder.DropTable(
@@ -297,6 +463,15 @@ namespace CmfDemo.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "CmsEntity");
+
+            migrationBuilder.DropTable(
+                name: "CmsPropertyMetadata");
+
+            migrationBuilder.DropTable(
+                name: "CmsEntityMetadata");
         }
     }
 }

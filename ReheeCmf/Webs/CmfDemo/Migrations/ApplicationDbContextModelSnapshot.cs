@@ -17,7 +17,7 @@ namespace CmfDemo.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0-rc.1.23419.6")
+                .HasAnnotation("ProductVersion", "8.0.0-rc.2.23480.1")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -45,6 +45,266 @@ namespace CmfDemo.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Entity1s");
+                });
+
+            modelBuilder.Entity("ReheeCmf.ContentManagementModule.Entities.CmsEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CmsEntityMetadataId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreateUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsPublished")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("bit")
+                        .HasComputedColumnSql("CASE \r\n  WHEN [Status] = 2 THEN CAST(1 AS bit)\r\n  WHEN [Status] = 4 AND [PublishedDate] IS NOT NULL AND [PublishedDate] >= CONVERT(datetimeoffset, SYSDATETIMEOFFSET()) AT TIME ZONE 'UTC' THEN CAST(1 AS bit)\r\n  WHEN [Status] = 4 AND [UpPublishedDate] IS NOT NULL AND [UpPublishedDate] < CONVERT(datetimeoffset, SYSDATETIMEOFFSET()) AT TIME ZONE 'UTC' THEN CAST(0 AS bit)\r\n  ELSE CAST(0 AS bit)\r\nEND");
+
+                    b.Property<DateTimeOffset?>("PublishedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("TenantID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpPublishedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdateUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CmsEntityMetadataId");
+
+                    b.ToTable("CmsEntity");
+                });
+
+            modelBuilder.Entity("ReheeCmf.ContentManagementModule.Entities.CmsEntityMetadata", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("AsSplitQuery")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreateUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EntityNameNormalization")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("HideProperty")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PermissionCreate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PermissionDelete")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PermissionRead")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PermissionUpdate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("QueryBeforeFilter")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RuleCreate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RuleDelete")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RuleRead")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RuleUpdate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SelectedProperties")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("TenantID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdateUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CmsEntityMetadata");
+                });
+
+            modelBuilder.Entity("ReheeCmf.ContentManagementModule.Entities.CmsProperty", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CmsEntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CmsPropertyMetadataId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreateUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("TenantID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdateUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("ValueBoolean")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ValueDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTimeOffset?>("ValueDateTimeOffset")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<decimal?>("ValueDecimal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<double?>("ValueDouble")
+                        .HasColumnType("float");
+
+                    b.Property<Guid?>("ValueGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<short?>("ValueInt16")
+                        .HasColumnType("smallint");
+
+                    b.Property<int?>("ValueInt32")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("ValueInt64")
+                        .HasColumnType("bigint");
+
+                    b.Property<float?>("ValueSingle")
+                        .HasColumnType("real");
+
+                    b.Property<string>("ValueString")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ValueUpdateStamp")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CmsEntityId");
+
+                    b.HasIndex("CmsPropertyMetadataId");
+
+                    b.ToTable("CmsProperty");
+                });
+
+            modelBuilder.Entity("ReheeCmf.ContentManagementModule.Entities.CmsPropertyMetadata", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CmsEntityMetadataId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreateUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("InputType")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("NotNull")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PermissionCreate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PermissionDelete")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PermissionRead")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PermissionUpdate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PropertyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PropertyNameNormalization")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PropertyType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RuleCreate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RuleDelete")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RuleRead")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RuleUpdate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("TenantID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("Unique")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdateUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CmsEntityMetadataId");
+
+                    b.ToTable("CmsPropertyMetadata");
                 });
 
             modelBuilder.Entity("ReheeCmf.ContextModule.Entities.ReheeCmfBaseUser", b =>
@@ -276,9 +536,8 @@ namespace CmfDemo.Migrations
 
             modelBuilder.Entity("ReheeCmf.Entities.RoleBasedPermission", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ModuleName")
                         .HasColumnType("nvarchar(max)");
@@ -368,6 +627,39 @@ namespace CmfDemo.Migrations
                     b.ToTable("Tenants");
                 });
 
+            modelBuilder.Entity("ReheeCmf.ContentManagementModule.Entities.CmsEntity", b =>
+                {
+                    b.HasOne("ReheeCmf.ContentManagementModule.Entities.CmsEntityMetadata", "Metadata")
+                        .WithMany("Entities")
+                        .HasForeignKey("CmsEntityMetadataId");
+
+                    b.Navigation("Metadata");
+                });
+
+            modelBuilder.Entity("ReheeCmf.ContentManagementModule.Entities.CmsProperty", b =>
+                {
+                    b.HasOne("ReheeCmf.ContentManagementModule.Entities.CmsEntity", "Entity")
+                        .WithMany("Properties")
+                        .HasForeignKey("CmsEntityId");
+
+                    b.HasOne("ReheeCmf.ContentManagementModule.Entities.CmsPropertyMetadata", "Property")
+                        .WithMany("Properties")
+                        .HasForeignKey("CmsPropertyMetadataId");
+
+                    b.Navigation("Entity");
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("ReheeCmf.ContentManagementModule.Entities.CmsPropertyMetadata", b =>
+                {
+                    b.HasOne("ReheeCmf.ContentManagementModule.Entities.CmsEntityMetadata", "Metadata")
+                        .WithMany("Properities")
+                        .HasForeignKey("CmsEntityMetadataId");
+
+                    b.Navigation("Metadata");
+                });
+
             modelBuilder.Entity("ReheeCmf.ContextModule.Entities.TenantIdentityRoleClaim", b =>
                 {
                     b.HasOne("ReheeCmf.ContextModule.Entities.TenantIdentityRole", null)
@@ -421,6 +713,23 @@ namespace CmfDemo.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ReheeCmf.ContentManagementModule.Entities.CmsEntity", b =>
+                {
+                    b.Navigation("Properties");
+                });
+
+            modelBuilder.Entity("ReheeCmf.ContentManagementModule.Entities.CmsEntityMetadata", b =>
+                {
+                    b.Navigation("Entities");
+
+                    b.Navigation("Properities");
+                });
+
+            modelBuilder.Entity("ReheeCmf.ContentManagementModule.Entities.CmsPropertyMetadata", b =>
+                {
+                    b.Navigation("Properties");
                 });
 
             modelBuilder.Entity("ReheeCmf.ContextModule.Entities.ReheeCmfBaseUser", b =>
