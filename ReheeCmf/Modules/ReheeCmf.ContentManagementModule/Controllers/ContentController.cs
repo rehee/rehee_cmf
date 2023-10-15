@@ -1,45 +1,34 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using ReheeCmf.ContextModule.Entities;
 using System.Linq.Expressions;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using ReheeCmf.ContentManagementModule.DTOs;
+using ReheeCmf.Commons.DTOs;
+using ReheeCmf.CodeAnalyses;
+using ReheeCmf.ContentManagementModule.CodeAnalyses;
 namespace ReheeCmf.ContentManagementModule.Controllers
 {
-  [Route("Api/Data/CmsContentDTO")]
+  [Route("Api/Content")]
   public class ContentController : ODataController
   {
     private readonly IContext context;
+    private readonly ICmfPredicateExpression<ContentManagementExpressOption> analysisService;
+
     static ScriptOptions? options { get; set; }
-    public ContentController(IContext context)
+    public ContentController(IContext context, ICmfPredicateExpression<ContentManagementExpressOption> analysisService)
     {
       this.context = context;
+      this.analysisService = analysisService;
     }
     [EnableQuery]
-    [HttpGet()]
-    public async Task<IEnumerable<CmsContentDTO>> Query(CancellationToken ct)
+    [HttpGet("{entityName}/Json")]
+    public async Task<IEnumerable<CmsContentDTO>> Query(string entityName, CancellationToken ct)
     {
-
-      var code = "x => !x.EmailConfirmed";
-      options = options ?? ScriptOptions.Default
-        .WithReferences(AppDomain.CurrentDomain.GetAssemblies().Where(a => !a.IsDynamic))
-        .WithImports("System", "System.Linq", "System.Linq.Expressions");
-
-      var d = await CSharpScript.EvaluateAsync(
-        $$"""
-        global::System.Linq.Expressions.Expression<System.Func<ReheeCmf.ContextModule.Entities.ReheeCmfBaseUser, System.Boolean>> exp = {{code}};
-        return exp;
-        """
-        , options, cancellationToken: ct);
-
-      var result = d as Expression<Func<ReheeCmfBaseUser, System.Boolean>>;
+      var exp = await analysisService.TypedEvaluateAsync<TokenDTO, TokenDTO>(ct, "x=>true");
 
 
-      var query = context.Query<ReheeCmfBaseUser>(true).Where(result);
-      //context.Query<ReheeCmfBaseUser>(true).Where();
-
+      var c1 = exp!(null);
+      var c2 = c1.Compile()(null);
       var metaData =
         (from entityMeta in context.Query<CmsEntityMetadata>(true)
          join propertyMeta in context.Query<CmsPropertyMetadata>(true) on entityMeta.Id equals propertyMeta.CmsEntityMetadataId into gp

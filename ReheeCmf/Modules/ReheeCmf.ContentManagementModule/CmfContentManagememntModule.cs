@@ -1,6 +1,11 @@
 ﻿using ReheeCmf.Commons.DTOs;
 using ReheeCmf.Modules;
-
+using ReheeCmf.ODatas.Commons;
+using ReheeCmf.ODatas;
+using Microsoft.OData.ModelBuilder;
+using ReheeCmf.CmfCodeAnalyses;
+using ReheeCmf.CodeAnalyses;
+using ReheeCmf.ContentManagementModule.CodeAnalyses;
 namespace ReheeCmf.ContentManagementModule
 {
   public class CmfContentManagememntModule : ServiceModule
@@ -13,6 +18,31 @@ namespace ReheeCmf.ContentManagementModule
     {
       await Task.CompletedTask;
       return [];
+    }
+
+    public override async Task ConfigureServicesAsync(ServiceConfigurationContext context)
+    {
+      await base.ConfigureServicesAsync(context);
+      context.Services!.AddCmfPredicateExpression<ContentManagementExpressOption>(
+        sp => new CmfCodeAnalysisOption<ContentManagementExpressOption>
+        {
+          Template = ContentManagementExpressOption.QueryPredicateLambdaTemplate
+        });
+    }
+
+    public override async Task PostConfigureServicesAsync(ServiceConfigurationContext context)
+    {
+      await base.PostConfigureServicesAsync(context);
+      context.MvcBuilder!.AddCmfOdataEndpoint(sp =>
+      {
+        var builder = new ODataConventionModelBuilder();
+        builder.EntitySet<CmsContentDTO>("CmsContentDTO");
+        return builder.GetEdmModel();
+      }
+    , "Api/Content", [
+          ODataEndpointMapping.New("ContentController", "Query", "{entityName}", "entityName"),
+      //ODataEndpointMapping.New("DataApiController", "FindEntity", CrudOption.DataEndpoint, "entityName"),
+    ]);
     }
   }
 }

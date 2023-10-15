@@ -61,9 +61,9 @@ namespace ReheeCmf.EntityModule
           var entitySet = typeof(ODataConventionModelBuilder).GetMethod("EntitySet");
           foreach (var m in ODataPools.QueryNameBuilderMapping)
           {
-            var set = entitySet.MakeGenericMethod(
-              ODataPools.QueryNameKeyTypeMapping.GetValueOrDefault(m.Key)).Invoke(builder, new object[] { m.Key }).GetPropertyValue("EntityType");
-            m.Value.Invoke("Invoke", set.Content);
+            var set = entitySet!.MakeGenericMethod(
+              ODataPools.QueryNameKeyTypeMapping.GetValueOrDefault(m.Key)!).Invoke(builder, new object[] { m.Key })!.GetPropertyValue("EntityType");
+            m.Value.Invoke("Invoke", set.Content!);
           }
           var edmModel = builder.GetEdmModel();
           opt.AddRouteComponents(CrudOption.DTOProcessor, edmModel, action =>

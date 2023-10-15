@@ -23,7 +23,7 @@ namespace System
     public const string ErrorCode_Validation = "Validation";
     public static string[] Proxies = { "Castle.Proxies" };
     public static Type IgnoreProperty = typeof(IgnoreUpdateAttribute);
-    public static string TemplatepPttern = "\\[[^\\[]+\\]";
+    public const string TemplatepPttern = @"\[([^\[\]]*)\]";
     public static string TenantIDHeader = "TenantID";
     public static string TokenType = "TokenType";
     public static string TenantNameHeader = "TenantName";
