@@ -23,23 +23,20 @@ namespace ReheeCmf.ContentManagementModule.Controllers
       this.analysisService = analysisService;
       this.entityStorage = entityStorage;
     }
+    private static Func<TokenDTO?, Expression<Func<CmsEntity, bool>>>? fff { get; set; }
     [EnableQuery]
     [HttpGet("{entityName}/Json")]
     public async Task<IEnumerable<CmsContentDTO>> Query(string entityName, CancellationToken ct)
     {
+      //fff = fff ?? await analysisService.TypedEvaluateAsync<TokenDTO, CmsEntity>(ct,
+      //  "e => e.Properties.Any(p2 => p2.ValueBoolean == false)");
+      //var queryResult = context.Query<CmsEntity>(true).Where(fff(null)).ToList();
+      //var query2 = await analysisService.TypedEvaluateAsync<TokenDTO, CmsEntity>(ct,
+      // "e => e.Properties.Any(p2 => p2.ValueBoolean == true)");
+      //var queryResult2 = context.Query<CmsEntity>(true).Where(query2(null)).ToList();
       var entityMetaQuery = await entityStorage.GetQueryAsync(ct);
       var metaDataFind = entityMetaQuery.Where(b => b.EntityName == entityName).FirstOrDefault();
-      var metaData =
-        (from entityMeta in context.Query<CmsEntityMetadata>(true)
-         let propertyMeta = context.Query<CmsPropertyMetadata>(true).Where(b => b.CmsEntityMetadataId == entityMeta.Id).Select(b => new { b.Id, b.PropertyType, b.PropertyName }).AsEnumerable()
-
-         select new
-         {
-           entityMeta = entityMeta,
-           propertyMeta = propertyMeta
-         }).ToArray();
-      var metaIds = metaData.Select(b => (Guid?)b.entityMeta.Id).ToArray();
-      //var metas = metaData.SelectMany(b => b.propertyMeta).ToArray().AsEnumerable();
+      var metaIds = context.Query<CmsEntityMetadata>(true).Select(b => (Guid?)b.Id).ToArray();
       var metas = context.Query<CmsPropertyMetadata>(true).AsEnumerable();
       return (
         from entity in context.Query<CmsEntity>(true).Where(b => metaIds.Contains(b.CmsEntityMetadataId))
