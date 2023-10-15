@@ -1,7 +1,9 @@
-﻿using ReheeCmf.Components.ChangeComponents;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ReheeCmf.Components.ChangeComponents;
 using ReheeCmf.Entities;
 using ReheeCmf.Handlers.EntityChangeHandlers;
 using ReheeCmf.Helpers;
+using ReheeCmf.Storages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,6 +16,17 @@ namespace ReheeCmf.ContentManagementModule.EntityHandlers
   [EntityChangeTracker<CmsEntityMetadata>]
   public class CmsEntityMetadataHandler : EntityChangeHandler<CmsEntityMetadata>
   {
+    public override void Dispose()
+    {
+      base.Dispose();
+      storage = null;
+    }
+    protected IStorage<CmsEntityMetadata, Guid>? storage { get; set; }
+    public override void Init(IServiceProvider sp, object entity, int index, int subindex, string? group = null)
+    {
+      base.Init(sp, entity, index, subindex, group);
+      storage = sp.GetService<IStorage<CmsEntityMetadata, Guid>>();
+    }
     public override async Task<IEnumerable<ValidationResult>> ValidationAsync(CancellationToken ct = default)
     {
       var validationResult = new List<ValidationResult>();
@@ -25,14 +38,20 @@ namespace ReheeCmf.ContentManagementModule.EntityHandlers
       }
       return validationResult;
     }
-    public override Task BeforeCreateAsync(CancellationToken ct = default)
+    public override async Task AfterCreateAsync(CancellationToken ct = default)
     {
-      return base.BeforeCreateAsync(ct);
+      await base.AfterCreateAsync(ct);
+      await storage!.AfterCreatetOrUpdateAsync(entity, ct);
     }
-    public override Task BeforeUpdateAsync(EntityChanges[] propertyChange, CancellationToken ct = default)
+    public override async Task AfterUpdateAsync(CancellationToken ct = default)
     {
-
-      return base.BeforeUpdateAsync(propertyChange, ct);
+      await base.AfterUpdateAsync(ct);
+      await storage!.AfterCreatetOrUpdateAsync(entity, ct);
+    }
+    public override async Task AfterDeleteAsync(CancellationToken ct = default)
+    {
+      await base.AfterDeleteAsync(ct);
+      await storage!.AfterDeletetAsync(entity, ct);
     }
   }
 }

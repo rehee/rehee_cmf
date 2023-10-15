@@ -37,21 +37,18 @@ namespace ReheeCmf.ContentManagementModule.EntityHandlers
     public override async Task BeforeUpdateAsync(EntityChanges[] propertyChange, CancellationToken ct = default)
     {
       await base.BeforeUpdateAsync(propertyChange, ct);
-      if (propertyChange.Any(b => b.PropertyName == nameof(CmsPropertyMetadata.PropertyType)))
+      if (propertyChange.Any(b => b.PropertyName == nameof(CmsPropertyMetadata.PropertyType) || b.PropertyName == nameof(CmsPropertyMetadata.PropertyName)))
       {
         if (entity?.Properties?.Any() == true)
         {
-          WithPropertyTypeChange = true;
-          var propertyChangeGrid = Guid.NewGuid();
           foreach (var p in entity!.Properties!)
           {
-            p.ValueUpdateStamp = propertyChangeGrid;
+            p.PropertyType = entity.PropertyType;
+            p.PropertyName = entity.PropertyName;
             context?.TrackEntity(p);
           }
-          
         }
       }
     }
-    private bool WithPropertyTypeChange { get; set; }
   }
 }

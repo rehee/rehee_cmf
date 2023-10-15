@@ -57,7 +57,17 @@ namespace ReheeCmf.ContentManagementModule.EntityHandlers
       await base.BeforeCreateAsync(ct);
       entity!.Property ??=
         await context!.Query<CmsPropertyMetadata>(false).Where(b => b.Id == entity!.CmsPropertyMetadataId).FirstOrDefaultAsync(ct);
-      entity.UpdatePropertyValue(true);
+      entity!.PropertyName = entity?.Property?.PropertyName;
+      entity!.PropertyType = entity?.Property?.PropertyType;
+      if (entity?.ValueSingle == null)
+      {
+        entity.UpdatePropertyValue(false);
+      }
+      else
+      {
+        entity.UpdatePropertyValue(true);
+      }
+
     }
     public override async Task BeforeUpdateAsync(EntityChanges[] propertyChange, CancellationToken ct = default)
     {
@@ -65,7 +75,7 @@ namespace ReheeCmf.ContentManagementModule.EntityHandlers
       entity!.Property ??=
         await context!.Query<CmsPropertyMetadata>(false).Where(b => b.Id == entity!.CmsPropertyMetadataId).FirstOrDefaultAsync(ct);
       var changedNames = propertyChange.Select(b => b.PropertyName).ToArray();
-      string[] otherValueChange = [
+      string[] valueChange = [
         nameof(CmsProperty.ValueBoolean),
         nameof(CmsProperty.ValueInt16),
         nameof(CmsProperty.ValueInt32),
@@ -75,19 +85,19 @@ namespace ReheeCmf.ContentManagementModule.EntityHandlers
         nameof(CmsProperty.ValueDecimal),
         nameof(CmsProperty.ValueGuid),
         nameof(CmsProperty.ValueDateTime),
-        nameof(CmsProperty.ValueDateTimeOffset),
-        nameof(CmsProperty.ValueUpdateStamp)
+        nameof(CmsProperty.ValueDateTimeOffset)
         ];
-      string[] stringChange = [
-        nameof(CmsProperty.ValueString)
+      string[] typeOrStringChange = [
+        nameof(CmsProperty.ValueString),
+        nameof(CmsProperty.PropertyType)
       ];
-      if (changedNames.Intersect(otherValueChange).Any() == true)
-      {
-        entity.UpdatePropertyValue(false);
-      }
-      else if (changedNames.Intersect(stringChange).Any() == true)
+      if (changedNames.Intersect(valueChange).Any() == true)
       {
         entity.UpdatePropertyValue(true);
+      }
+      else if (changedNames.Intersect(typeOrStringChange).Any() == true)
+      {
+        entity.UpdatePropertyValue(false);
       }
     }
   }

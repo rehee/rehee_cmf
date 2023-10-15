@@ -28,6 +28,7 @@ namespace ReheeCmf.ContentManagementModule
         {
           Template = ContentManagementExpressOption.QueryPredicateLambdaTemplate
         });
+      context.Services!.AddCmfStorageSetup<CmsEntityMetadata, Guid>();
     }
 
     public override async Task PostConfigureServicesAsync(ServiceConfigurationContext context)
@@ -40,7 +41,7 @@ namespace ReheeCmf.ContentManagementModule
         return builder.GetEdmModel();
       }
     , "Api/Content", [
-          ODataEndpointMapping.New("ContentController", "Query", "{entityName}", "entityName"),
+          ODataEndpointMapping.New("ContentController", "Query", "{entityName}", "entityName", "CmsContentDTO"),
       //ODataEndpointMapping.New("DataApiController", "FindEntity", CrudOption.DataEndpoint, "entityName"),
     ]);
     }

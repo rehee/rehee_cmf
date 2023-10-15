@@ -1,5 +1,6 @@
 ﻿using ReheeCmf.ContentManagementModule.Interfaces;
 using ReheeCmf.Entities;
+using ReheeCmf.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,7 +19,10 @@ namespace ReheeCmf.ContentManagementModule.Entities
 
     public Guid? CmsPropertyMetadataId { get; set; }
     public virtual CmsPropertyMetadata? Property { get; set; }
-    public Guid? ValueUpdateStamp { get; set; }
+
+    public String? PropertyName { get; set; }
+    public EnumPropertyType? PropertyType { get; set; }
+
     [NotMapped]
     public string? Value { get; set; }
     public String? ValueString { get; set; }

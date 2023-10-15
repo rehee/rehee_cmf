@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Components\ReheeCmf.CmfCodeAnalyses\ReheeCmf.CmfCodeAnalyses.csproj" />
+    <ProjectReference Include="..\..\Components\ReheeCmf.CmfStorages\ReheeCmf.CmfStorages.csproj" />
     <ProjectReference Include="..\..\Components\ReheeCmf.ContextComponent\ReheeCmf.ContextComponent.csproj" />
     <ProjectReference Include="..\..\Core\ReheeCmf.Libs\ReheeCmf.Libs.csproj" />
     <ProjectReference Include="..\..\Core\ReheeCmf.Modules\ReheeCmf.Modules.csproj" />

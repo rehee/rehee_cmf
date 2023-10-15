@@ -53,6 +53,21 @@ namespace ReheeCmf.Caches.MemoryCaches
       return Task.CompletedTask;
     }
 
+    public IQueryable<TValue> Query<TValue>()
+    {
+      return this.keyLastVisit.Keys
+        .Where(b => b is string)
+        .Select(b => b as string)
+        .Select(b => Get<TValue>(b!))
+        .Where(b => b is not null)
+        .Select(b => b!)
+        .AsQueryable();
+    }
 
+    public Task RemoveAsync(string key, CancellationToken ct)
+    {
+      Remove(key);
+      return Task.CompletedTask;
+    }
   }
 }

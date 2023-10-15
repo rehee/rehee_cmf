@@ -1,4 +1,5 @@
 ﻿using ReheeCmf.ContentManagementModule.Interfaces;
+using ReheeCmf.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace ReheeCmf.ContentManagementModule.DTOs
   public class CmsPropertyDTO : IWithPropertyValue
   {
     public string? PropertyName { get; set; }
+    public EnumPropertyType? PropertyType { get; set; }
     public string? Value { get; set; }
     public string? ValueString { get; set; }
     public bool? ValueBoolean { get; set; }

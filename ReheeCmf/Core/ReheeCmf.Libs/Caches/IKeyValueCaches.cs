@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,8 @@ namespace ReheeCmf.Caches
     bool TryGetValue<TValue>(string key, out TValue? value);
     void Set<TValue>(string key, TValue value, double expireMins);
     Task SetAsync<TValue>(string key, TValue value, double expireMins, CancellationToken ct);
+    Task RemoveAsync(string key, CancellationToken ct);
+    IQueryable<TValue> Query<TValue>();
   }
   public interface IKeyValueCaches<T> : IKeyValueCaches
   {

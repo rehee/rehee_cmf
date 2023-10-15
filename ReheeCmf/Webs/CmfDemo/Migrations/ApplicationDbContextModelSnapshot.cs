@@ -179,6 +179,12 @@ namespace CmfDemo.Migrations
                     b.Property<string>("CreateUserId")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PropertyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PropertyType")
+                        .HasColumnType("int");
+
                     b.Property<Guid?>("TenantID")
                         .HasColumnType("uniqueidentifier");
 
@@ -220,9 +226,6 @@ namespace CmfDemo.Migrations
 
                     b.Property<string>("ValueString")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("ValueUpdateStamp")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
