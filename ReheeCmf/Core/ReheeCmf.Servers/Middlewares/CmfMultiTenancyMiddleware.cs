@@ -26,6 +26,12 @@ namespace ReheeCmf.Servers.Middlewares
         await next(context);
         return;
       }
+      if (context.Request.Path.HasValue && context.Request.Path.ToString().StartsWith("/swagger"))
+      {
+        await next(context);
+        return;
+
+      }
       var tenant = service.GetTenant();
       if (tenant != null)
       {
