@@ -1,9 +1,7 @@
 using CmfDemo.Data;
-using CmfDemo.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ReheeCmf.Contexts;
-using ReheeCmf.Requests;
-using System.Diagnostics;
 
 namespace CmfDemo.Controllers
 {
@@ -13,7 +11,7 @@ namespace CmfDemo.Controllers
     private readonly IContext context;
     private readonly IServiceProvider sp;
 
-    public HomeController(ApplicationDbContext db, IContext context,IServiceProvider sp)
+    public HomeController(ApplicationDbContext db, IContext context, IServiceProvider sp)
     {
       this.db = db;
       this.context = context;
@@ -22,17 +20,7 @@ namespace CmfDemo.Controllers
 
     public async Task<IActionResult> Index()
     {
-      var http = sp.GetService<IHttpContextAccessor>();
-      var e1 = context.Query<Entity1>(true).ToList();
-      e1.Reverse();
-      var newE = new Entity1();
-      db.Add(newE);
-      ////await context.AddAsync<Entity1>(newE, CancellationToken.None);
-      //newE.Name2 = Guid.NewGuid().ToString();
-      //context.Delete(typeof(Entity1), e1.LastOrDefault().Id);
-      await context.SaveChangesAsync(null);
-      //await context.SaveChangesAsync(null);
-      //db.SaveChanges();
+      var e1 = await context.Query<Entity1>(true).FirstOrDefaultAsync();
       return Ok();
     }
 

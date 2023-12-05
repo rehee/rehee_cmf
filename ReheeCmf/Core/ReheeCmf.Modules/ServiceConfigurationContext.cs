@@ -15,6 +15,8 @@ namespace ReheeCmf.Modules
     public IServiceCollection? Services { get; set; }
     public IMvcBuilder? MvcBuilder { get; set; }
     public IConfiguration? Configuration { get; set; }
+    public Action<IServiceCollection>? CustomerAddAuthentication { get; set; }
+    public bool? UseAuthenticationAfterRouting { get; set; }
     public CrudOption? CrudOptions { get; set; }
     public Action<object>[]? BuilderEntityOData { get; set; }
     public Action<object>[]? BuilderUserOData { get; set; }

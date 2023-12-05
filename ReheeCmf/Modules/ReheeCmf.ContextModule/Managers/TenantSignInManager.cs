@@ -52,7 +52,8 @@ namespace ReheeCmf.ContextModule.Managers
         }
         else
         {
-          return await base.ValidateTwoFactorSecurityStampAsync(principal);
+          var result = await base.ValidateSecurityStampAsync(principal);
+          return result;
         }
       }
       catch

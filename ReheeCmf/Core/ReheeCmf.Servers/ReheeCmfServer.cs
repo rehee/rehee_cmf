@@ -294,9 +294,12 @@ namespace System
       context.App = app;
       context.Env = env;
       app.UseStaticFiles();
+      if (context.UseAuthenticationAfterRouting != true)
+      {
+        app.UseAuthentication();
+        app.UseAuthorization();
+      }
 
-      app.UseAuthentication();
-      app.UseAuthorization();
       foreach (var s in serverModule)
       {
         await s.BeforePreApplicationInitializationAsync(context);
@@ -305,7 +308,11 @@ namespace System
       var mapper = new Dictionary<string, string>();
 
       app.UseRouting();
-
+      if (context.UseAuthenticationAfterRouting == true)
+      {
+        app.UseAuthentication();
+        app.UseAuthorization();
+      }
       foreach (var s in serverModule)
       {
         await s.PreApplicationInitializationAsync(context);

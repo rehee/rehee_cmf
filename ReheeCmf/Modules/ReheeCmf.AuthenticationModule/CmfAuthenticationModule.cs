@@ -17,7 +17,7 @@ namespace ReheeCmf.AuthenticationModule
     public override async Task ConfigureServicesAsync(ServiceConfigurationContext context)
     {
       await base.ConfigureServicesAsync(context);
-      context.Services!.AddCmfAuthentication<TUser>(context.Configuration!);
+      context.Services!.AddCmfAuthentication<TUser>(context.Configuration!, context);
     }
 
     public override Task<IEnumerable<string>> GetPermissions(IContext? db, TokenDTO? user, CancellationToken ct = default)
