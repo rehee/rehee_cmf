@@ -49,7 +49,7 @@ namespace ReheeCmf.ContextModule.Events
         db.AddingTracker(entity.GetType(), entity);
       }
     }
-    public static void ValidateEntity(IEnumerable<IChangeHandler>? handlers)
+    public static void ValidateEntity(ICrudTracker tracker, EntityEntry e, IEnumerable<IChangeHandler>? handlers)
     {
       if (handlers?.Any() == true)
       {
@@ -66,6 +66,11 @@ namespace ReheeCmf.ContextModule.Events
         }).Wait();
         if (result?.Any() == true)
         {
+          if (e.State != EntityState.Added)
+          {
+            e.State = EntityState.Unchanged;
+          }
+          tracker.ClearTracker();
           StatusException.Throw(result.ToArray());
         }
       }
@@ -95,7 +100,7 @@ namespace ReheeCmf.ContextModule.Events
             {
               handler.BeforeCreateAsync().Wait();
             }
-            ValidateEntity(handlers);
+            ValidateEntity(db, e.Entry, handlers);
             break;
           case EntityState.Modified:
             var handlersUpdate = db.GetHandlers(entity);
@@ -107,7 +112,7 @@ namespace ReheeCmf.ContextModule.Events
             {
               handler.BeforeUpdateAsync(entityChanges).Wait();
             }
-            ValidateEntity(handlersUpdate);
+            ValidateEntity(db, e.Entry, handlersUpdate);
             break;
           case EntityState.Deleted:
             var handlersDelete = db.GetHandlers(entity);

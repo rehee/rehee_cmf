@@ -9,5 +9,7 @@ namespace CmfBlazorSSR.Data
     public ApplicationDbContext(IServiceProvider sp) : base(sp)
     {
     }
+
+    public DbSet<Entity1> Entity1s { get; set; }
   }
 }

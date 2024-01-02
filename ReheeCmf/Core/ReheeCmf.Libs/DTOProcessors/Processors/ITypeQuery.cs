@@ -9,11 +9,11 @@
   }
   public interface IFindByQueryKey
   {
-    Task<object> FindAsync(TokenDTO user, string queryKey, CancellationToken ct);
+    Task<object> FindAsync(TokenDTO user, string queryKey, CancellationToken ct = default);
   }
   public interface IFindByQueryKey<T>
   {
-    Task<T> FindAsyncWithType(TokenDTO user, string queryKey, CancellationToken ct);
+    Task<T> FindAsyncWithType(TokenDTO user, string queryKey, CancellationToken ct = default);
   }
   public interface ITypeQuery<T> : ITypeQuery where T : IQueryKey
   {

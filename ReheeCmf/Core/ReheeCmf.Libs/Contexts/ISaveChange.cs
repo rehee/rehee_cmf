@@ -8,7 +8,7 @@ namespace ReheeCmf.Contexts
 {
   public interface ISaveChange
   {
-    int SaveChanges(TokenDTO? user);
-    Task<int> SaveChangesAsync(TokenDTO? user, CancellationToken ct = default);
+    int SaveChanges(TokenDTO? user = null);
+    Task<int> SaveChangesAsync(TokenDTO? user = null, CancellationToken ct = default);
   }
 }

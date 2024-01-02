@@ -281,7 +281,15 @@ namespace ReheeCmf.ContextModule.Contexts
       {
         SetUser(user);
       }
-      return context.SaveChanges();
+      try
+      {
+        return context.SaveChanges();
+      }
+      catch
+      {
+        return -1;
+      }
+
     }
 
     public async Task<int> SaveChangesAsync(TokenDTO? user, CancellationToken ct = default)
@@ -290,7 +298,15 @@ namespace ReheeCmf.ContextModule.Contexts
       {
         SetUser(user);
       }
-      return await context.SaveChangesAsync(ct);
+      try
+      {
+        return await context.SaveChangesAsync(ct);
+      }
+      catch (Exception ex)
+      {
+        return -1;
+      }
+
     }
     public void SetReadOnly(bool readOnly)
     {
@@ -411,6 +427,11 @@ namespace ReheeCmf.ContextModule.Contexts
 
       }
 
+    }
+
+    public void ClearTracker()
+    {
+      context?.ChangeTracker?.Clear();
     }
   }
 }

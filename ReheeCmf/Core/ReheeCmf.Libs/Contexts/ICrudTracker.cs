@@ -7,5 +7,7 @@ namespace ReheeCmf.Contexts
     Task AfterSaveChangesAsync(CancellationToken ct = default);
     void AddingTracker(Type entityType, object entity);
     IEnumerable<IChangeHandler> GetHandlers(object entity);
+
+    void ClearTracker();
   }
 }

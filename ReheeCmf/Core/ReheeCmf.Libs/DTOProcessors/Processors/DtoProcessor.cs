@@ -38,7 +38,7 @@ namespace ReheeCmf.DTOProcessors.Processors
       rawJson = json;
       dto = JsonSerializer.Deserialize<T>(json ?? "", JsonOption.DefaultOption);
     }
-    public virtual async Task InitializationAsync(string? key, string? json, TokenDTO? user, CancellationToken ct)
+    public virtual async Task InitializationAsync(string? key, string? json, TokenDTO? user, CancellationToken ct = default)
     {
       oldDto = await FindAsyncWithType(user, key, ct);
       if (oldDto == null)
@@ -49,11 +49,11 @@ namespace ReheeCmf.DTOProcessors.Processors
       dto = JsonHelper.MergePatch(oldDto, rawJson!);
     }
 
-    public virtual async Task<object> FindAsync(TokenDTO user, string? queryKey, CancellationToken ct)
+    public virtual async Task<object> FindAsync(TokenDTO user, string? queryKey, CancellationToken ct = default)
     {
       return await FindAsyncWithType(user, queryKey, ct);
     }
-    public virtual async Task<T> FindAsyncWithType(TokenDTO? user, string? queryKey, CancellationToken ct)
+    public virtual async Task<T> FindAsyncWithType(TokenDTO? user, string? queryKey, CancellationToken ct = default)
     {
       var query = QueryWithType(user);
       return await asyncQuery.FirstOrDefaultAsync(QueryWithType(user).Where(b => b.QueryKey == queryKey), ct);
