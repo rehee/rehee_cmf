@@ -8,6 +8,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>$(Version)</Version>
     <BaseOutputPath>..\..\..\bin</BaseOutputPath>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
