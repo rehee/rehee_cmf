@@ -1,9 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ReheeCmf.Handlers.ValidationHandlers
+﻿namespace ReheeCmf.Handlers.ValidationHandlers
 {
-  public interface IValidationHandler
-  {
-    Task<IEnumerable<ValidationResult>> ValidationAsync(CancellationToken ct = default);
-  }
+	public interface IValidationHandler
+	{
+		IEnumerable<ValidationResult> Validation();
+	}
 }

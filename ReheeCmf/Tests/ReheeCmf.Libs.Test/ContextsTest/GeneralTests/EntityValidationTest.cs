@@ -71,9 +71,9 @@ namespace ReheeCmf.Libs.Test.ContextsTest.GeneralTests
 	[EntityChangeTracker<WhiteClass>]
 	internal class WhiteClassHandler : EntityChangeHandler<WhiteClass>
 	{
-		public override Task<IEnumerable<ValidationResult>> ValidationAsync(CancellationToken ct = default)
+		public override IEnumerable<ValidationResult> Validation()
 		{
-			return base.ValidationAsync(ct);
+			return base.Validation();
 		}
 	}
 }

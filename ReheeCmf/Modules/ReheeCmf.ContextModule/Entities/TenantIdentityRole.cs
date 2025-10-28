@@ -1,21 +1,19 @@
-﻿using Microsoft.AspNetCore.Identity;
-using ReheeCmf.Components.ChangeComponents;
-using ReheeCmf.Tenants;
+﻿using ReheeCmf.Components.ChangeComponents;
 
 namespace ReheeCmf.ContextModule.Entities
 {
-  public class TenantIdentityRole : IdentityRole, IWithTenant
-  {
-    public Guid? TenantID { get; set; }
-  }
+	public class TenantIdentityRole : IdentityRole, IWithTenant
+	{
+		public Guid? TenantID { get; set; }
+	}
 
-  [EntityChangeTracker<TenantIdentityRole>]
-  public class TenantIdentityRoleHandler : EntityChangeHandler<TenantIdentityRole>
-  {
-    public override async Task BeforeCreateAsync(CancellationToken ct = default)
-    {
-      await base.BeforeCreateAsync(ct);
-      entity.TenantID = context?.TenantID;
-    }
-  }
+	[EntityChangeTracker<TenantIdentityRole>]
+	public class TenantIdentityRoleHandler : EntityChangeHandler<TenantIdentityRole>
+	{
+		public override void BeforeCreate()
+		{
+			base.BeforeCreate();
+			entity?.TenantID = context?.TenantID;
+		}
+	}
 }
