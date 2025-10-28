@@ -90,11 +90,10 @@ namespace ReheeCmf.Libs.Test.ContextsTest.Contexts
 	{
 		public bool IsDeleted { get; set; }
 
-		public Task DeleteAsync(CancellationToken ct = default)
+		public void Delete()
 		{
 			entity!.Name = "0";
 			IsDeleted = false;
-			return Task.CompletedTask;
 		}
 	}
 

@@ -90,6 +90,10 @@ namespace ReheeCmf.ContextModule.Contexts
 		bool IsDispose { get; set; }
 		public void Dispose()
 		{
+			if (context != null && context is IWithTrackerCallback cb)
+			{
+				cb.CrudTrackers.Clear();
+			}
 			if (IsDispose)
 			{
 				return;

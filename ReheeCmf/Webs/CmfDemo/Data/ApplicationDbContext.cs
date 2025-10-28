@@ -47,6 +47,10 @@ namespace CmfDemo.Data
 	[EntityChangeTracker<EntityType1>]
 	public class EntityType1Tracker : EntityChangeHandler<EntityType1>
 	{
+		public override void BeforeCreate()
+		{
+			base.BeforeCreate();
+		}
 		public override void BeforeDelete()
 		{
 			base.BeforeDelete();
@@ -54,6 +58,11 @@ namespace CmfDemo.Data
 			{
 				context?.Delete(sub);
 			}
+		}
+
+		public override Task AfterCreateAsync(CancellationToken ct = default)
+		{
+			return base.AfterCreateAsync(ct);
 		}
 	}
 

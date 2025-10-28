@@ -32,12 +32,16 @@ namespace ReheeCmf.ContextModule.Events
 		}
 		public static void SavedChangesEventArgs(object sender, SavedChangesEventArgs e)
 		{
-			var db = TryGetTracker(sender);
-			if (db != null && e.AcceptAllChangesOnSuccess)
+			if (sender is IWithTrackerCallback tk)
 			{
-				db.AfterSaveChangesAsync().Wait();
+				var db = TryGetTracker(sender);
+				if (db != null && e.AcceptAllChangesOnSuccess)
+				{
+					tk.CrudTrackers.TryAdd(Guid.NewGuid(), db);
+				}
 			}
 		}
+
 		public static void ChangeTracker_Tracked(object sender, EntityTrackedEventArgs e)
 		{
 
@@ -113,8 +117,11 @@ namespace ReheeCmf.ContextModule.Events
 							.Select(b => b as IDeletedHandler).Select(b => b!);
 						if (deleteHandlers?.Any() == true)
 						{
-							Task.WaitAll(deleteHandlers.Select(b => b.DeleteAsync()).ToArray());
-							if (deleteHandlers.Any(b => b.IsDeleted) == false)
+							foreach (var h in deleteHandlers ?? [])
+							{
+								h.Delete();
+							}
+							if (deleteHandlers?.Any(b => b.IsDeleted) == false)
 							{
 								e.Entry.State = EntityState.Modified;
 								goto ReCheckLogic;
