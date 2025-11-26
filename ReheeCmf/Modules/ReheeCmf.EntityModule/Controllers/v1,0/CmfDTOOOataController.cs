@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.Extensions.DependencyInjection;
+using ReheeCmf.Attributes;
 using ReheeCmf.Authenticates;
 using ReheeCmf.Commons.DTOs;
 using ReheeCmf.Commons;

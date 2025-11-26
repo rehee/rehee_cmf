@@ -1,4 +1,4 @@
-﻿using ReheeCmf.Components.ChangeComponents;
+﻿using ReheeCmf.Attributes;
 using ReheeCmf.Entities;
 using ReheeCmf.Handlers.EntityChangeHandlers;
 using ReheeCmf.Helpers;

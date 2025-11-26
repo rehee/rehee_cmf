@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.Extensions.DependencyInjection;
+using ReheeCmf.Attributes;
 using ReheeCmf.Authenticates;
 using ReheeCmf.Commons;
 using ReheeCmf.Entities;

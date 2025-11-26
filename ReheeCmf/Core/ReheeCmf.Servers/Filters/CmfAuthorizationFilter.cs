@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
+using ReheeCmf.Attributes;
 using ReheeCmf.Entities;
 using ReheeCmf.Enums;
 using System.Reflection;

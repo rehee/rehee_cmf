@@ -1,11 +1,11 @@
-﻿using ReheeCmf.Handlers.InterfaceChangeHandlers;
+using ReheeCmf.Handlers.InterfaceChangeHandlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReheeCmf.Components.ChangeComponents
+namespace ReheeCmf.Attributes
 {
   public interface IInterfaceChangeComponent : IChangeComponent
   {
