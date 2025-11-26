@@ -119,8 +119,13 @@ ReheeCmf.Utility/
 │   ├── ETagHelper.cs               # ETag帮助类（从Libs迁移）
 │   ├── FileRequestHelper.cs        # 文件请求帮助类（从Libs迁移）
 │   ├── IHttpDictionaryHelper.cs    # HTTP字典帮助接口（从Libs迁移）
+│   ├── JsonHelper.cs               # JSON合并补丁帮助类
+│   ├── ReflectTypeMapperHelper.cs  # 反射类型映射帮助类
+│   ├── ServiceCollectionHelpers.cs # 服务集合扩展帮助类
 │   ├── StandardInputHelper.cs      # 标准输入帮助类（从Libs迁移）
+│   ├── StatusExceptionHelper.cs    # 状态异常帮助类
 │   ├── StringHelper.cs             # 字符串相关扩展
+│   ├── StringValueHelper.cs        # 字符串值转换帮助类（GetObjValue, StringValue等）
 │   ├── TenantHelper.cs             # 租户帮助类（从Libs迁移）
 │   ├── TypeHelper.cs               # 类型相关扩展
 │   └── ValidationResultHelper.cs   # 验证结果帮助类
@@ -185,9 +190,12 @@ ReheeCmf.Utility/
 |------|------|
 | `TypeHelper` | 类型判断和处理的扩展方法（IsNullable, IsIEnumerable, IsImplement, HasAttribute, ImplementsInterface, InheritsFrom等） |
 | `StringHelper` | 字符串处理扩展方法（SplitPascalCase, GetSystemType等） |
+| `StringValueHelper` | 字符串值转换扩展方法（GetObjValue, GetValue, StringValue等，支持多种TypeCode转换） |
 | `AttributeHelper` | 特性获取和判断的扩展方法 |
 | `DictionaryHelper` | 字典操作的扩展方法（大小写不敏感键值查找, TryAdd, TryAddOrUpdate, TryRemove等） |
 | `EnumIdTypeHelper` | ID类型映射帮助类 |
+| `StatusExceptionHelper` | 状态异常处理扩展方法（ThrowStatusException, GetStatusException等） |
+| `StatusException` | 带HTTP状态码的异常类（支持验证错误、错误代码等） |
 | `RequestBase` | HTTP请求基类（从Libs迁移） |
 | `ServiceWithTenant` | 支持多租户的服务基类（从Libs迁移） |
 | `DIPool` | 静态DI池，管理ProfileContainer和Profile实例的简易依赖注入容器 |
@@ -646,12 +654,14 @@ ReheeCmf.Modules ←────────────────────
 **Helpers（辅助工具测试）**:
 - TypeHelperTest - 类型处理扩展测试（IsIEnumerable, IsNullable, IsImplement, IsInheritance, HasAttribute, ImplementsInterface, InheritsFrom等）
 - StringHelperTest - 字符串处理扩展测试
+- StringValueHelperTest - 字符串值转换帮助类测试（GetObjValue, GetValue, StringValue等）
 - AttributeHelperTest - 特性处理扩展测试
 - DictionaryHelperTest - 字典处理扩展测试（TryGetValueStringKey, ToDictionWithKeys, TryAdd, TryAddOrUpdate, TryRemove等）
 - EnumIdTypeHelperTest - ID类型帮助方法测试
 - CommonHelperTest - 通用帮助方法测试
 - ContentResponseHelperTest - 内容响应帮助类测试
 - ValidationResultHelperTest - 验证结果帮助类测试
+- StatusExceptionHelperTest - 状态异常帮助类测试（ThrowStatusException, Throw, GetStatusException等）
 
 **DIContainers（依赖注入容器测试）**:
 - DIPoolTest - DIPool静态依赖注入池测试（Initialize, Reset, GetProfile, GetAllProfiles, RegisterComponent, TryGetController等）
@@ -659,6 +669,7 @@ ReheeCmf.Modules ←────────────────────
 **Commons（通用类测试）**:
 - ProfileTest - Profile基类测试（KeyType, StringKeyValue, KeyValue, EffectiveKey等）
 - ProfileContainerTest - ProfileContainer容器测试（AddProfile, GetProfile, RemoveProfile, GetAllProfiles等）
+- StatusExceptionTest - StatusException异常类测试（构造函数, Throw方法, 验证错误处理等）
 
 > **注意**: ReheeCmf.Libs.Test 已被删除，原有测试功能已整合至 ReheeCmf.Utility.Test。
 
