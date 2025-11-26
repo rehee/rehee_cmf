@@ -1,6 +1,4 @@
-﻿using ReheeCmf.Commons;
-using System;
-using System.Net;
+﻿using System.Net;
 using System.Runtime.Serialization;
 
 namespace ReheeCmf.Responses
@@ -8,13 +6,13 @@ namespace ReheeCmf.Responses
 	[DataContract]
 	public class Error
 	{
-		public static Error New(Exception ex)
+		public static Error? New(Exception ex)
 		{
 			if (ex == null)
 			{
 				return null;
 			}
-			StatusException statusException = null;
+			StatusException? statusException = null;
 			if (ex is StatusException ex2)
 			{
 				statusException = ex2;
@@ -28,7 +26,7 @@ namespace ReheeCmf.Responses
 			error.OtherError = statusException?.OtherError;
 			return error;
 		}
-		public Error(string message, string errorCode, HttpStatusCode status, Error innerError)
+		public Error(string message, string errorCode, HttpStatusCode status, Error? innerError)
 		{
 			Message = message;
 			ErrorCode = errorCode;
@@ -42,10 +40,10 @@ namespace ReheeCmf.Responses
 		[DataMember(EmitDefaultValue = false)]
 		public HttpStatusCode Status { get; private set; }
 		[DataMember(EmitDefaultValue = false)]
-		public Error InnerError { get; private set; }
+		public Error? InnerError { get; private set; }
 		[DataMember(EmitDefaultValue = false)]
-		public object ValidationError { get; private set; }
+		public IEnumerable<ValidationResult>? ValidationError { get; private set; }
 		[DataMember(EmitDefaultValue = false)]
-		public object OtherError { get; set; }
+		public object? OtherError { get; set; }
 	}
 }

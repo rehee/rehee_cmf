@@ -1,8 +1,4 @@
-﻿using ReheeCmf.Responses;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Net;
+﻿using System.Net;
 
 namespace ReheeCmf.Commons
 {
@@ -23,11 +19,11 @@ namespace ReheeCmf.Commons
 			this.StatusCode = statusCode;
 			this.ErrorCode = errorCode;
 		}
-		public static void Throw(HttpStatusCode statusCode = HttpStatusCode.BadRequest, string message = "", string errorCode = "", Exception innerException = null)
+		public static void Throw(HttpStatusCode statusCode = HttpStatusCode.BadRequest, string message = "", string errorCode = "", Exception? innerException = null)
 		{
 			throw new StatusException(message, errorCode, statusCode, innerException);
 		}
-		public static void Throw(IContentResponse response)
+		public static void Throw(ContentResponse response)
 		{
 			var e = new StatusException(response.ErrorMessage, response.ErrorCode, response.Status);
 			e.OtherError = response.ErrorObject;
