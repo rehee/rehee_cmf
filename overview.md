@@ -86,7 +86,13 @@ ReheeCmf.Utility/
 ├── Components/        # 组件接口（保留接口定义）
 │   ├── CmfComponentAttribute.cs    # IEntityComponent, IHandlerComponent标记接口（文件名历史遗留）
 │   ├── ICmfComponent.cs            # CMF组件接口
-│   └── ICmfHandler.cs              # CMF处理器接口
+│   ├── ICmfHandler.cs              # CMF处理器接口
+│   ├── ContextFactoryComponents/   # 上下文工厂组件
+│   │   ├── IContextFactoryComponent.cs    # 上下文工厂组件接口
+│   │   └── ContextFactoryComponentAttribute.cs # 上下文工厂组件特性
+│   └── SelectEntityComponents/     # 实体选择组件
+│       ├── ISelectEntityComponent.cs      # 实体选择组件接口
+│       └── SelectEntityAttribute.cs       # 实体选择特性
 ├── ConstValues/       # 常量值（从Libs迁移）
 │   └── ConstCrud.cs                # CRUD常量
 ├── Enums/             # 枚举定义（以Enum开头，默认值NotSpecified=0）
@@ -132,6 +138,24 @@ ReheeCmf.Utility/
 │   ├── IServiceWithTenant.cs
 │   ├── ServiceWithTenant.cs
 │   └── TenantConnection.cs
+├── Handlers/          # 处理器（继承ICmfHandler，处理组件相关工作）
+│   ├── ChangeHandlers/            # 变更处理器
+│   │   ├── IChangeHandler.cs          # 变更处理器接口（继承ICmfHandler）
+│   │   ├── ChangeHandler.cs           # 变更处理器抽象基类
+│   │   └── IDeletedHandler.cs         # 删除处理器接口
+│   ├── ContextHandlers/           # 上下文处理器
+│   │   └── IContextFactoryHandler.cs  # 上下文工厂处理器接口
+│   ├── EntityChangeHandlers/      # 实体变更处理器
+│   │   ├── IEntityChangeHandler.cs    # 实体变更处理器接口
+│   │   └── EntityChangeHandler.cs     # 实体变更处理器抽象基类
+│   ├── InterfaceChangeHandlers/   # 接口变更处理器
+│   │   ├── IInterfaceChangeHandler.cs # 接口变更处理器接口
+│   │   └── InterfaceChangeHandler.cs  # 接口变更处理器类
+│   ├── SelectEntityHandlers/      # 实体选择处理器
+│   │   ├── ISelectEntityHandler.cs    # 实体选择处理器接口
+│   │   └── SelectEntityHandler.cs     # 实体选择处理器抽象基类
+│   └── ValidationHandlers/        # 验证处理器
+│       └── IValidationHandler.cs      # 验证处理器接口
 ├── Requests/          # 请求相关（从Libs迁移）
 │   ├── IGetHttpClient.cs
 │   ├── IGetRequestTokenService.cs
