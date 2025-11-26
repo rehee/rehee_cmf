@@ -165,6 +165,17 @@ ReheeCmf.Utility/
 │   ├── IServiceModuleRequestFactory.cs
 │   ├── RequestBase.cs
 │   └── RequestClient.cs
+├── Commons/           # 通用基础类
+│   ├── IWithName.cs               # 带名称接口（Name, Description属性）
+│   ├── IWIthKeyType.cs            # 带键类型接口
+│   ├── IWIthChangeTracker.cs      # 带变更追踪器接口
+│   ├── Profile.cs                 # Profile基类（支持枚举键值的配置类）
+│   └── ProfileContainer.cs        # Profile容器类（管理Profile实例）
+├── DIContainers/      # 依赖注入容器（简易DI实现）
+│   ├── DIPool.cs                  # 静态DI池（Poor Man's DI容器）
+│   ├── CmfComponents.cs           # CMF组件池（ComponentPool, ControllerPool等）
+│   ├── CmfRegister.cs             # 组件注册器（IRegistrableAttribute注册）
+│   └── PoolInitialize.cs          # 池初始化委托定义
 └── ... (其他原有目录)
 ```
 
@@ -172,13 +183,16 @@ ReheeCmf.Utility/
 
 | 类名 | 说明 |
 |------|------|
-| `TypeHelper` | 类型判断和处理的扩展方法（IsNullable, IsIEnumerable, IsImplement等） |
+| `TypeHelper` | 类型判断和处理的扩展方法（IsNullable, IsIEnumerable, IsImplement, HasAttribute, ImplementsInterface, InheritsFrom等） |
 | `StringHelper` | 字符串处理扩展方法（SplitPascalCase, GetSystemType等） |
 | `AttributeHelper` | 特性获取和判断的扩展方法 |
-| `DictionaryHelper` | 字典操作的扩展方法（大小写不敏感键值查找等） |
+| `DictionaryHelper` | 字典操作的扩展方法（大小写不敏感键值查找, TryAdd, TryAddOrUpdate, TryRemove等） |
 | `EnumIdTypeHelper` | ID类型映射帮助类 |
 | `RequestBase` | HTTP请求基类（从Libs迁移） |
 | `ServiceWithTenant` | 支持多租户的服务基类（从Libs迁移） |
+| `DIPool` | 静态DI池，管理ProfileContainer和Profile实例的简易依赖注入容器 |
+| `Profile` | 带枚举键值的配置Profile基类 |
+| `ProfileContainer` | Profile实例管理容器 |
 
 **项目配置**:
 - TargetFramework: netstandard2.1
@@ -628,14 +642,23 @@ ReheeCmf.Modules ←────────────────────
 
 ### ReheeCmf.Utility.Test
 工具库测试，包含：
-- TypeHelperTest - 类型处理扩展测试
+
+**Helpers（辅助工具测试）**:
+- TypeHelperTest - 类型处理扩展测试（IsIEnumerable, IsNullable, IsImplement, IsInheritance, HasAttribute, ImplementsInterface, InheritsFrom等）
 - StringHelperTest - 字符串处理扩展测试
 - AttributeHelperTest - 特性处理扩展测试
-- DictionaryHelperTest - 字典处理扩展测试
+- DictionaryHelperTest - 字典处理扩展测试（TryGetValueStringKey, ToDictionWithKeys, TryAdd, TryAddOrUpdate, TryRemove等）
 - EnumIdTypeHelperTest - ID类型帮助方法测试
 - CommonHelperTest - 通用帮助方法测试
 - ContentResponseHelperTest - 内容响应帮助类测试
 - ValidationResultHelperTest - 验证结果帮助类测试
+
+**DIContainers（依赖注入容器测试）**:
+- DIPoolTest - DIPool静态依赖注入池测试（Initialize, Reset, GetProfile, GetAllProfiles, RegisterComponent, TryGetController等）
+
+**Commons（通用类测试）**:
+- ProfileTest - Profile基类测试（KeyType, StringKeyValue, KeyValue, EffectiveKey等）
+- ProfileContainerTest - ProfileContainer容器测试（AddProfile, GetProfile, RemoveProfile, GetAllProfiles等）
 
 > **注意**: ReheeCmf.Libs.Test 已被删除，原有测试功能已整合至 ReheeCmf.Utility.Test。
 
