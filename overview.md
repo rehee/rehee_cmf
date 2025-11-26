@@ -20,6 +20,7 @@ ReheeCmf 是一个基于 .NET 的快速开发框架，专为外包项目设计�
 ```
 ReheeCmf/
 ├── Core/                      # 核心库
+│   ├── ReheeCmf.Utility      # 工具库（netstandard2.1，通用工具类）
 │   ├── ReheeCmf.Libs         # 基础库（所有项目的基础依赖）
 │   ├── ReheeCmf.Modules      # 模块化框架核心
 │   ├── ReheeCmf.Servers      # Web服务器配置和启动
@@ -38,12 +39,64 @@ ReheeCmf/
 │   ├── CmfDemo               # 标准Demo
 │   └── CmfBlazorSSR          # Blazor SSR Demo
 └── Tests/                     # 测试项目
+    ├── ReheeCmf.Utility.Test # 工具库测试
     └── ReheeCmf.Libs.Test    # 基础库测试
 ```
 
 ---
 
 ## 三、核心库 (Core) 详解
+
+### 3.0 ReheeCmf.Utility - 工具库
+
+**功能定位**: 提供跨平台的通用工具类，支持netstandard2.1，可被.NET Core/.NET 5+/.NET Framework项目引用。
+
+**目录结构**:
+```
+ReheeCmf.Utility/
+├── Attributes/        # 自定义特性（Attribute）
+│   ├── AutowiredAttribute.cs       # 自动注入特性
+│   ├── IgnoreMappingAttribute.cs   # 忽略映射特性
+│   ├── IgnoreTenantAttribute.cs    # 忽略租户特性
+│   ├── IgnoreUpdateAttribute.cs    # 忽略更新特性
+│   ├── NoAutowiredAttribute.cs     # 不自动注入特性
+│   └── QueryBeforeFilterAttribute.cs # 查询前过滤特性
+├── Enums/             # 枚举定义（以Enum开头，默认值NotSpecified=0）
+│   ├── EnumAuthorizeType.cs        # 授权类型枚举
+│   ├── EnumBadgeType.cs            # 徽章类型枚举
+│   ├── EnumEntityState.cs          # 实体状态枚举
+│   ├── EnumFileService.cs          # 文件服务枚举
+│   ├── EnumHttpMethod.cs           # HTTP方法枚举
+│   ├── EnumIdType.cs               # ID类型枚举
+│   ├── EnumInputType.cs            # 输入类型枚举
+│   ├── EnumPropertyUpdateType.cs   # 属性更新类型枚举
+│   ├── EnumSQLType.cs              # SQL类型枚举
+│   └── EnumTokenType.cs            # Token类型枚举
+└── Helpers/           # 辅助工具类（扩展方法）
+    ├── AttributeHelper.cs          # 特性相关扩展
+    ├── CommonHelper.cs             # 通用帮助方法
+    ├── DictionaryHelper.cs         # 字典相关扩展
+    ├── EnumIdTypeHelper.cs         # ID类型帮助方法
+    ├── StringHelper.cs             # 字符串相关扩展
+    └── TypeHelper.cs               # 类型相关扩展
+```
+
+**核心类说明**:
+
+| 类名 | 说明 |
+|------|------|
+| `TypeHelper` | 类型判断和处理的扩展方法（IsNullable, IsIEnumerable, IsImplement等） |
+| `StringHelper` | 字符串处理扩展方法（SplitPascalCase, GetSystemType等） |
+| `AttributeHelper` | 特性获取和判断的扩展方法 |
+| `DictionaryHelper` | 字典操作的扩展方法（大小写不敏感键值查找等） |
+| `EnumIdTypeHelper` | ID类型映射帮助类 |
+
+**项目配置**:
+- TargetFramework: netstandard2.1
+- RootNamespace: ReheeCmf
+- 无外部依赖
+
+---
 
 ### 3.1 ReheeCmf.Libs - 基础库
 
@@ -531,7 +584,18 @@ ReheeCmf.Modules ←────────────────────
 
 ## 十、测试
 
-测试项目位于 `Tests/ReheeCmf.Libs.Test`，包含：
+测试项目位于 `Tests/` 目录下：
+
+### ReheeCmf.Utility.Test
+工具库测试，包含：
+- TypeHelperTest - 类型处理扩展测试
+- StringHelperTest - 字符串处理扩展测试
+- AttributeHelperTest - 特性处理扩展测试
+- DictionaryHelperTest - 字典处理扩展测试
+- EnumIdTypeHelperTest - ID类型帮助方法测试
+
+### ReheeCmf.Libs.Test
+基础库测试，包含：
 - ContextsTest - 上下文测试
 - HandlerTest - 处理器测试
 - HelperTest - 辅助类测试
