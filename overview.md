@@ -1,7 +1,7 @@
 # ReheeCmf 项目概述 (Project Overview)
 
-> **版本**: 10.0.0-rc-2-002  
-> **框架**: .NET 10.0  
+> **版本**: 8.0.22  
+> **框架**: .NET 8.0  
 > **类型**: Content Management Framework (内容管理框架)
 
 ## 一、项目简介
@@ -676,8 +676,8 @@ ReheeCmf.Modules ←────────────────────
 
 ## 十二、版本信息
 
-- 当前版本: 10.0.0-rc-2-002
-- .NET版本: .NET 10.0
+- 当前版本: 8.0.22
+- .NET版本: .NET 8.0
 - 版本配置文件: `ReheeCmf/version.props`
 
 ---

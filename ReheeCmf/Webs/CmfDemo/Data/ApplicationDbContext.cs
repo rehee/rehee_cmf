@@ -39,7 +39,10 @@ namespace CmfDemo.Data
 		public override void BeforeCreate()
 		{
 			base.BeforeCreate();
-			entity?.Name1 = Guid.NewGuid().ToString();
+			if (entity != null)
+			{
+				entity.Name1 = Guid.NewGuid().ToString();
+			}
 
 		}
 	}
