@@ -1,7 +1,7 @@
 ﻿namespace ReheeCmf
 {
-	public interface IWIthKeyType
-	{
-		Type KeyType { get; }
-	}
+  public interface IWIthKeyType
+  {
+    Type KeyType { get; }
+  }
 }

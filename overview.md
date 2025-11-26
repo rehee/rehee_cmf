@@ -172,9 +172,11 @@ ReheeCmf.Utility/
 │   └── RequestClient.cs
 ├── Commons/           # 通用基础类
 │   ├── IWithName.cs               # 带名称接口（Name, Description属性）
+│   ├── IWithNameOverride.cs       # 名称覆盖接口（NameOverride, DescriptionOverride属性）
+│   ├── IWithKey.cs                # 带键接口（KeyValue, StringKeyValue, StringKeyValueOverride属性）
 │   ├── IWIthType.cs               # 带键类型接口（IWIthKeyType接口）
 │   ├── IWIthChangeTracker.cs      # 带变更追踪器接口
-│   ├── Profile.cs                 # Profile基类（支持枚举键值的配置类）
+│   ├── Profile.cs                 # Profile基类（支持枚举键值的配置类，实现IWithName, IWithNameOverride, IWIthKeyType, IWithKey）
 │   └── ProfileContainer.cs        # Profile容器类（管理Profile实例）
 ├── DIContainers/      # 依赖注入容器（简易DI实现）
 │   ├── DIPool.cs                  # 静态DI池（Poor Man's DI容器）
@@ -667,7 +669,7 @@ ReheeCmf.Modules ←────────────────────
 - DIPoolTest - DIPool静态依赖注入池测试（Initialize, Reset, GetProfile, GetAllProfiles, RegisterComponent, TryGetController等）
 
 **Commons（通用类测试）**:
-- ProfileTest - Profile基类测试（KeyType, StringKeyValue, KeyValue, EffectiveKey等）
+- ProfileTest - Profile基类测试（KeyType, StringKeyValue, KeyValue, EffectiveKey, NameOverride, DescriptionOverride, StringKeyValueOverride, 接口实现测试等）
 - ProfileContainerTest - ProfileContainer容器测试（AddProfile, GetProfile, RemoveProfile, GetAllProfiles等）
 - StatusExceptionTest - StatusException异常类测试（构造函数, Throw方法, 验证错误处理等）
 
