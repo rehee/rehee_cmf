@@ -61,6 +61,9 @@ ReheeCmf.Utility/
 │   ├── IgnoreUpdateAttribute.cs    # 忽略更新特性
 │   ├── NoAutowiredAttribute.cs     # 不自动注入特性
 │   └── QueryBeforeFilterAttribute.cs # 查询前过滤特性
+├── Commons/           # 公共接口（新增）
+│   ├── IIsvalidate.cs              # 验证接口
+│   └── ISetValidation.cs           # 设置验证接口
 ├── Enums/             # 枚举定义（以Enum开头，默认值NotSpecified=0）
 │   ├── EnumAuthorizeType.cs        # 授权类型枚举
 │   ├── EnumBadgeType.cs            # 徽章类型枚举
@@ -72,13 +75,16 @@ ReheeCmf.Utility/
 │   ├── EnumPropertyUpdateType.cs   # 属性更新类型枚举
 │   ├── EnumSQLType.cs              # SQL类型枚举
 │   └── EnumTokenType.cs            # Token类型枚举
-└── Helpers/           # 辅助工具类（扩展方法）
-    ├── AttributeHelper.cs          # 特性相关扩展
-    ├── CommonHelper.cs             # 通用帮助方法
-    ├── DictionaryHelper.cs         # 字典相关扩展
-    ├── EnumIdTypeHelper.cs         # ID类型帮助方法
-    ├── StringHelper.cs             # 字符串相关扩展
-    └── TypeHelper.cs               # 类型相关扩展
+├── Helpers/           # 辅助工具类（扩展方法）
+│   ├── AttributeHelper.cs          # 特性相关扩展
+│   ├── CommonHelper.cs             # 通用帮助方法
+│   ├── DictionaryHelper.cs         # 字典相关扩展
+│   ├── EnumIdTypeHelper.cs         # ID类型帮助方法
+│   ├── StringHelper.cs             # 字符串相关扩展
+│   └── TypeHelper.cs               # 类型相关扩展
+└── Responses/         # 响应模型（新增）
+    ├── ContentResponse.cs          # 统一响应包装
+    └── IContentResponse.cs         # 响应接口
 ```
 
 **核心类说明**:
@@ -90,17 +96,18 @@ ReheeCmf.Utility/
 | `AttributeHelper` | 特性获取和判断的扩展方法 |
 | `DictionaryHelper` | 字典操作的扩展方法（大小写不敏感键值查找等） |
 | `EnumIdTypeHelper` | ID类型映射帮助类 |
+| `ContentResponse<T>` | 统一的API响应包装类，包含Success、Status、Content、Validation等 |
 
 **项目配置**:
 - TargetFramework: netstandard2.1
 - RootNamespace: ReheeCmf
-- 无外部依赖
+- 依赖包: System.ComponentModel.Annotations
 
 ---
 
 ### 3.1 ReheeCmf.Libs - 基础库
 
-**功能定位**: 整个框架的基础，定义了所有核心接口、实体基类、帮助类等。
+**功能定位**: 整个框架的基础，定义了所有核心接口、实体基类、帮助类等。依赖 ReheeCmf.Utility 项目。
 
 **目录结构**:
 ```
@@ -118,30 +125,26 @@ ReheeCmf.Libs/
 │   ├── IUserService.cs       # 用户服务接口
 │   ├── IFileService.cs       # 文件服务接口
 │   └── IToken.cs             # Token服务接口
-├── Attributes/        # 自定义特性
+├── Attributes/        # 自定义特性（仅包含需要Libs依赖的特性）
 │   ├── PermissionAttribute.cs    # 权限特性
-│   ├── IgnoreTenantAttribute.cs  # 忽略租户特性
-│   └── AutowiredAttribute.cs     # 自动注入特性
+│   ├── FindCheckAttribute.cs     # 查找检查特性
+│   └── ReadCheckAttribute.cs     # 读取检查特性
 ├── Handlers/          # 处理器
 │   ├── ChangeHandlers/       # 变更处理器
 │   ├── ValidationHandlers/   # 验证处理器
 │   └── EntityChangeHandlers/ # 实体变更处理器
-├── Helpers/           # 辅助工具类
-│   ├── StringHelper.cs       # 字符串处理
-│   ├── JsonHelper.cs         # JSON处理
-│   ├── ValidationResultHelper.cs # 验证结果处理
-│   └── TypeHelper.cs         # 类型处理
+├── Helpers/           # 辅助工具类（仅包含需要Libs依赖的扩展）
+│   ├── StringHelper.cs           # 字符串处理（扩展）
+│   ├── StringValueHelper.cs      # 字符串值处理
+│   ├── TypeHelperExtensions.cs   # 类型处理扩展
+│   ├── JsonHelper.cs             # JSON处理
+│   └── ValidationResultHelper.cs # 验证结果处理
 ├── DTOProcessors/     # DTO处理器
 │   └── CmfDTOBase.cs         # DTO基类
-├── Responses/         # 响应模型
-│   ├── ContentResponse.cs    # 统一响应包装
+├── Responses/         # 响应模型（仅保留Error类）
 │   └── Error.cs              # 错误信息
 ├── Requests/          # 请求相关
 │   └── RequestBase.cs        # 请求基类
-├── Enums/             # 枚举定义
-│   ├── EnumEntityState.cs    # 实体状态枚举
-│   ├── EnumHttpMethod.cs     # HTTP方法枚举
-│   └── EnumIdType.cs         # ID类型枚举
 ├── Commons/           # 公共类
 │   ├── CrudOption.cs         # CRUD配置选项
 │   ├── ApiSetting.cs         # API设置
@@ -162,13 +165,14 @@ ReheeCmf.Libs/
 |------|------|
 | `EntityBase<T>` | 实体基类，支持泛型ID（Guid、int、long等），自动包含TenantID |
 | `IContext` | 数据上下文核心接口，继承ISaveChange、IRepository、IWithTenant |
-| `ContentResponse<T>` | 统一的API响应包装类，包含Success、Status、Content、Validation等 |
 | `CmfDTOBase<T>` | DTO基类，实现IValidatableObject验证 |
+| `Error` | 错误信息包装类 |
 
 **依赖包**:
 - Microsoft.Extensions.DependencyInjection
 - Microsoft.Extensions.Primitives
 - Newtonsoft.Json
+- ReheeCmf.Utility (项目引用)
 
 ---
 

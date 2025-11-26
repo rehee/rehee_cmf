@@ -1,10 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReheeCmf.Responses
 {
@@ -38,9 +36,6 @@ namespace ReheeCmf.Responses
     public IEnumerable<ValidationResult>? Validation { get; set; }
 
     public IEnumerable<ValidationResult>? ExceptionValidation { get; set; }
-
-
-
 
     public void SetValidation(params ValidationResult[] validations)
     {
