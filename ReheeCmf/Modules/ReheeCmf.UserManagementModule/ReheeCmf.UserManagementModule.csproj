@@ -13,7 +13,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\ReheeCmf.Caches\ReheeCmf.Caches.csproj" />
-    <ProjectReference Include="..\..\Core\ReheeCmf.Libs\ReheeCmf.Libs.csproj" />
     <ProjectReference Include="..\..\Core\ReheeCmf.Modules\ReheeCmf.Modules.csproj" />
     <ProjectReference Include="..\..\Core\ReheeCmf.Odatas\ReheeCmf.ODatas.csproj" />
   </ItemGroup>

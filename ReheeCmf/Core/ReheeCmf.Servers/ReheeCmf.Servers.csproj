@@ -19,7 +19,6 @@
     <PackageReference Include="OData.Swagger" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ReheeCmf.Libs\ReheeCmf.Libs.csproj" />
     <ProjectReference Include="..\ReheeCmf.Modules\ReheeCmf.Modules.csproj" />
     <ProjectReference Include="..\ReheeCmf.Odatas\ReheeCmf.ODatas.csproj" />
   </ItemGroup>

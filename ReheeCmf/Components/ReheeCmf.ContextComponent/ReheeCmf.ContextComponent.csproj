@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\ReheeCmf.Caches\ReheeCmf.Caches.csproj" />
-    <ProjectReference Include="..\..\Core\ReheeCmf.Libs\ReheeCmf.Libs.csproj" />
   </ItemGroup>
 
 </Project>
