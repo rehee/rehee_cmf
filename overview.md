@@ -167,7 +167,7 @@ ReheeCmf.Utility/
 │   └── RequestClient.cs
 ├── Commons/           # 通用基础类
 │   ├── IWithName.cs               # 带名称接口（Name, Description属性）
-│   ├── IWIthKeyType.cs            # 带键类型接口
+│   ├── IWIthType.cs               # 带键类型接口（IWIthKeyType接口）
 │   ├── IWIthChangeTracker.cs      # 带变更追踪器接口
 │   ├── Profile.cs                 # Profile基类（支持枚举键值的配置类）
 │   └── ProfileContainer.cs        # Profile容器类（管理Profile实例）
