@@ -1,6 +1,6 @@
 ﻿using ReheeCmf.Attributes;
 using ReheeCmf.Components;
-using ReheeCmf.Handlers.SelectHandler;
+using ReheeCmf.Components.SelectEntityComponents;
 using ReheeCmf.Utility.CmfRegisters;
 
 namespace ReheeCmf.Helpers
