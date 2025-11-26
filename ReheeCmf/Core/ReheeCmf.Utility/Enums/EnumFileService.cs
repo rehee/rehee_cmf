@@ -1,8 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace ReheeCmf.Enums
 {
   public enum EnumFileService
   {
-    NotSpecified = 0,
+    None = 0,
     Local = 100,
     Dropbox = 200,
     OneDrive = 300,

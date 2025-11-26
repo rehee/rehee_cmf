@@ -1,8 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace ReheeCmf.Enums
 {
   public enum EnumInputType
   {
-    NotSpecified = 0,
     Text = 100,
     Email = 200,
     Number = 300,

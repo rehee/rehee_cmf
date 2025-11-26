@@ -1,10 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace ReheeCmf.Enums
 {
   public enum EnumIdType
   {
-    NotSpecified = 0,
-    Number = 1,
-    Guid = 2,
-    String = 3
+    NotSpecified,
+    Number,
+    Guid,
+    String
   }
+
 }

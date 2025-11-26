@@ -1,11 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace ReheeCmf.Enums
 {
   public enum EnumEntityState
   {
-    NotSpecified = 0,
-    Added = 1,
-    Modified = 2,
-    Deleted = 3,
-    Unchanged = 4,
+    NotSpecified,
+    Added,
+    Modified,
+    Deleted,
+    Unchanged,
   }
 }

@@ -1,10 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace ReheeCmf.Enums
 {
   public enum EnumAuthorizeType
   {
-    NotSpecified = 0,
-    SelfManagement = 1,
-    RemoteManagement = 2,
-    RemoteLoginSelfAuth = 3,
+    NotSpecified,
+    SelfManagement,
+    RemoteManagement,
+    RemoteLoginSelfAuth,
   }
 }

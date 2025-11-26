@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ReheeCmf.Commons;
 
 namespace ReheeCmf.MultiTenants
 {
-  public interface IServiceWithTenant : IDisposable, ISetTenantDetail
-  {
-    Tenant? CurrentTenant { get; }
-    event EventHandler<EventArgs<Tenant>> TenantChange;
-  }
+	public interface IServiceWithTenant : IDisposable, ISetTenantDetail
+	{
+		Tenant? CurrentTenant { get; }
+		event EventHandler<EventArgs<Tenant>> TenantChange;
+	}
 }
