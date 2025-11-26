@@ -20,8 +20,8 @@ ReheeCmf 是一个基于 .NET 的快速开发框架，专为外包项目设计�
 ```
 ReheeCmf/
 ├── Core/                      # 核心库
-│   ├── ReheeCmf.Utility      # 工具库（netstandard2.1，通用工具类）
-│   ├── ReheeCmf.Libs         # 基础库（所有项目的基础依赖）
+│   ├── ReheeCmf.Utility      # 工具库（netstandard2.1，包含原Libs中的大部分功能）
+│   ├── ReheeCmf.Libs         # 基础库（仅包含Global.cs，所有项目的基础依赖）
 │   ├── ReheeCmf.Modules      # 模块化框架核心
 │   ├── ReheeCmf.Servers      # Web服务器配置和启动
 │   ├── ReheeCmf.Caches       # 缓存服务
@@ -39,8 +39,7 @@ ReheeCmf/
 │   ├── CmfDemo               # 标准Demo
 │   └── CmfBlazorSSR          # Blazor SSR Demo
 └── Tests/                     # 测试项目
-    ├── ReheeCmf.Utility.Test # 工具库测试
-    └── ReheeCmf.Libs.Test    # 基础库测试
+    └── ReheeCmf.Utility.Test # 工具库测试
 ```
 
 ---
@@ -49,7 +48,7 @@ ReheeCmf/
 
 ### 3.0 ReheeCmf.Utility - 工具库
 
-**功能定位**: 提供跨平台的通用工具类，支持netstandard2.1，可被.NET Core/.NET 5+/.NET Framework项目引用。
+**功能定位**: 提供跨平台的通用工具类，支持netstandard2.1，可被.NET Core/.NET 5+/.NET Framework项目引用。此库现包含原ReheeCmf.Libs中的大部分功能代码。
 
 **目录结构**:
 ```
@@ -61,6 +60,23 @@ ReheeCmf.Utility/
 │   ├── IgnoreUpdateAttribute.cs    # 忽略更新特性
 │   ├── NoAutowiredAttribute.cs     # 不自动注入特性
 │   └── QueryBeforeFilterAttribute.cs # 查询前过滤特性
+├── Authenticates/     # 认证相关（从Libs迁移）
+│   ├── AuthorizeOption.cs          # 授权选项
+│   ├── CmfAuthorizeAttribute.cs    # CMF授权特性
+│   ├── IAuthorize.cs               # 授权接口
+│   ├── IDTOSignInManager.cs        # DTO登录管理接口
+│   ├── IJWTService.cs              # JWT服务接口
+│   ├── ReheeCmfIdentity.cs         # CMF身份认证
+│   ├── TokenManagement.cs          # Token管理
+│   └── UserManagementOption.cs     # 用户管理选项
+├── Caches/            # 缓存相关（从Libs迁移）
+│   ├── CacheBaseHelper.cs          # 缓存基础帮助类
+│   ├── ICacheManager.cs            # 缓存管理接口
+│   ├── ICmfCache.cs                # CMF缓存接口
+│   ├── IKeyValueCaches.cs          # 键值缓存接口
+│   └── QuerySecondCache.cs         # 查询二级缓存
+├── ConstValues/       # 常量值（从Libs迁移）
+│   └── ConstCrud.cs                # CRUD常量
 ├── Enums/             # 枚举定义（以Enum开头，默认值NotSpecified=0）
 │   ├── EnumAuthorizeType.cs        # 授权类型枚举
 │   ├── EnumBadgeType.cs            # 徽章类型枚举
@@ -72,13 +88,46 @@ ReheeCmf.Utility/
 │   ├── EnumPropertyUpdateType.cs   # 属性更新类型枚举
 │   ├── EnumSQLType.cs              # SQL类型枚举
 │   └── EnumTokenType.cs            # Token类型枚举
-└── Helpers/           # 辅助工具类（扩展方法）
-    ├── AttributeHelper.cs          # 特性相关扩展
-    ├── CommonHelper.cs             # 通用帮助方法
-    ├── DictionaryHelper.cs         # 字典相关扩展
-    ├── EnumIdTypeHelper.cs         # ID类型帮助方法
-    ├── StringHelper.cs             # 字符串相关扩展
-    └── TypeHelper.cs               # 类型相关扩展
+├── Helpers/           # 辅助工具类（扩展方法，已合并Libs中的Helper）
+│   ├── AttributeHelper.cs          # 特性相关扩展
+│   ├── ClaimsHelper.cs             # Claims相关扩展（从Libs迁移）
+│   ├── CommonHelper.cs             # 通用帮助方法
+│   ├── ComponentAttributeHelper.cs # 组件特性帮助类（从Libs迁移）
+│   ├── ComponentFactory.cs         # 组件工厂（从Libs迁移）
+│   ├── DictionaryHelper.cs         # 字典相关扩展
+│   ├── EnumIdTypeHelper.cs         # ID类型帮助方法
+│   ├── EntityRelationHelper.cs     # 实体关系帮助类（从Libs迁移）
+│   ├── ETagHelper.cs               # ETag帮助类（从Libs迁移）
+│   ├── FileRequestHelper.cs        # 文件请求帮助类（从Libs迁移）
+│   ├── IHttpDictionaryHelper.cs    # HTTP字典帮助接口（从Libs迁移）
+│   ├── StandardInputHelper.cs      # 标准输入帮助类（从Libs迁移）
+│   ├── StringHelper.cs             # 字符串相关扩展
+│   ├── TenantHelper.cs             # 租户帮助类（从Libs迁移）
+│   └── TypeHelper.cs               # 类型相关扩展
+├── Modules/           # 模块相关（从Libs迁移）
+│   ├── Components/
+│   │   └── ModulePermissionComponent.cs
+│   ├── Helpers/
+│   │   └── ModulePermissionComponentHelper.cs
+│   ├── Permissions/
+│   │   ├── ConstCmfAuthenticationModule.cs
+│   │   ├── ConstCmfUserManagementModule.cs
+│   │   └── IModulePermission.cs
+│   └── ConstModule.cs
+├── MultiTenants/      # 多租户实现（从Libs迁移）
+│   ├── IServiceWithTenant.cs
+│   ├── ServiceWithTenant.cs
+│   └── TenantConnection.cs
+├── Requests/          # 请求相关（从Libs迁移）
+│   ├── IGetHttpClient.cs
+│   ├── IGetRequestTokenService.cs
+│   ├── IRequestBase.cs
+│   ├── IRequestClient.cs
+│   ├── IServiceModuleMapping.cs
+│   ├── IServiceModuleRequestFactory.cs
+│   ├── RequestBase.cs
+│   └── RequestClient.cs
+└── ... (其他原有目录)
 ```
 
 **核心类说明**:
@@ -90,85 +139,38 @@ ReheeCmf.Utility/
 | `AttributeHelper` | 特性获取和判断的扩展方法 |
 | `DictionaryHelper` | 字典操作的扩展方法（大小写不敏感键值查找等） |
 | `EnumIdTypeHelper` | ID类型映射帮助类 |
+| `RequestBase` | HTTP请求基类（从Libs迁移） |
+| `ServiceWithTenant` | 支持多租户的服务基类（从Libs迁移） |
 
 **项目配置**:
 - TargetFramework: netstandard2.1
 - RootNamespace: ReheeCmf
-- 无外部依赖
+- 依赖包：
+  - Microsoft.CSharp
+  - Microsoft.Extensions.DependencyInjection
+  - Microsoft.Extensions.Primitives
+  - Newtonsoft.Json
+  - System.ComponentModel.Annotations
+  - System.Net.Http
+  - System.Text.Json
 
 ---
 
 ### 3.1 ReheeCmf.Libs - 基础库
 
-**功能定位**: 整个框架的基础，定义了所有核心接口、实体基类、帮助类等。
+**功能定位**: 基础依赖库，大部分代码已迁移至ReheeCmf.Utility，现仅保留Global.cs用于全局设置。
 
 **目录结构**:
 ```
 ReheeCmf.Libs/
-├── Entities/          # 实体相关
-│   ├── EntityBase.cs         # 实体基类（泛型支持多种ID类型）
-│   ├── IEntityBase.cs        # 实体接口定义
-│   ├── ICmfUser.cs           # CMF用户接口
-│   └── RoleBasedPermission.cs # 基于角色的权限实体
-├── Contexts/          # 上下文接口
-│   ├── IContext.cs           # 数据上下文接口
-│   ├── IRepository.cs        # 仓储接口
-│   └── ISaveChange.cs        # 保存变更接口
-├── Services/          # 服务接口
-│   ├── IUserService.cs       # 用户服务接口
-│   ├── IFileService.cs       # 文件服务接口
-│   └── IToken.cs             # Token服务接口
-├── Attributes/        # 自定义特性
-│   ├── PermissionAttribute.cs    # 权限特性
-│   ├── IgnoreTenantAttribute.cs  # 忽略租户特性
-│   └── AutowiredAttribute.cs     # 自动注入特性
-├── Handlers/          # 处理器
-│   ├── ChangeHandlers/       # 变更处理器
-│   ├── ValidationHandlers/   # 验证处理器
-│   └── EntityChangeHandlers/ # 实体变更处理器
-├── Helpers/           # 辅助工具类
-│   ├── StringHelper.cs       # 字符串处理
-│   ├── JsonHelper.cs         # JSON处理
-│   ├── ValidationResultHelper.cs # 验证结果处理
-│   └── TypeHelper.cs         # 类型处理
-├── DTOProcessors/     # DTO处理器
-│   └── CmfDTOBase.cs         # DTO基类
-├── Responses/         # 响应模型
-│   ├── ContentResponse.cs    # 统一响应包装
-│   └── Error.cs              # 错误信息
-├── Requests/          # 请求相关
-│   └── RequestBase.cs        # 请求基类
-├── Enums/             # 枚举定义
-│   ├── EnumEntityState.cs    # 实体状态枚举
-│   ├── EnumHttpMethod.cs     # HTTP方法枚举
-│   └── EnumIdType.cs         # ID类型枚举
-├── Commons/           # 公共类
-│   ├── CrudOption.cs         # CRUD配置选项
-│   ├── ApiSetting.cs         # API设置
-│   └── StatusException.cs    # 状态异常
-├── Components/        # 组件支持
-│   └── ICmfComponent.cs      # 组件接口
-├── StandardInputs/    # 标准输入
-│   └── Properties/           # 属性定义
-├── Tenants/           # 多租户支持
-├── MultiTenants/      # 多租户实现
-└── Reflects/          # 反射相关
-    └── ReflectPools/         # 反射池
+└── Global.cs          # 全局设置和配置
 ```
-
-**核心类说明**:
-
-| 类名 | 说明 |
-|------|------|
-| `EntityBase<T>` | 实体基类，支持泛型ID（Guid、int、long等），自动包含TenantID |
-| `IContext` | 数据上下文核心接口，继承ISaveChange、IRepository、IWithTenant |
-| `ContentResponse<T>` | 统一的API响应包装类，包含Success、Status、Content、Validation等 |
-| `CmfDTOBase<T>` | DTO基类，实现IValidatableObject验证 |
 
 **依赖包**:
 - Microsoft.Extensions.DependencyInjection
 - Microsoft.Extensions.Primitives
 - Newtonsoft.Json
+- ProjectReference: ReheeCmf.Utility
 
 ---
 
@@ -594,12 +596,7 @@ ReheeCmf.Modules ←────────────────────
 - DictionaryHelperTest - 字典处理扩展测试
 - EnumIdTypeHelperTest - ID类型帮助方法测试
 
-### ReheeCmf.Libs.Test
-基础库测试，包含：
-- ContextsTest - 上下文测试
-- HandlerTest - 处理器测试
-- HelperTest - 辅助类测试
-- UtilityTests - 工具类测试
+> **注意**: ReheeCmf.Libs.Test 已被删除，原有测试功能已整合至 ReheeCmf.Utility.Test。
 
 ---
 

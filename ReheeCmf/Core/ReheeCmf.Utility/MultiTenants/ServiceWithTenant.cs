@@ -1,4 +1,6 @@
-﻿namespace ReheeCmf.MultiTenants
+﻿using ReheeCmf.Tenants;
+
+namespace ReheeCmf.MultiTenants
 {
 	public abstract class ServiceWithTenant : IServiceWithTenant
 	{

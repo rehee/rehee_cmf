@@ -1,4 +1,8 @@
-﻿namespace ReheeCmf.Requests
+﻿using ReheeCmf.Tenants;
+using System.IO;
+using System.Net.Http;
+
+namespace ReheeCmf.Requests
 {
 	public class RequestClient : RequestBase, IRequestClient
 	{

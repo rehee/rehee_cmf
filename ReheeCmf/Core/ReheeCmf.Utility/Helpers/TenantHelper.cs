@@ -1,4 +1,7 @@
-﻿namespace ReheeCmf.Helpers
+﻿using ReheeCmf.FileServices;
+using ReheeCmf.Tenants;
+
+namespace ReheeCmf.Helpers
 {
 	public static class TenantHelper
 	{

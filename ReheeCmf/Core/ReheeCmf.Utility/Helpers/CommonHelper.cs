@@ -9,4 +9,12 @@ namespace ReheeCmf.Helpers
       return new KeyValuePair<string, object>(key, value);
     }
   }
+
+  public static class KeyValuePairFunc
+  {
+    public static KeyValuePair<string, object> CreateStringObj(string key, object value)
+    {
+      return new KeyValuePair<string, object>(key, value);
+    }
+  }
 }
