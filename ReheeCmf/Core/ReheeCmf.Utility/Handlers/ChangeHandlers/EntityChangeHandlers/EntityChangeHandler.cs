@@ -1,8 +1,7 @@
-﻿using ReheeCmf.Handlers.ChangeHandlers;
-using ReheeCmf.Services;
+﻿using ReheeCmf.Services;
 using ReheeCmf.Tenants;
 
-namespace ReheeCmf.Handlers.EntityChangeHandlers
+namespace ReheeCmf.Handlers.ChangeHandlers.EntityChangeHandlers
 {
 	public abstract class EntityChangeHandler<T> : ChangeHandler<T>, IEntityChangeHandler where T : class
 	{

@@ -1,6 +1,6 @@
 ﻿using ReheeCmf.Attributes;
 using ReheeCmf.Entities;
-using ReheeCmf.Handlers.EntityChangeHandlers;
+using ReheeCmf.Handlers.ChangeHandlers.EntityChangeHandlers;
 using ReheeCmf.Helpers;
 using System.ComponentModel.DataAnnotations;
 

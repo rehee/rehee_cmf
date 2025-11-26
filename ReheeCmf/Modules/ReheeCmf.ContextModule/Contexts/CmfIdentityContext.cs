@@ -1,7 +1,6 @@
-﻿using ReheeCmf.Components.ContextFactoryComponents;
+﻿using ReheeCmf.Attributes;
 using ReheeCmf.ContextComponent;
 using ReheeCmf.ContextModule.Components;
-using ReheeCmf.Handlers.ContextHandlers;
 using ReheeCmf.MultiTenants;
 
 namespace ReheeCmf.ContextModule.Contexts

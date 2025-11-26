@@ -1,4 +1,4 @@
-﻿namespace ReheeCmf.Components
+﻿namespace ReheeCmf.Handlers
 {
   public interface ICmfHandler
   {

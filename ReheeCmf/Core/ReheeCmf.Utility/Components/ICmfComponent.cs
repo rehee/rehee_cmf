@@ -1,4 +1,5 @@
-﻿using ReheeCmf.Utility.CmfRegisters;
+﻿using ReheeCmf.Attributes;
+using ReheeCmf.Handlers;
 
 namespace ReheeCmf.Components
 {

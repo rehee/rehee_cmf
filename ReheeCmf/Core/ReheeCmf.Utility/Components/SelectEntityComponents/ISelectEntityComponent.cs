@@ -1,10 +1,9 @@
-using ReheeCmf.Components;
 using ReheeCmf.Handlers.SelectEntityHandlers;
 
 namespace ReheeCmf.Components.SelectEntityComponents
 {
-  public interface ISelectEntityComponent : ICmfComponent
-  {
-    ISelectEntityHandler? GetSelectHandler();
-  }
+	public interface ISelectEntityComponent : ICmfComponent
+	{
+		ISelectEntityHandler? GetSelectHandler();
+	}
 }

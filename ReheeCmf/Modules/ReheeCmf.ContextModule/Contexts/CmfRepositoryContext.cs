@@ -1,6 +1,6 @@
-﻿using ReheeCmf.Commons.Interfaces;
-using ReheeCmf.Enums;
+﻿using ReheeCmf.Enums;
 using ReheeCmf.Handlers.ChangeHandlers;
+using ReheeCmf.Handlers.ChangeHandlers.EntityChangeHandlers;
 using ReheeCmf.MultiTenants;
 
 namespace ReheeCmf.ContextModule.Contexts
@@ -62,28 +62,28 @@ namespace ReheeCmf.ContextModule.Contexts
 			}
 
 		}
-
+		//todo need double check
 		private void ChangeTracker_StateChanging(object? sender, Microsoft.EntityFrameworkCore.ChangeTracking.EntityStateChangingEventArgs e)
 		{
-			if (e.Entry.Entity is IWithName nn)
+			if (e.Entry.Entity is IWIthChangeTracker ct)
 			{
-				nn.Name1 = Guid.NewGuid().ToString();
+				ct.ChangeTracker = Guid.NewGuid().ToString();
 			}
 		}
-
+		//todo need double check
 		private void ChangeTracker_DetectedEntityChanges(object? sender, Microsoft.EntityFrameworkCore.ChangeTracking.DetectedEntityChangesEventArgs e)
 		{
-			if (e.Entry.Entity is IWithName nn)
+			if (e.Entry.Entity is IWIthChangeTracker ct)
 			{
-				nn.Name1 = Guid.NewGuid().ToString();
+				ct.ChangeTracker = Guid.NewGuid().ToString();
 			}
 		}
 
 		private void ChangeTracker_StateChanged(object? sender, Microsoft.EntityFrameworkCore.ChangeTracking.EntityStateChangedEventArgs e)
 		{
-			if (e.Entry.Entity is IWithName b)
+			if (e.Entry.Entity is IWIthChangeTracker b)
 			{
-				b.Name1 = Guid.NewGuid().ToString();
+				b.ChangeTracker = Guid.NewGuid().ToString();
 			}
 		}
 

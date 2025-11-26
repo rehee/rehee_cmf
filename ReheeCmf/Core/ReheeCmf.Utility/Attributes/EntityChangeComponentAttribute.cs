@@ -1,4 +1,4 @@
-using ReheeCmf.Handlers.EntityChangeHandlers;
+using ReheeCmf.Handlers.ChangeHandlers.EntityChangeHandlers;
 
 namespace ReheeCmf.Attributes
 {

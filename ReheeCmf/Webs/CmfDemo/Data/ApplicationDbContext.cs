@@ -3,7 +3,7 @@ using ReheeCmf.Attributes;
 using ReheeCmf.ContextModule.Contexts;
 using ReheeCmf.ContextModule.Entities;
 using ReheeCmf.Entities;
-using ReheeCmf.Handlers.EntityChangeHandlers;
+using ReheeCmf.Handlers.ChangeHandlers.EntityChangeHandlers;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CmfDemo.Data

@@ -1,10 +1,10 @@
 ﻿using ReheeCmf.Caches;
 using ReheeCmf.Commons.Encrypts;
+using ReheeCmf.DIContainers;
 using ReheeCmf.Modules.Options;
 using ReheeCmf.ODatas;
 using ReheeCmf.Servers.Filters;
 using ReheeCmf.Servers.Middlewares;
-using ReheeCmf.Utility.CmfRegisters;
 
 namespace System
 {
@@ -34,7 +34,7 @@ namespace System
 			{
 				m.Constructor(context);
 			}
-			CmfRegister.Init();
+			DIPool.Initialize();
 			ModuleHelper.BlizorAssemblies = serverModule.SelectMany(b => b.BlazorAssemblies()).DistinctBy(b => b.FullName).ToArray();
 			var configuration = context.Configuration;
 			var services = context.Services;
