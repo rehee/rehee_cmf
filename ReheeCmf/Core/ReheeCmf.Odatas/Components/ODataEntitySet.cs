@@ -1,4 +1,5 @@
 ﻿using Microsoft.OData.ModelBuilder;
+using ReheeCmf.Attributes;
 using ReheeCmf.Components;
 using System.Reflection;
 

@@ -53,16 +53,24 @@ ReheeCmf/
 **目录结构**:
 ```
 ReheeCmf.Utility/
-├── Attributes/        # 自定义特性（Attribute）
-│   ├── AutowiredAttribute.cs       # 自动注入特性
-│   ├── IgnoreMappingAttribute.cs   # 忽略映射特性
-│   ├── IgnoreTenantAttribute.cs    # 忽略租户特性
-│   ├── IgnoreUpdateAttribute.cs    # 忽略更新特性
-│   ├── NoAutowiredAttribute.cs     # 不自动注入特性
-│   └── QueryBeforeFilterAttribute.cs # 查询前过滤特性
+├── Attributes/        # 自定义特性（Attribute）- 所有Attribute类统一放置于此
+│   ├── AutowiredAttribute.cs           # 自动注入特性
+│   ├── ChangeComponentAttribute.cs     # 变更组件特性基类（从Components迁移）
+│   ├── CmfAuthorizeAttribute.cs        # CMF授权特性（从Authenticates迁移）
+│   ├── CmfComponentAttribute.cs        # CMF组件特性基类（从Components迁移）
+│   ├── EntityChangeComponentAttribute.cs # 实体变更组件特性（从Components/ChangeComponents迁移）
+│   ├── FindCheckAttribute.cs           # 查找检查特性
+│   ├── FormInputsAttribute.cs          # 表单输入特性（从StandardInputs/Attributes迁移）
+│   ├── IgnoreMappingAttribute.cs       # 忽略映射特性
+│   ├── IgnoreTenantAttribute.cs        # 忽略租户特性
+│   ├── IgnoreUpdateAttribute.cs        # 忽略更新特性
+│   ├── InterfaceChangeComponentAttribute.cs # 接口变更组件特性（从Components/ChangeComponents迁移）
+│   ├── NoAutowiredAttribute.cs         # 不自动注入特性
+│   ├── PermissionAttribute.cs          # 权限特性
+│   ├── QueryBeforeFilterAttribute.cs   # 查询前过滤特性
+│   └── ReadCheckAttribute.cs           # 读取检查特性
 ├── Authenticates/     # 认证相关（从Libs迁移）
 │   ├── AuthorizeOption.cs          # 授权选项
-│   ├── CmfAuthorizeAttribute.cs    # CMF授权特性
 │   ├── IAuthorize.cs               # 授权接口
 │   ├── IDTOSignInManager.cs        # DTO登录管理接口
 │   ├── IJWTService.cs              # JWT服务接口
@@ -75,6 +83,10 @@ ReheeCmf.Utility/
 │   ├── ICmfCache.cs                # CMF缓存接口
 │   ├── IKeyValueCaches.cs          # 键值缓存接口
 │   └── QuerySecondCache.cs         # 查询二级缓存
+├── Components/        # 组件接口（保留接口定义）
+│   ├── CmfComponentAttribute.cs    # IEntityComponent, IHandlerComponent标记接口（文件名历史遗留）
+│   ├── ICmfComponent.cs            # CMF组件接口
+│   └── ICmfHandler.cs              # CMF处理器接口
 ├── ConstValues/       # 常量值（从Libs迁移）
 │   └── ConstCrud.cs                # CRUD常量
 ├── Enums/             # 枚举定义（以Enum开头，默认值NotSpecified=0）
@@ -94,6 +106,7 @@ ReheeCmf.Utility/
 │   ├── CommonHelper.cs             # 通用帮助方法
 │   ├── ComponentAttributeHelper.cs # 组件特性帮助类（从Libs迁移）
 │   ├── ComponentFactory.cs         # 组件工厂（从Libs迁移）
+│   ├── ContentResponseHelper.cs    # 内容响应帮助类
 │   ├── DictionaryHelper.cs         # 字典相关扩展
 │   ├── EnumIdTypeHelper.cs         # ID类型帮助方法
 │   ├── EntityRelationHelper.cs     # 实体关系帮助类（从Libs迁移）
@@ -103,7 +116,8 @@ ReheeCmf.Utility/
 │   ├── StandardInputHelper.cs      # 标准输入帮助类（从Libs迁移）
 │   ├── StringHelper.cs             # 字符串相关扩展
 │   ├── TenantHelper.cs             # 租户帮助类（从Libs迁移）
-│   └── TypeHelper.cs               # 类型相关扩展
+│   ├── TypeHelper.cs               # 类型相关扩展
+│   └── ValidationResultHelper.cs   # 验证结果帮助类
 ├── Modules/           # 模块相关（从Libs迁移）
 │   ├── Components/
 │   │   └── ModulePermissionComponent.cs
@@ -595,6 +609,9 @@ ReheeCmf.Modules ←────────────────────
 - AttributeHelperTest - 特性处理扩展测试
 - DictionaryHelperTest - 字典处理扩展测试
 - EnumIdTypeHelperTest - ID类型帮助方法测试
+- CommonHelperTest - 通用帮助方法测试
+- ContentResponseHelperTest - 内容响应帮助类测试
+- ValidationResultHelperTest - 验证结果帮助类测试
 
 > **注意**: ReheeCmf.Libs.Test 已被删除，原有测试功能已整合至 ReheeCmf.Utility.Test。
 

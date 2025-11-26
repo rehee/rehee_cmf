@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
+using ReheeCmf.Attributes;
 using ReheeCmf.Authenticates;
 using ReheeCmf.Commons;
 using ReheeCmf.DTOProcessors.Processors;

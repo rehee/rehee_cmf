@@ -1,4 +1,5 @@
-﻿using ReheeCmf.Enums;
+﻿using ReheeCmf.Attributes;
+using ReheeCmf.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ReheeCmf.ContextModule.Entities

@@ -1,5 +1,5 @@
 ﻿using Microsoft.OData.ModelBuilder;
-using ReheeCmf.Components.ChangeComponents;
+using ReheeCmf.Attributes;
 using ReheeCmf.ODatas.Components;
 
 namespace ReheeCmf.ContextModule.Entities

@@ -1,6 +1,6 @@
 ﻿
 
-using ReheeCmf.Components.ChangeComponents;
+using ReheeCmf.Attributes;
 using ReheeCmf.Handlers.EntityChangeHandlers;
 
 namespace ReheeCmf.Entities

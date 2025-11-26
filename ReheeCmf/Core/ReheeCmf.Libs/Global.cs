@@ -1,6 +1,6 @@
-﻿global using ReheeCmf.Commons;
+﻿global using ReheeCmf.Attributes;
+global using ReheeCmf.Commons;
 global using ReheeCmf.Commons.DTOs;
-global using ReheeCmf.Components.ChangeComponents;
 global using ReheeCmf.Enums;
 global using ReheeCmf.FileServices;
 global using ReheeCmf.Helpers;

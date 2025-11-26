@@ -1,5 +1,5 @@
-﻿using ReheeCmf.Components;
-using ReheeCmf.Components.ChangeComponents;
+﻿using ReheeCmf.Attributes;
+using ReheeCmf.Components;
 using ReheeCmf.Handlers.SelectHandler;
 using ReheeCmf.Utility.CmfRegisters;
 
