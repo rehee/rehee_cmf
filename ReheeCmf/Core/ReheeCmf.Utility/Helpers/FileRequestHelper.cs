@@ -1,4 +1,6 @@
 ﻿using ReheeCmf.Commons.Interfaces;
+using ReheeCmf.FileServices;
+
 namespace ReheeCmf.Helpers
 {
 	public static class FileRequestHelper

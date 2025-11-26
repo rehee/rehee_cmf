@@ -1,4 +1,5 @@
 ﻿using ReheeCmf.Commons;
+using ReheeCmf.Tenants;
 
 namespace ReheeCmf.MultiTenants
 {
