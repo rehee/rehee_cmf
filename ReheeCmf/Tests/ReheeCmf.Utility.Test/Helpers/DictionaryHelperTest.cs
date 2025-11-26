@@ -78,5 +78,152 @@ namespace ReheeCmf.Utility.Test.Helpers
       Assert.That(result.Count, Is.EqualTo(1));
       Assert.That(result.ContainsKey("Key1"), Is.True);
     }
+
+    // Tests for TryAddOrUpdate
+    [Test]
+    public void TryAddOrUpdate_WithNewKey_AddsValue()
+    {
+      var dict = new Dictionary<string, string>();
+
+      var result = dict.TryAddOrUpdate("NewKey", "NewValue");
+
+      Assert.That(result, Is.True);
+      Assert.That(dict["NewKey"], Is.EqualTo("NewValue"));
+    }
+
+    [Test]
+    public void TryAddOrUpdate_WithExistingKey_UpdatesValue()
+    {
+      var dict = new Dictionary<string, string>
+      {
+        ["ExistingKey"] = "OldValue"
+      };
+
+      var result = dict.TryAddOrUpdate("ExistingKey", "UpdatedValue");
+
+      Assert.That(result, Is.True);
+      Assert.That(dict["ExistingKey"], Is.EqualTo("UpdatedValue"));
+    }
+
+    [Test]
+    public void TryAddOrUpdate_WithNullDictionary_ReturnsFalse()
+    {
+      Dictionary<string, string>? dict = null;
+
+      var result = dict!.TryAddOrUpdate("Key", "Value");
+
+      Assert.That(result, Is.False);
+    }
+
+    [Test]
+    public void TryAddOrUpdate_WithNullKey_ReturnsFalse()
+    {
+      var dict = new Dictionary<string, string>();
+
+      var result = dict.TryAddOrUpdate(null!, "Value");
+
+      Assert.That(result, Is.False);
+    }
+
+    // Tests for TryAdd
+    [Test]
+    public void TryAdd_WithNewKey_AddsValueAndReturnsTrue()
+    {
+      var dict = new Dictionary<string, string>();
+
+      var result = dict.TryAdd("NewKey", "NewValue");
+
+      Assert.That(result, Is.True);
+      Assert.That(dict["NewKey"], Is.EqualTo("NewValue"));
+    }
+
+    [Test]
+    public void TryAdd_WithExistingKey_ReturnsFalse()
+    {
+      var dict = new Dictionary<string, string>
+      {
+        ["ExistingKey"] = "OldValue"
+      };
+
+      var result = dict.TryAdd("ExistingKey", "NewValue");
+
+      Assert.That(result, Is.False);
+      Assert.That(dict["ExistingKey"], Is.EqualTo("OldValue"));
+    }
+
+    [Test]
+    public void TryAdd_WithNullDictionary_ReturnsFalse()
+    {
+      IDictionary<string, string>? dict = null;
+
+      var result = DictionaryHelper.TryAdd(dict!, "Key", "Value");
+
+      Assert.That(result, Is.False);
+    }
+
+    [Test]
+    public void TryAdd_WithNullKey_ReturnsFalse()
+    {
+      var dict = new Dictionary<string, string>();
+
+      var result = DictionaryHelper.TryAdd<string, string>(dict, null!, "Value");
+
+      Assert.That(result, Is.False);
+    }
+
+    // Tests for TryRemove
+    [Test]
+    public void TryRemove_WithExistingKey_RemovesAndReturnsTrue()
+    {
+      var dict = new Dictionary<string, string>
+      {
+        ["KeyToRemove"] = "ValueToRemove"
+      };
+
+      var result = dict.TryRemove("KeyToRemove", out var removedValue);
+
+      Assert.That(result, Is.True);
+      Assert.That(removedValue, Is.EqualTo("ValueToRemove"));
+      Assert.That(dict.ContainsKey("KeyToRemove"), Is.False);
+    }
+
+    [Test]
+    public void TryRemove_WithNonExistingKey_ReturnsFalse()
+    {
+      var dict = new Dictionary<string, string>
+      {
+        ["Key1"] = "Value1"
+      };
+
+      var result = dict.TryRemove("NonExistentKey", out var removedValue);
+
+      Assert.That(result, Is.False);
+      Assert.That(removedValue, Is.Null);
+    }
+
+    [Test]
+    public void TryRemove_WithNullDictionary_ReturnsFalse()
+    {
+      Dictionary<string, string>? dict = null;
+
+      var result = dict!.TryRemove("Key", out var removedValue);
+
+      Assert.That(result, Is.False);
+      Assert.That(removedValue, Is.Null);
+    }
+
+    [Test]
+    public void TryRemove_WithNullKey_ReturnsFalse()
+    {
+      var dict = new Dictionary<string, string>
+      {
+        ["Key1"] = "Value1"
+      };
+
+      var result = dict.TryRemove(null!, out var removedValue);
+
+      Assert.That(result, Is.False);
+      Assert.That(removedValue, Is.Null);
+    }
   }
 }
