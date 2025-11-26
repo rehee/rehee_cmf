@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ReheeCmf.Commons
+﻿namespace ReheeCmf.Commons
 {
 	public interface ISetValidation : IIsvalidate
 	{

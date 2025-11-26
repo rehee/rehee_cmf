@@ -2,7 +2,7 @@ namespace ReheeCmf
 {
 	public interface IWithName
 	{
-		string? Name { get; set; }
-		string? Description { get; set; }
+		string Name { get; }
+		string Description { get; }
 	}
 }

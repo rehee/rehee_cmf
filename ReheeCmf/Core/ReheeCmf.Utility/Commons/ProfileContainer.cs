@@ -30,7 +30,7 @@ namespace ReheeCmf
 				return;
 			}
 
-			var key = profile.EffectiveKey;
+			var key = profile.EffectiveKey();
 			if (string.IsNullOrEmpty(key))
 			{
 				return;

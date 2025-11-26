@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ReheeCmf.Commons
+﻿namespace ReheeCmf.Commons
 {
 	public interface IUserAndRole
 	{
