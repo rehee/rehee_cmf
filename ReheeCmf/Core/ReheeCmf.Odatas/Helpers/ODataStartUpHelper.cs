@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Routing;
+﻿using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
@@ -37,10 +36,10 @@ namespace ReheeCmf.ODatas.Helpers
 			foreach (var entity in entityList)
 			{
 				//todo 需要阅读10.0 的文档 弄明白IdentityUserPasskey是什么.
-				if (entity == typeof(IdentityUserPasskey<string>))
-				{
-					continue;
-				}
+				//if (entity == typeof(IdentityUserPasskey<string>))
+				//{
+				//	continue;
+				//}
 				var handler = ODataEntitySetFactory.GetHandler(entity);
 				if (handler != null)
 				{

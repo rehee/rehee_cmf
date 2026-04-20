@@ -14,7 +14,11 @@ namespace ReheeCmf.ContextModule.Entities
 		public override void BeforeCreate()
 		{
 			base.BeforeCreate();
-			entity?.TenantID = context?.TenantID;
+			if (entity != null)
+			{
+				entity.TenantID = context?.TenantID;
+			}
+
 		}
 	}
 	[ODataEntitySet<TenantIdentityUserToken>]

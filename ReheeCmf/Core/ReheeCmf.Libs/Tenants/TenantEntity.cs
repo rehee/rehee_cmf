@@ -42,7 +42,10 @@ namespace ReheeCmf.Tenants
 		}
 		public override void SetTenant()
 		{
-			entity?.TenantID = null;
+			if (entity != null)
+			{
+				entity.TenantID = null;
+			}
 		}
 		public override Task AfterCreateAsync(CancellationToken ct = default)
 		{

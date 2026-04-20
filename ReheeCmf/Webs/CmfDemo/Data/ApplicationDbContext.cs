@@ -5,6 +5,7 @@ using ReheeCmf.ContextModule.Contexts;
 using ReheeCmf.ContextModule.Entities;
 using ReheeCmf.Entities;
 using ReheeCmf.Handlers.EntityChangeHandlers;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CmfDemo.Data
@@ -40,8 +41,15 @@ namespace CmfDemo.Data
 		public override void BeforeCreate()
 		{
 			base.BeforeCreate();
-			entity?.Name1 = Guid.NewGuid().ToString();
-
+			if (entity != null)
+			{
+				entity.Name1 = Guid.NewGuid().ToString();
+			}
+			//StatusException.Throw(System.Net.HttpStatusCode.BadRequest, "already with 3 chars");
+		}
+		public override IEnumerable<ValidationResult> Validation()
+		{
+			return [new ValidationResult("1", ["2"])];
 		}
 	}
 	[EntityChangeTracker<EntityType1>]

@@ -32,16 +32,25 @@
 		public override void BeforeCreate()
 		{
 			base.BeforeCreate();
-			entity?.NormalizationModuleName = entity?.ModuleName?.Trim().ToUpper() ?? "";
-			entity?.NormalizationRoleName = entity?.RoleName?.Trim().ToUpper() ?? "";
+			if (entity != null)
+			{
+				entity.NormalizationModuleName = entity.ModuleName?.Trim().ToUpper() ?? "";
+				entity.NormalizationRoleName = entity.RoleName?.Trim().ToUpper() ?? "";
+			}
+
 
 		}
 		public override void BeforeUpdate(EntityChanges[] propertyChange)
 		{
 			base.BeforeUpdate(propertyChange);
+			if (entity == null)
+			{
+				return;
+			}
 			if (propertyChange.Any(b => b.PropertyName == nameof(entity.RoleName)))
 			{
-				entity?.NormalizationRoleName = entity?.RoleName?.Trim().ToUpper() ?? "";
+
+				entity.NormalizationRoleName = entity.RoleName?.Trim().ToUpper() ?? "";
 			}
 		}
 		public override IEnumerable<ValidationResult> Validation()
